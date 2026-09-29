@@ -76,7 +76,7 @@
   .flip-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
   .flipcard.flipped .flip-inner{transform:rotateY(180deg)}
   .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;border:1px solid var(--border);background:var(--card);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px}
-  .face.back{transform:rotateY(180px)}
+  .face.back{transform:rotateY(180deg)}
   .hanzi{font-size:54px;font-family:var(--serif);font-weight:700}
   .pinyin{font-size:19px;color:var(--accent-dark)}
   .es{font-size:18px;color:var(--ink)}
@@ -281,7 +281,9 @@ onAuthStateChanged(auth, async (user)=>{
     snap = await getDoc(ref);
   }
   const profile = snap.data();
-  $("who").textContent = profile.name || user.email.split("@")[0];
+  const rawName = profile.name || user.email.split("@")[0];
+  const displayName = rawName.split(".")[0].charAt(0).toUpperCase() + rawName.split(".")[0].slice(1);
+  $("who").textContent = displayName;
   renderHome(profile.modules||[]);
   show("view-home");
 });
