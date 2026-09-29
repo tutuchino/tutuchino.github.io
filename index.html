@@ -72,15 +72,18 @@
   .back{background:var(--card);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:8px 14px;font-size:14px;cursor:pointer}
   .progress{color:var(--sub);font-size:14px;margin-left:auto}
   .card-stage{display:flex;align-items:center;justify-content:center;padding:26px 0 10px}
-  .flipcard{width:min(420px,92vw);height:240px;perspective:1000px;cursor:pointer}
-  .flip-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+  .flipcard{width:min(420px,92vw);height:420px;perspective:1200px;cursor:pointer}
+  .flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
   .flipcard.flipped .flip-inner{transform:rotateY(180deg)}
-  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;border:1px solid var(--border);background:var(--card);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;border:1px solid var(--border);background:var(--card);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px}
   .face.back{transform:rotateY(180deg)}
-  .hanzi{font-size:54px;font-family:var(--serif);font-weight:700}
-  .pinyin{font-size:19px;color:var(--accent-dark)}
-  .es{font-size:18px;color:var(--ink)}
-  .tip{font-size:12.5px;color:var(--later)}
+  .hanzi{font-size:110px;font-family:var(--serif);font-weight:900;line-height:1}
+  .pinyin{font-size:24px;color:var(--accent-dark)}
+  .es{font-size:19px;color:var(--ink);text-align:center;max-width:90%}
+  .ex{font-size:15px;color:var(--ink);text-align:center;margin-top:6px}
+  .exPy{font-size:13px;color:var(--sub);text-align:center}
+  .exEs{font-size:13px;color:var(--sub);text-align:center;font-style:italic}
+  .tip{font-size:12.5px;color:var(--sub);margin-top:10px}
   .study-actions{display:flex;gap:12px;justify-content:center;padding:10px 0 30px;flex-wrap:wrap}
   .act{border:none;border-radius:12px;padding:12px 22px;font-size:15px;font-weight:700;cursor:pointer}
   .act-no{background:var(--later-bg);color:var(--later)}
@@ -164,6 +167,10 @@
             <div class="face back">
               <div class="pinyin" id="c-pinyin"></div>
               <div class="es" id="c-es"></div>
+              <div class="ex" id="c-ex"></div>
+              <div class="exPy" id="c-exPy"></div>
+              <div class="exEs" id="c-exEs"></div>
+              <div class="tip">點卡片翻回正面</div>
             </div>
           </div>
         </div>
@@ -351,7 +358,12 @@ function renderCard(){
   if(idx >= deck.length){ $("study-title").textContent += " ✓"; return; }
   const c = deck[idx];
   document.getElementById("flipcard").classList.remove("flipped");
-  $("c-hanzi").textContent = c.h; $("c-pinyin").textContent=c.p; $("c-es").textContent=c.es;
+  $("c-hanzi").textContent = c.h;
+  $("c-pinyin").textContent = c.p;
+  $("c-es").textContent = c.es;
+  $("c-ex").textContent = c.example || "";
+  $("c-exPy").textContent = c.examplePinyin || "";
+  $("c-exEs").textContent = c.exampleEs || "";
 }
 document.getElementById("flipcard").onclick = function(){ this.classList.toggle("flipped"); };
 $("btn-say").onclick = ()=>{
