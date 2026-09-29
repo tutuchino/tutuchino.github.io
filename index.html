@@ -250,7 +250,8 @@ async function loadModule(key){
     const c = d.data();
     arr.push({ h:c.hanzi||"", p:c.pinyin||"", es:c.es||"", id:c.id||d.id,
       example:c.example||"", examplePinyin:c.examplePinyin||"", exampleEs:c.exampleEs||"",
-      level:c.level||1, hsk:c.hsk||0, group:c.group||"", story:c.story||"", words:c.words||[] });
+      level:c.level||1, hsk:c.hsk||0, group:c.group||"", story:c.story||"", words:c.words||[],
+      category:c.category||"", subcategory:c.subcategory||"" });
   });
   /* 隨機打亂 */
   for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
