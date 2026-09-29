@@ -240,6 +240,7 @@ const MODULES = {
   clf:     { ico:"量", t:"量詞閃卡", e:"Clasificadores" }
 };
 /* 從 Firestore 讀真實字庫（第一次進某模組時載入，之後快取） */
+const CAT_ORDER = [{"cat":"Temas Básicos","subs":["Pronombres Personales y Posesivos","Los Saludos","Para decir chau","Para agradecer","Para disculparse","Para dar la bienvenida","Para decir sí","Para decir no","Un placer","Para invitar / Pedir un favor","Silencio","Un momento / Probablemente","Cómo te va?","Los 20 Vocabularios Básicos"]},{"cat":"Ambiente","subs":["Naturaleza","Infraestructura","Campo","Ciudad","Términos Geográficos","Principales Cultivos de Argentina"]},{"cat":"Animales","subs":["Zoológico","Animales Terrestres","Aves","Animales Marinos","Insectos","Mascotas","Ganado"]},{"cat":"Bebidas","subs":["Té","Café","Otras Bebidas"]},{"cat":"Cine","subs":["Mirar Película","Tipos de Película","Tipos de Programa","Equipo de Película"]},{"cat":"Clima","subs":["Las Cuatro Estaciones","El Clima","Desastres Naturales"]},{"cat":"Comercio","subs":["Importación y Exportación","Colores","Formas","Materiales","Unidad de Medida","Sobre los Productos","Adjetivos para Productos","Negocios","Compras","Formas de Pago","Moneda"]},{"cat":"Comidas","subs":["Comidas","Huevos","Sabores y Texturas","Verduras","Frutas","Cereales","Carne","Postres","Especias","Frutos Secos","Condimentos","Medidas y Envases","En el Restaurante","Utensillos","Formas de Cocción"]},{"cat":"Comunicación","subs":["Hablar por teléfono","Celular, Tableta y Computadora"]},{"cat":"Conectores","subs":["Conectores"]},{"cat":"Cuerpo","subs":["Cuerpo","La Cara","La Mano","Los Pies","La Piel","Los Órganos","Movimientos del Cuerpo"]},{"cat":"Deportes","subs":["Deportes de Pelota","Ejercicios de Ocio","Deportes de Invierno","Deportes de Verano","Artes Marciales"]},{"cat":"Domicilio","subs":["Dirección"]},{"cat":"Educación","subs":["Personales de una Escuela","Sistema Educativo","Docente y Alumno","Escuela","Útiles Escolares","Materias","Carreras Universitarias","Biblioteca"]},{"cat":"Finanzas","subs":["Los Números","Matemáticas","Finanzas","Economía","Contaduría"]},{"cat":"Hobbies","subs":["Hobbies"]},{"cat":"Hospital","subs":["Dentro del Hospital","Especialidades Médicas","Exámenes Médicos","Enfermedades","Tratamientos","Empleados del Hospital","Signos Vitales","Estado de Salud","Equipos Médicos","Cuidado Personal"]},{"cat":"Industrias","subs":["Industrias","Fábricas y Empresas"]},{"cat":"Leyes","subs":["Términos Legales","Alquilar un Auto","Política","Alquilar una Casa"]},{"cat":"Música","subs":["Instrumentos de Música","Aparatos de Música","Bailes"]},{"cat":"Países","subs":["Continentes","Países","Ciudades Importantes"]},{"cat":"Persona","subs":["Familia","Relación Familiar","Sexo y Estado Civil","Edad","Etapa de la Vida","Signo Zodiacal","Horóscopo Chino","Apariencia","Color del Pelo","Forma de la Cara","Peinado","Personalidad","Sentimientos"]},{"cat":"Plantas","subs":["Plantas del Interior","Cultivo","Herramientas de Jardín","Flores","Árboles de Fruta","Árboles"]},{"cat":"Religión","subs":["Religiones","Personal Religioso","Construcciones Religiosas"]},{"cat":"Ropa","subs":["Ropa y Accesorios para Niños","Ropa de Hombre","Maquillajes","Accesorios"]},{"cat":"Tecnología","subs":["Tecnología"]},{"cat":"Tiempo","subs":["Días de la Semana","Meses","Fecha","Momentos del Día","Adverbios de Frecuencia","El Tiempo","Fiestas"]},{"cat":"Trabajo","subs":["Sectores de una Empresa","Títulos y Profesiones","Actividades Diarias","Oficina","Personal de una Empresa","Profesiones"]},{"cat":"Transporte","subs":["Medios de Transporte","Verbos para los Transportes","Otros Transportes"]},{"cat":"Viajes","subs":["Aeropuerto","En el Vuelo","Documentaciones para el Viaje","Frases en el Aeropuerto","Frases en el Avión"]},{"cat":"Vivienda","subs":["Tipos de Casa","Partes de una Casa","Living","Los Muebles","Cocina","Habitación","Baño","Lavadero","Jardín","Garaje","Herramientas para Limpieza","Electricidad","Agua","Gas"]},{"cat":"HSK","subs":["HSK Nivel 1 - Parte 1","HSK Nivel 1 - Parte 2","HSK Nivel 1 - Parte 3","HSK Nivel 2 - Parte 1","HSK Nivel 2 - Parte 2","HSK Nivel 3 - Parte 1","HSK Nivel 3 - Parte 2","HSK Nivel 3 - Parte 3","HSK Nivel 3 - Parte 4","HSK Nivel 3 - Parte 5","HSK Nivel 4 - Parte 1","HSK Nivel 4 - Parte 2","HSK Nivel 4 - Parte 3","HSK Nivel 4 - Parte 4","HSK Nivel 4 - Parte 5","HSK Nivel 4 - Parte 6","HSK Nivel 4 - Parte 7","HSK Nivel 4 - Parte 8","HSK Nivel 4 - Parte 9","HSK Nivel 5 - Parte 1","HSK Nivel 5 - Parte 2","HSK Nivel 5 - Parte 3","HSK Nivel 5 - Parte 4","HSK Nivel 5 - Parte 5","HSK Nivel 5 - Parte 6","HSK Nivel 5 - Parte 7","HSK Nivel 5 - Parte 8","HSK Nivel 5 - Parte 9","HSK Nivel 5 - Parte 10","HSK Nivel 5 - Parte 11","HSK Nivel 5 - Parte 12","HSK Nivel 5 - Parte 13","HSK Nivel 5 - Parte 14","HSK Nivel 5 - Parte 15","HSK Nivel 5 - Parte 16","HSK Nivel 6 - Parte 1","HSK Nivel 6 - Parte 2","HSK Nivel 6 - Parte 3","HSK Nivel 6 - Parte 4","HSK Nivel 6 - Parte 5","HSK Nivel 6 - Parte 6","HSK Nivel 6 - Parte 7","HSK Nivel 6 - Parte 8","HSK Nivel 6 - Parte 9","HSK Nivel 6 - Parte 10","HSK Nivel 6 - Parte 11","HSK Nivel 6 - Parte 12","HSK Nivel 6 - Parte 13","HSK Nivel 6 - Parte 14","HSK Nivel 6 - Parte 15","HSK Nivel 6 - Parte 16","HSK Nivel 6 - Parte 17","HSK Nivel 6 - Parte 18","HSK Nivel 7 - Parte 1","HSK Nivel 7 - Parte 2","HSK Nivel 7 - Parte 3","HSK Nivel 7 - Parte 4","HSK Nivel 7 - Parte 5","HSK Nivel 7 - Parte 6","HSK Nivel 7 - Parte 7","HSK Nivel 7 - Parte 8","HSK Nivel 7 - Parte 9","HSK Nivel 7 - Parte 10","HSK Nivel 8 - Parte 1","HSK Nivel 8 - Parte 2","HSK Nivel 8 - Parte 3","HSK Nivel 8 - Parte 4","HSK Nivel 8 - Parte 5","HSK Nivel 8 - Parte 6","HSK Nivel 8 - Parte 7","HSK Nivel 8 - Parte 8","HSK Nivel 8 - Parte 9","HSK Nivel 8 - Parte 10"]}];
 const CACHE = {};
 async function loadModule(key){
   if(CACHE[key]) return CACHE[key];
@@ -362,7 +363,7 @@ async function startStudy(key,title){
     try{
       allModuleCards = await loadModule(key);
     }catch(e){ console.error(e); toast("載入失敗"); show("view-home"); return; }
-    /* 按 subcategory 分組 */
+    /* 按 subcategory 分組，按 CAT_ORDER 順序排列 */
     const groups = {};
     allModuleCards.forEach(c=>{
       const sub = c.subcategory || c.category || "其他";
@@ -370,12 +371,23 @@ async function startStudy(key,title){
       groups[sub].push(c);
     });
     const list = $("topics-list"); list.innerHTML="";
-    Object.entries(groups).forEach(([sub, cards])=>{
-      const btn = document.createElement("button");
-      btn.style.css = "text-align:left;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-size:15px;cursor:pointer;color:var(--ink)";
-      btn.innerHTML = `<strong>${sub}</strong> <span style="color:var(--sub);font-size:13px">(${cards.length} 張)</span>`;
-      btn.onclick = ()=>{ deck = cards.slice(); /* 打亂 */ for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];} idx=0; $("study-title").textContent = sub; document.getElementById("flipcard").classList.remove("flipped"); show("view-study"); renderCard(); };
-      list.appendChild(btn);
+    CAT_ORDER.forEach(catBlock=>{
+      /* 大類標題 */
+      const hasSubs = catBlock.subs.some(s=>groups[s]);
+      if(!hasSubs) return;
+      const catTitle = document.createElement("div");
+      catTitle.style.css="font-family:var(--serif);font-size:17px;font-weight:700;color:var(--accent-dark);margin:18px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border)";
+      catTitle.textContent = catBlock.cat;
+      list.appendChild(catTitle);
+      catBlock.subs.forEach(sub=>{
+        if(!groups[sub]) return;
+        const cards = groups[sub];
+        const btn = document.createElement("button");
+        btn.style.css="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;cursor:pointer;color:var(--ink);margin-bottom:6px;width:100%";
+        btn.innerHTML = `${sub} <span style="color:var(--sub);font-size:12px">(${cards.length})</span>`;
+        btn.onclick = ()=>{ deck = cards.slice(); for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];} idx=0; $("study-title").textContent = sub; document.getElementById("flipcard").classList.remove("flipped"); show("view-study"); renderCard(); };
+        list.appendChild(btn);
+      });
     });
     return;
   }
