@@ -149,6 +149,18 @@
     </div>
   </div>
 
+  <!-- 主题选择 -->
+  <div id="view-topics" class="hidden">
+    <div class="wrap">
+      <div class="study-head">
+        <button class="back" id="btn-topics-back">← 回首頁</button>
+        <strong id="topics-title">選擇主題</strong>
+        <span></span>
+      </div>
+      <div id="topics-list" style="display:flex;flex-direction:column;gap:10px;margin-top:16px"></div>
+    </div>
+  </div>
+
   <!-- 闪卡学习 -->
   <div id="view-study" class="hidden">
     <div class="wrap">
@@ -249,7 +261,7 @@ async function loadModule(key){
 /* ------- 小工具 ------- */
 const $ = id => document.getElementById(id);
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2000); }
-function show(view){ ["view-login","view-home","view-study"].forEach(v=>$(v).classList.toggle("hidden", v!==view)); window.scrollTo(0,0); }
+function show(view){ ["view-login","view-home","view-study","view-topics"].forEach(v=>$(v).classList.toggle("hidden", v!==view)); window.scrollTo(0,0); }
 /* 字體縮放 */
 const zs=[0.8,0.9,1,1.1,1.2,1.3,1.45,1.6]; let zi=2;
 $("zout").onclick=()=>{if(zi>0){zi--;$("stage").style.zoom=zs[zi];}};
@@ -339,9 +351,34 @@ function renderHome(openModules){
 }
 
 /* ------- 閃卡 ------- */
-let deck=[], idx=0, curKey="";
+let deck=[], idx=0, curKey="", allModuleCards=[];
 async function startStudy(key,title){
-  curKey=key; idx=0;
+  curKey=key;
+  /* words 模組：先顯示主題列表 */
+  if(key==="words"){
+    $("topics-title").textContent = title;
+    show("view-topics");
+    try{
+      allModuleCards = await loadModule(key);
+    }catch(e){ console.error(e); toast("載入失敗"); show("view-home"); return; }
+    /* 按 subcategory 分組 */
+    const groups = {};
+    allModuleCards.forEach(c=>{
+      const sub = c.subcategory || c.category || "其他";
+      if(!groups[sub]) groups[sub] = [];
+      groups[sub].push(c);
+    });
+    const list = $("topics-list"); list.innerHTML="";
+    Object.entries(groups).forEach(([sub, cards])=>{
+      const btn = document.createElement("button");
+      btn.style.css = "text-align:left;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-size:15px;cursor:pointer;color:var(--ink)";
+      btn.innerHTML = `<strong>${sub}</strong> <span style="color:var(--sub);font-size:13px">(${cards.length} 張)</span>`;
+      btn.onclick = ()=>{ deck = cards.slice(); /* 打亂 */ for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];} idx=0; $("study-title").textContent = sub; document.getElementById("flipcard").classList.remove("flipped"); show("view-study"); renderCard(); };
+      list.appendChild(btn);
+    });
+    return;
+  }
+  idx=0;
   $("study-title").textContent = title + "（載入中…）";
   show("view-study");
   try{
@@ -352,6 +389,7 @@ async function startStudy(key,title){
   document.getElementById("flipcard").classList.remove("flipped");
   renderCard();
 }
+$("btn-topics-back").onclick = ()=> show("view-home");
 function renderCard(){
   $("done-box").classList.toggle("hidden", idx < deck.length);
   $("study-progress").textContent = `${idx} / ${deck.length}`;
