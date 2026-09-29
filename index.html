@@ -200,7 +200,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC_C9Mj_xAXyVTcd34v1VfnffvgJMDMLm8",
@@ -220,18 +220,24 @@ const MODULES = {
   words:   { ico:"詞", t:"單詞閃卡", e:"Palabras" },
   clf:     { ico:"量", t:"量詞閃卡", e:"Clasificadores" }
 };
-/* Demo 樣本卡（正式版會從 Firestore 讀全部字庫） */
-const SAMPLE = {
-  hanzi: [
-    {h:"你",p:"nǐ",es:"tú"},{h:"好",p:"hǎo",es:"bueno"},{h:"謝",p:"xiè",es:"agradecer"},{h:"再",p:"zài",es:"de nuevo"},{h:"學",p:"xué",es:"estudiar"}
-  ],
-  words: [
-    {h:"你好",p:"nǐ hǎo",es:"hola"},{h:"再見",p:"zài jiàn",es:"adiós"},{h:"老師",p:"lǎo shī",es:"profesor/a"},{h:"謝謝",p:"xiè xie",es:"gracias"},{h:"同學",p:"tóng xué",es:"compañero/a"}
-  ],
-  clf: [
-    {h:"一個人",p:"yí gè rén",es:"una persona"},{h:"一本書",p:"yì běn shū",es:"un libro"},{h:"一輛車",p:"yí liàng chē",es:"un coche"}
-  ]
-};
+/* 從 Firestore 讀真實字庫（第一次進某模組時載入，之後快取） */
+const CACHE = {};
+async function loadModule(key){
+  if(CACHE[key]) return CACHE[key];
+  const q = query(collection(db,"cards"), where("module","==",key));
+  const snap = await getDocs(q);
+  const arr = [];
+  snap.forEach(d=>{
+    const c = d.data();
+    arr.push({ h:c.hanzi||"", p:c.pinyin||"", es:c.es||"", id:c.id||d.id,
+      example:c.example||"", examplePinyin:c.examplePinyin||"", exampleEs:c.exampleEs||"",
+      level:c.level||1, hsk:c.hsk||0, group:c.group||"", story:c.story||"", words:c.words||[] });
+  });
+  /* 隨機打亂 */
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  CACHE[key]=arr;
+  return arr;
+}
 
 /* ------- 小工具 ------- */
 const $ = id => document.getElementById(id);
@@ -325,11 +331,17 @@ function renderHome(openModules){
 
 /* ------- 閃卡 ------- */
 let deck=[], idx=0, curKey="";
-function startStudy(key,title){
-  curKey=key; deck = (SAMPLE[key]||[]).slice(); idx=0;
+async function startStudy(key,title){
+  curKey=key; idx=0;
+  $("study-title").textContent = title + "（載入中…）";
+  show("view-study");
+  try{
+    deck = await loadModule(key);
+    if(!deck.length){ toast("這個模組目前還沒有卡片"); show("view-home"); return; }
+  }catch(e){ console.error(e); toast("載入失敗，請重新整理"); show("view-home"); return; }
   $("study-title").textContent = title;
   document.getElementById("flipcard").classList.remove("flipped");
-  show("view-study"); renderCard();
+  renderCard();
 }
 function renderCard(){
   $("done-box").classList.toggle("hidden", idx < deck.length);
