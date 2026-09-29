@@ -1427,6 +1427,8 @@ const db = getFirestore(fb);
 
 onAuthStateChanged(auth, async (user) => {
   if(!user) return;
+  const isTeacher = user.providerData.some(p => p.providerId === "google.com");
+  if(isTeacher) return; // 老師：顯示全部 + 發放面板
   try {
     const snap = await getDoc(doc(db, "grants", user.email));
     const g = snap.exists() ? (snap.data().clf || null) : null;
