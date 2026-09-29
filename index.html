@@ -90,7 +90,12 @@
   .done h3{font-family:var(--serif);font-size:24px}
   .done p{color:var(--sub);margin-top:8px}
 
-  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(16px);background:#3a3428;color:#fdf8ec;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25px;z-index:99}
+  .modal{position:fixed;inset:0;background:rgba(40,30,10,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;width:min(360px,92vw);box-shadow:var(--shadow)}
+.modal-box h3{font-family:var(--serif);font-size:18px;margin-bottom:12px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:10px 18px;font-size:14px;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(16px);background:#3a3428;color:#fdf8ec;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25px;z-index:99}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   @media (max-width:640px){ .grid{grid-template-columns:1fr} }
 </style>
@@ -107,7 +112,7 @@
       <div class="form" style="margin-top:20px">
         <div class="field">
           <label>名字 · Nombre</label>
-          <input id="f-user" placeholder="facundo.garcia" autocomplete="username">
+          <input id="f-user" placeholder="nombre.apellido" autocomplete="username">
         </div>
         <div class="field">
           <label>密碼 · Contraseña</label>
@@ -127,6 +132,7 @@
         <div class="top-right">
           <button class="ctl" id="zout">A－</button><button class="ctl" id="zin">A＋</button>
           <button class="ctl" id="theme">☾</button>
+          <button class="ctl" id="pwbtn">改密碼</button>
           <button class="ctl" id="logout">登出</button>
         </div>
       </div>
@@ -174,12 +180,26 @@
     </div>
   </div>
 </div>
+  <!-- 修改密码弹窗 -->
+  <div id="pw-modal" class="modal hidden">
+    <div class="modal-box">
+      <h3>修改密碼</h3>
+      <div class="field"><label>目前的密碼</label><input id="pw-old" type="password"></div>
+      <div class="field"><label>新密碼（至少 6 位）</label><input id="pw-new" type="password"></div>
+      <div class="err" id="pw-err"></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="pw-cancel">取消</button>
+        <button class="btn btn-primary" id="pw-save" style="width:auto;padding:10px 18px">儲存</button>
+      </div>
+    </div>
+  </div>
+
 
 <div class="toast" id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -259,6 +279,33 @@ onAuthStateChanged(auth, async (user)=>{
   renderHome(profile.modules||[]);
   show("view-home");
 });
+
+
+/* ------- 修改密碼 ------- */
+const pwModal=$("pw-modal");
+function openPw(){ $("pw-old").value=""; $("pw-new").value=""; $("pw-err").textContent=""; pwModal.classList.remove("hidden"); }
+function closePw(){ pwModal.classList.add("hidden"); }
+$("pwbtn").onclick=openPw;
+$("pw-cancel").onclick=closePw;
+pwModal.addEventListener("click",e=>{ if(e.target===pwModal) closePw(); });
+$("pw-save").onclick=async ()=>{
+  const oldp=$("pw-old").value, newp=$("pw-new").value;
+  $("pw-err").textContent="";
+  if(!oldp||!newp){ $("pw-err").textContent="請把兩個欄位都填上"; return; }
+  if(newp.length<6){ $("pw-err").textContent="新密碼至少要 6 個字元"; return; }
+  $("pw-save").disabled=true;
+  try{
+    const cred=EmailAuthProvider.credential(auth.currentUser.email, oldp);
+    await reauthenticateWithCredential(auth.currentUser, cred);
+    await updatePassword(auth.currentUser, newp);
+    closePw(); toast("密碼已更新 ✓");
+  }catch(e){
+    $("pw-err").textContent = e.code==="auth/wrong-password" ? "目前的密碼不對，再試一次" : "更新失敗，請稍後再試";
+    console.error(e);
+  }
+  $("pw-save").disabled=false;
+};
+
 
 $("logout").onclick = ()=> signOut(auth);
 
