@@ -2032,12 +2032,22 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
     if(!name){ stat.textContent = "Escribe el nombre del alumno."; return; }
     if(batches.length === 0 && levels.length === 0){ stat.textContent = "Selecciona al menos un lote o nivel."; return; }
     const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
-    await setDoc(doc(db, "grants", email), { hanzi: { batches: batches, levels: levels, groupMode: currentGroupMode, updatedAt: new Date() } }, { merge: true });
+    // 先讀現有 grants，合併舊 batches（防止覆蓋其他模式的勾選）
+    let oldBatches = [];
+    try {
+      const oldSnap = await getDoc(doc(db, "grants", email));
+      if(oldSnap.exists()){
+        const oldHanzi = oldSnap.data().hanzi || {};
+        oldBatches = oldHanzi.batches || [];
+      }
+    } catch(e) {}
+    const mergedBatches = [...new Set([...oldBatches, ...batches])];
+    await setDoc(doc(db, "grants", email), { hanzi: { batches: mergedBatches, levels: levels, groupMode: currentGroupMode, updatedAt: new Date() } }, { merge: true });
     // 立即重新讀回確認
     const verify = await getDoc(doc(db, "grants", email));
     const vData = verify.exists() ? (verify.data().hanzi || {}) : {};
     const vBatches = vData.batches || [];
-    alert("✓ 已儲存雲端\n寫入: " + batches.length + " 批次\n讀回: " + vBatches.length + " 批次\n給: " + email + (vBatches.length !== batches.length ? "\n⚠️ 讀回數量不符！" : ""));
+    alert("✓ 已儲存雲端\n寫入: " + mergedBatches.length + " 批次（含舊 " + oldBatches.length + "）\n讀回: " + vBatches.length + " 批次\n給: " + email + (vBatches.length !== batches.length ? "\n⚠️ 讀回數量不符！" : ""));
     stat.textContent = "✓ Guardado (" + vBatches.length + "/" + batches.length + " lotes) → " + email;
   } catch(e) {
     stat.textContent = "Error: " + (e.message || e);
