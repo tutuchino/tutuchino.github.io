@@ -1779,6 +1779,10 @@ document.getElementById("gLevelCheckRow").addEventListener("change", updateExpor
 // 分組模式切換
 document.querySelectorAll('input[name="groupMode"]').forEach(radio => {
   radio.onchange = () => {
+    // 切模式前：先把當前 DOM 的 checked 同步到全局 Set（防止丟失）
+    document.querySelectorAll("#batchCheckRow input[data-batch]:checked").forEach(cb => {
+      window.__grantBatches.add(cb.dataset.batch);
+    });
     currentGroupMode = document.querySelector('input[name="groupMode"]:checked').value;
     renderBatchChecks();
     setupTeacherFilterUI();
