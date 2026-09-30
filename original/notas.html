@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notas de Clase · 上課筆記</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+:root{
+  --bg:#FFF4E0; --card:#FFFBF2; --ink:#4a2c10; --sub:#9a7a52; --line:#FFD9A8;
+  --accent:#FF8C2E; --accent-dark:#E66A14; --soft:#FFE8C9;
+  --orange1:#FFB366; --orange3:#E66A14;
+  --shadow:0 4px 16px rgba(230,106,20,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);padding:16px;max-width:640px;margin:0 auto;min-height:100vh}
+body.dark{--bg:#2a2018;--card:#382c20;--ink:#ffe8cf;--sub:#c9a880;--line:#5a4530;--accent:#FFB366;--accent-dark:#FF8C2E;--soft:#4a3826}
+.tb{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.tb a,.tb button{font-size:13px;font-family:"Times New Roman",serif;padding:7px 14px;border-radius:20px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;text-decoration:none;transition:all .15s}
+.tb a:hover,.tb button:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0 4px;text-align:center}
+.subtitle{text-align:center;color:var(--sub);font-size:13px;margin-bottom:18px}
+/* 老師操作列 */
+.teacher-panel{background:var(--card);border:1.5px dashed var(--accent);border-radius:14px;padding:14px;margin-bottom:18px;display:none}
+.teacher-panel.on{display:block}
+.teacher-panel select,.teacher-panel input,.teacher-panel textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:14px;background:transparent;color:var(--ink);margin-bottom:8px;font-family:inherit}
+.teacher-panel textarea{min-height:80px;resize:vertical}
+.teacher-panel label{display:block;font-size:12px;color:var(--sub);margin:6px 0 3px;font-weight:700}
+.teacher-panel .row{display:flex;gap:8px}
+.teacher-panel .row>*{flex:1}
+.btn-main{background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;border:none;border-radius:22px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:"Times New Roman",serif;box-shadow:0 3px 10px rgba(230,106,20,.3)}
+.btn-main:hover{transform:translateY(-1px)}
+.btn-ghost{background:none;border:1.5px solid var(--line);color:var(--sub);border-radius:22px;padding:8px 16px;font-size:13px;cursor:pointer}
+/* 筆記卡片 */
+.note{background:var(--card);border:1.5px solid var(--line);border-radius:16px;margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
+.note-head{padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.note-head:hover{background:var(--soft)}
+.note-date{font-family:"Times New Roman",serif;font-weight:700;color:var(--accent-dark);font-size:15px;white-space:nowrap}
+.note-summary{flex:1;font-size:14px;text-align:right;color:var(--ink)}
+.note-body{padding:0 16px 16px;border-top:1px solid var(--line);display:none}
+.note.open .note-body{display:block}
+.script-line{padding:10px 8px;border-radius:10px;cursor:pointer;transition:background .12s;margin-bottom:4px}
+.script-line:hover{background:var(--soft)}
+.script-zh{font-family:"Noto Serif SC",serif;font-size:19px;font-weight:700;line-height:1.5}
+.script-py{font-size:12px;color:var(--sub);margin-top:2px}
+.vocab-box{background:var(--soft);border-radius:12px;padding:12px;margin-top:12px}
+.vocab-box h4{font-size:13px;color:var(--accent-dark);margin-bottom:8px;font-family:"Noto Serif SC",serif}
+.vocab-item{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 12px;margin:0 6px 6px 0;cursor:pointer;font-size:14px}
+.vocab-item:hover{border-color:var(--accent)}
+.vocab-item .py{display:block;font-size:11px;color:var(--sub)}
+.vocab-item .es{display:block;font-size:11px;color:var(--accent-dark)}
+.links{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.links a{color:var(--accent-dark);font-size:13px;word-break:break-all}
+.hint{text-align:center;color:var(--sub);font-size:14px;padding:30px 0}
+.teacher-badge{display:inline-block;background:var(--accent);color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;margin-left:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="tb">
+  <a href="../index.html">⌂ Inicio</a>
+  <button onclick="zoomPage(-1)">A−</button>
+  <button onclick="zoomPage(1)">A+</button>
+  <button onclick="toggleDarkAll()">◐</button>
+</div>
+
+<h1>Notas de Clase</h1>
+<div class="subtitle">上課筆記 · 點句子朗讀</div>
+
+<!-- 老師：新增筆記面板 -->
+<div class="teacher-panel" id="teacherPanel">
+  <label>學生帳號（如 facundo.garcia）</label>
+  <input id="tEmail" placeholder="nombre.apellido" value="">
+  <label>上課日期</label>
+  <input id="tDate" type="date">
+  <label>摘要（這節課教了什麼，一兩行）</label>
+  <input id="tSummary" placeholder="例：第 5 課 · 時間表達">
+  <label>逐字稿（每行一句：中文|||拼音）</label>
+  <textarea id="tScript" placeholder="今天|||jīn tiān&#10;明天|||míng tiān"></textarea>
+  <label>補充生詞（每行：中文|||拼音|||西班牙文）</label>
+  <textarea id="tVocab" placeholder="後天|||hòu tiān|||pasado mañana"></textarea>
+  <label>影片連結（可選）</label>
+  <input id="tVideo" placeholder="https://...">
+  <label>錄音連結（可選，vocaroo 等）</label>
+  <input id="tAudio" placeholder="https://...">
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button class="btn-main" onclick="saveNote()">儲存筆記 · Guardar</button>
+  </div>
+</div>
+
+<div id="noteList"><div class="hint">Cargando… 載入中…</div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, where, orderBy, getDocs, addDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const fb = initializeApp({
+  apiKey: "AIzaSyC_C9Mj_xAXyVTcd34v1VfnffvgJMDMLm8",
+  authDomain: "chino-basico-por-tema.firebaseapp.com",
+  projectId: "chino-basico-por-tema",
+  storageBucket: "chino-basico-por-tema.firebasestorage.app",
+  messagingSenderId: "25772645467",
+  appId: "1:25772645467:web:325ba09f8ec4d6b229737e"
+});
+const auth = getAuth(fb);
+const db = getFirestore(fb);
+
+/* 工具條 */
+let zlvl = 3; const ZOOMS = [0.85,0.92,1.0,1.1,1.2];
+window.zoomPage = d => { zlvl=Math.max(1,Math.min(5,zlvl+d)); document.documentElement.style.zoom=ZOOMS[zlvl-1]; };
+window.toggleDarkAll = () => document.body.classList.toggle("dark");
+
+/* 朗讀 */
+window.speak = (text) => {
+  if(!text) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "zh-CN"; u.rate = 0.9;
+  speechSynthesis.speak(u);
+};
+window.speakEs = (text) => {
+  if(!text) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "es-ES"; u.rate = 0.95;
+  speechSynthesis.speak(u);
+};
+
+let currentUser = null;
+let isTeacher = false;
+
+function parseScript(txt){
+  return (txt||"").split("\n").map(l=>l.trim()).filter(Boolean).map(line=>{
+    const parts = line.split("|||");
+    return { zh: parts[0]||"", pinyin: parts[1]||"" };
+  });
+}
+function parseVocab(txt){
+  return (txt||"").split("\n").map(l=>l.trim()).filter(Boolean).map(line=>{
+    const parts = line.split("|||");
+    return { zh: parts[0]||"", pinyin: parts[1]||"", es: parts[2]||"" };
+  });
+}
+
+async function saveNote(){
+  const email = document.getElementById("tEmail").value.trim().toLowerCase().replace(/[^a-z0-9.]+/g,".");
+  if(!email){ alert("請輸入學生帳號"); return; }
+  const data = {
+    studentEmail: email,
+    date: document.getElementById("tDate").value || new Date().toISOString().slice(0,10),
+    summary: document.getElementById("tSummary").value.trim(),
+    script: parseScript(document.getElementById("tScript").value),
+    vocab: parseVocab(document.getElementById("tVocab").value),
+    videoUrl: document.getElementById("tVideo").value.trim(),
+    audioUrl: document.getElementById("tAudio").value.trim(),
+    createdAt: new Date()
+  };
+  try{
+    await addDoc(collection(db, "notes"), data);
+    alert("已儲存 ✓");
+    document.getElementById("tSummary").value="";
+    document.getElementById("tScript").value="";
+    document.getElementById("tVocab").value="";
+    document.getElementById("tVideo").value="";
+    document.getElementById("tAudio").value="";
+    loadNotes(email);
+  }catch(e){ alert("儲存失敗："+e.message); }
+}
+window.saveNote = saveNote;
+
+async function loadNotes(forceEmail){
+  const list = document.getElementById("noteList");
+  const targetEmail = forceEmail || currentUser.email;
+  list.innerHTML = `<div class="hint">Cargando…</div>`;
+  try{
+    const q = query(collection(db,"notes"), where("studentEmail","==",targetEmail), orderBy("date","desc"));
+    const snap = await getDocs(q);
+    if(snap.empty){ list.innerHTML = `<div class="hint">尚無筆記。<br>Todavía no hay notas.</div>`; return; }
+    let html = "";
+    snap.forEach(doc=>{
+      const n = doc.data();
+      html += `<div class="note" data-id="${doc.id}">
+        <div class="note-head" onclick="this.parentElement.classList.toggle('open')">
+          <div class="note-date">${n.date||""}</div>
+          <div class="note-summary">${n.summary||""}</div>
+        </div>
+        <div class="note-body">
+          ${(n.script||[]).map(s=>`<div class="script-line" onclick="speak('${(s.zh||'').replace(/'/g,"\\'")}')">
+            <div class="script-zh">${s.zh||""}</div>
+            <div class="script-py">${s.pinyin||""}</div>
+          </div>`).join("")}
+          ${(n.vocab && n.vocab.length) ? `<div class="vocab-box"><h4>📖 補充生詞</h4>${n.vocab.map(v=>`<span class="vocab-item" onclick="speak('${(v.zh||'').replace(/'/g,"\\'")}')">${v.zh||""}<span class="py">${v.pinyin||""}</span><span class="es">${v.es||""}</span></span>`).join("")}</div>`:""}
+          ${(n.videoUrl||n.audioUrl) ? `<div class="links">
+            ${n.videoUrl?`<a href="${n.videoUrl}" target="_blank">▶ 影片 · Video</a>`:""}
+            ${n.audioUrl?`<a href="${n.audioUrl}" target="_blank">🎧 錄音 · Audio</a>`:""}
+          </div>`:""}
+        </div>
+      </div>`;
+    });
+    list.innerHTML = html;
+    // 統計：記錄開啟次數
+    try{ await setDoc(doc(db,"stats",currentUser.email),{notasOpen:{count:1,last:new Date()}},{merge:true}); }catch(e){}
+  }catch(e){
+    list.innerHTML = `<div class="hint">載入失敗：${e.message}</div>`;
+  }
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ location.href = "../index.html"; return; }
+  currentUser = user;
+  isTeacher = user.providerData.some(p=>p.providerId==="google.com");
+  if(isTeacher){
+    document.getElementById("teacherPanel").classList.add("on");
+    document.getElementById("tEmail").addEventListener("change", e=>loadNotes(e.target.value.trim().toLowerCase().replace(/[^a-z0-9.]+/g,".")));
+  }
+  await loadNotes(isTeacher ? "" : user.email);
+});
+</script>
+</body>
+</html>

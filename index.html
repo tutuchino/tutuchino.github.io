@@ -4,64 +4,65 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chino Básico por Tema</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐇</text></svg>">
 <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
 <style>
 :root{
-  --paper:#f2ead8;--card:#fdf8ec;--ink:#3a3428;--sub:#7d7560;
-  --accent:#8a6d3b;--accent-dark:#6b5328;--border:#e0d5bb;
-  --shadow:0 4px 20px rgba(60,45,20,.1);
-  --gold:#c9a86a;--rose:#c4756a;
+  --paper:#f2ead8; --card:#fdf8ec; --ink:#3a3428; --sub:#7d7560;
+  --line:#e0d5bb; --gold:#c9a86a;
+  --warm1:#EFC25D; --warm2:#D9A033; --warm3:#C9A97D; --warm4:#E6D8AB;
+  --orange1:#FFB366; --orange2:#FF8C2E; --orange3:#E66A14; --orange4:#FFF4E0;
+  --shadow:0 4px 20px rgba(60,45,20,.10);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:"Noto Sans SC",sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;transition:background .3s}
-html.night{--paper:#26221c;--card:#322c24;--ink:#ece3cf;--sub:#a89e88;--accent:#c9a86a;--accent-dark:#c9a86a;--border:#4a4238;--shadow:0 4px 20px rgba(0,0,0,.3)}
-.wrap{width:100%;max-width:440px;text-align:center}
-/* 頂部工具列 */
+html.night{--paper:#26221c;--card:#322c24;--ink:#ece3cf;--sub:#a89e88;--line:#4a4238;--shadow:0 4px 20px rgba(0,0,0,.3)}
+.wrap{width:100%;max-width:460px;text-align:center}
 .tools{display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px}
-.tools button{background:var(--card);border:1px solid var(--border);color:var(--sub);border-radius:20px;width:36px;height:36px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.tools button:hover{color:var(--accent)}
-/* Logo */
-.logo-wrap{display:flex;flex-direction:column;align-items:center;margin:16px 0 28px}
-.logo{width:88px;height:88px;border-radius:50%;background:var(--card);border:2px solid var(--gold);box-shadow:0 4px 20px rgba(201,168,106,.25);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.tools button{background:var(--card);border:1px solid var(--line);color:var(--sub);border-radius:20px;width:38px;height:38px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:"Times New Roman",serif}
+.tools button:hover{color:var(--warm2)}
+.logo-wrap{display:flex;flex-direction:column;align-items:center;margin:14px 0 22px}
+.logo{width:96px;height:96px;border-radius:50%;background:var(--card);border:3px solid var(--gold);box-shadow:0 6px 24px rgba(201,168,106,.3);overflow:hidden;display:flex;align-items:center;justify-content:center}
 .logo img{width:100%;height:100%;object-fit:cover}
-.logo-name{font-family:"Noto Serif SC",serif;font-size:13px;font-weight:700;letter-spacing:4px;color:var(--accent);margin-top:10px}
+.logo-name{font-family:"Times New Roman",serif;font-size:14px;font-weight:700;letter-spacing:6px;color:var(--warm2);margin-top:12px}
 h1{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:900;margin-bottom:6px;letter-spacing:1px}
-.sub{color:var(--sub);font-size:14px;margin-bottom:8px}
-.who{font-size:15px;color:var(--sub);margin-bottom:28px}
-.who strong{color:var(--accent);font-family:"Noto Serif SC",serif;font-size:17px}
-/* 登入表單 */
-.form{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;box-shadow:var(--shadow);text-align:left}
+.sub{color:var(--sub);font-size:13px;margin-bottom:8px}
+.who{font-size:15px;color:var(--sub);margin-bottom:22px}
+.who strong{color:var(--warm2);font-family:"Noto Serif SC",serif;font-size:17px}
+.form{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);text-align:left}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:13px;color:var(--sub);margin-bottom:5px}
-.field input{width:100%;border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:16px;background:transparent;color:var(--ink)}
-.btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px}
-.btn:hover{background:var(--accent-dark)}
+.field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:16px;background:transparent;color:var(--ink)}
+.btn{width:100%;background:linear-gradient(135deg,var(--warm2),#b8821e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;font-family:"Times New Roman",serif;letter-spacing:1px;box-shadow:0 4px 12px rgba(217,160,51,.35)}
+.btn:hover{transform:translateY(-1px)}
 .err{color:#c0392b;font-size:13px;margin-top:8px;min-height:18px}
-/* 模組卡片 */
 .home{display:none}
-.mod{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:14px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
-.mod:hover{transform:translateY(-3px);border-color:var(--gold)}
-.mod .ico{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:"Noto Serif SC",serif;font-size:26px;font-weight:900;flex-shrink:0}
-.mod:nth-child(1) .ico{background:rgba(138,109,59,.12);color:var(--accent)}
-.mod:nth-child(2) .ico{background:rgba(196,117,106,.12);color:var(--rose)}
-.mod:nth-child(3) .ico{background:rgba(100,130,100,.12);color:#6b8e6b}
-.mod .txt{text-align:left;flex:1}
-.mod .t{font-family:"Noto Serif SC",serif;font-size:17px;font-weight:700}
-.mod .e{font-size:13px;color:var(--sub);margin-top:2px}
-.logout-row{margin-top:28px;display:flex;justify-content:center}
-.logout-row button{background:none;border:1px solid var(--border);color:var(--sub);border-radius:20px;padding:7px 18px;font-size:13px;cursor:pointer}
-footer{margin-top:16px;font-size:12px;color:var(--sub)}
-/* 字體縮放 */
-/* 字體縮放 */
-html{zoom:1}
+.bigmod{display:block;text-decoration:none;border-radius:20px;padding:24px 20px;margin-bottom:16px;box-shadow:var(--shadow);transition:transform .18s;position:relative;overflow:hidden}
+.bigmod:hover{transform:translateY(-3px)}
+.bigmod .badge{position:absolute;top:14px;right:16px;font-size:11px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.55)}
+.mod-tarjetas{background:linear-gradient(135deg,#fdf3d8,var(--warm4));color:#5a4416;border:1.5px solid var(--warm3)}
+.mod-tarjetas .badge{background:rgba(217,160,51,.2);color:#8a6a1a}
+.mod-tarjetas .big-ico{font-family:"Noto Serif SC",serif;font-size:40px;font-weight:900;line-height:1}
+.mod-tarjetas .big-t{font-family:"Times New Roman","Noto Serif SC",serif;font-size:22px;font-weight:700;margin-top:8px}
+.mod-tarjetas .big-e{font-size:13px;opacity:.75;margin-top:4px}
+.mod-notas{background:linear-gradient(135deg,var(--orange4),#ffe3c2);color:#8a3c0a;border:1.5px solid var(--orange1)}
+.mod-notas .badge{background:rgba(255,140,46,.18);color:var(--orange3)}
+.mod-notas .big-ico{font-size:38px;line-height:1}
+.mod-notas .big-t{font-family:"Times New Roman","Noto Serif SC",serif;font-size:22px;font-weight:700;margin-top:8px}
+.mod-notas .big-e{font-size:13px;opacity:.8;margin-top:4px}
+.teacher-row{margin-top:18px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.teacher-row a, .teacher-row button{background:none;border:1px solid var(--line);color:var(--sub);border-radius:20px;padding:8px 18px;font-size:13px;cursor:pointer;text-decoration:none}
+.teacher-row a:hover,.teacher-row button:hover{color:var(--warm2);border-color:var(--warm2)}
+footer{margin-top:18px;font-size:12px;color:var(--sub)}
+.loading{color:var(--sub);font-size:14px;padding:20px 0}
 </style>
 </head>
-<body class="zoom-3">
+<body>
 <div class="wrap">
   <div class="tools">
-    <button onclick="zoom(-1)" title="縮小">A-</button>
+    <button onclick="zoom(-1)" title="縮小">A−</button>
     <button onclick="zoom(1)" title="放大">A+</button>
-    <button onclick="toggleNight()" id="night-btn" title="夜間模式">◐</button>
+    <button onclick="toggleNight()" title="暗色模式">◐</button>
   </div>
 
   <div id="view-login">
@@ -72,8 +73,8 @@ html{zoom:1}
     <h1>Chino Básico por Tema</h1>
     <div class="sub">基礎中文 · 按主題學習</div>
     <div class="form">
-      <div class="field"><label>名字 · Nombre</label><input id="f-user" placeholder="nombre.apellido"></div>
-      <div class="field"><label>密碼 · Contraseña</label><input id="f-pass" type="password"></div>
+      <div class="field"><label>名字 · Nombre</label><input id="f-user" placeholder="nombre.apellido" autocomplete="username"></div>
+      <div class="field"><label>密碼 · Contraseña</label><input id="f-pass" type="password" autocomplete="current-password"></div>
       <button class="btn" id="btn-login">進入學習 · Iniciar</button>
       <div class="err" id="login-err"></div>
     </div>
@@ -84,81 +85,122 @@ html{zoom:1}
       <div class="logo"><img src="logo.png" alt="TUTU"></div>
       <div class="logo-name">T U T U</div>
     </div>
-    <h1>Chino Básico por Tema</h1>
     <div class="who" id="who"></div>
-    <a class="mod" href="original/hanzi.html"><div class="ico">字</div><div class="txt"><div class="t">漢字閃卡</div><div class="e">Hanzi · 4,475 字</div></div></a>
-    <a class="mod" href="original/words.html"><div class="ico">詞</div><div class="txt"><div class="t">單詞閃卡</div><div class="e">Palabras · 11,781 詞</div></div></a>
-    <a class="mod" href="original/clf.html"><div class="ico">量</div><div class="txt"><div class="t">量詞閃卡</div><div class="e">Clasificadores · 258 個</div></div></a>
-    <div class="logout-row"><button id="btn-logout">登出 · Salir</button></div>
-    <footer id="hidden-door" style="cursor:default;">Chino Básico por Tema · 基礎中文 — 按主題學習</footer>
+    <div id="home-modules"></div>
+    <div class="teacher-row" id="teacher-row" style="display:none">
+      <a href="admin.html">後台 · Panel</a>
+      <button id="btn-logout">登出 · Salir</button>
+    </div>
+    <footer>Chino Básico por Tema · 基礎中文 — 按主題學習</footer>
   </div>
 </div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-const firebaseConfig = {
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const fb = initializeApp({
   apiKey: "AIzaSyC_C9Mj_xAXyVTcd34v1VfnffvgJMDMLm8",
   authDomain: "chino-basico-por-tema.firebaseapp.com",
   projectId: "chino-basico-por-tema",
   storageBucket: "chino-basico-por-tema.firebasestorage.app",
   messagingSenderId: "25772645467",
   appId: "1:25772645467:web:325ba09f8ec4d6b229737e"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-/* 字體縮放 */
+});
+const auth = getAuth(fb);
+const db = getFirestore(fb);
+
 let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
   document.documentElement.style.zoom = ZOOMS[zlvl-1];
 };
-/* 夜間模式 */
-window.toggleNight = () => {
-  document.documentElement.classList.toggle("night");
-};
+window.toggleNight = () => { document.documentElement.classList.toggle("night"); };
+
+function $(id){ return document.getElementById(id); }
 function usernameToEmail(u){ return u.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com"; }
+
 $("btn-login").onclick = async () => {
   $("login-err").textContent="";
   const u=$("f-user").value, p=$("f-pass").value;
   if(!u||!p){ $("login-err").textContent="請輸入名字和密碼"; return; }
-  // 老師專用：名字 Tutu + 密碼 tutu2026 → Google 登入
   if(u.trim().toLowerCase() === "blissfulmeow" && p === "tutu1987"){
     try{ await signInWithPopup(auth, new GoogleAuthProvider()); }
     catch(e){ $("login-err").textContent="老師登入失敗：" + (e.message||e); }
     return;
   }
-  // 一般學生：名字 + 密碼
   try{ await signInWithEmailAndPassword(auth, usernameToEmail(u), p); }
   catch(e){ $("login-err").textContent="登入失敗：名字或密碼錯誤"; }
 };
-onAuthStateChanged(auth, user => {
-  if(user){
-    const raw = user.email.split("@")[0];
-    $("who").innerHTML = "你好，<strong>" + raw.split(".")[0].charAt(0).toUpperCase() + raw.split(".")[0].slice(1) + "</strong>";
-    $("view-login").style.display="none";
-    $("view-home").style.display="block";
-  } else {
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){
     $("view-login").style.display="block";
     $("view-home").style.display="none";
+    return;
   }
+  $("view-login").style.display="none";
+  $("view-home").style.display="block";
+  const raw = user.email.split("@")[0];
+  const first = raw.split(".")[0];
+  $("who").innerHTML = "你好，<strong>" + first.charAt(0).toUpperCase()+first.slice(1) + "</strong>";
+
+  const isTeacher = user.providerData.some(p => p.providerId === "google.com");
+  $("teacher-row").style.display = isTeacher ? "flex" : "none";
+
+  let grant = null;
+  try{
+    const snap = await getDoc(doc(db, "grants", user.email));
+    if(snap.exists()) grant = snap.data();
+  }catch(e){ console.warn("grants load fail", e); }
+
+  const mods = (grant && grant.modules) || {};
+  const showTarjetas = isTeacher || mods.tarjetas === true;
+  const showNotas    = isTeacher || mods.notas === true;
+
+  try{
+    await setDoc(doc(db, "stats", user.email), {
+      lastSeen: new Date(), lastModule: "inicio"
+    }, { merge: true });
+  }catch(e){}
+
+  const box = $("home-modules");
+  let html = "";
+  if(showTarjetas){
+    html += `<div style="font-size:13px;color:var(--sub);text-align:left;margin:0 4px 10px;font-weight:700;">📚 Tarjetas de Chino · 字卡</div>`;
+    html += `<a class="bigmod mod-tarjetas" style="padding:16px 18px;margin-bottom:10px" href="original/hanzi.html">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="big-ico" style="font-size:30px">字</div>
+        <div style="text-align:left"><div class="big-t" style="font-size:18px;margin-top:0">漢字閃卡</div><div class="big-e">Hanzi</div></div>
+      </div></a>`;
+    html += `<a class="bigmod mod-tarjetas" style="padding:16px 18px;margin-bottom:10px" href="original/words.html">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="big-ico" style="font-size:30px">詞</div>
+        <div style="text-align:left"><div class="big-t" style="font-size:18px;margin-top:0">單詞閃卡</div><div class="big-e">Palabras</div></div>
+      </div></a>`;
+    html += `<a class="bigmod mod-tarjetas" style="padding:16px 18px;margin-bottom:18px" href="original/clf.html">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="big-ico" style="font-size:30px">量</div>
+        <div style="text-align:left"><div class="big-t" style="font-size:18px;margin-top:0">量詞閃卡</div><div class="big-e">Clasificadores</div></div>
+      </div></a>`;
+  }
+  if(showNotas){
+    html += `<div style="font-size:13px;color:var(--sub);text-align:left;margin:0 4px 10px;font-weight:700">📝 Notas de Clase · 上課筆記</div>`;
+    html += `<a class="bigmod mod-notas" href="original/notas.html">
+      <div class="big-ico">記</div>
+      <div class="big-t">Notas de Clase</div>
+      <div class="big-e">逐字稿朗讀 · 影片 · 錄音 · 按日期排列</div>
+    </a>`;
+  }
+  if(!html){
+    html = `<div class="loading">目前尚未開放內容，請等候老師通知。<br>Todavía no hay contenido disponible.</div>`;
+  }
+  box.innerHTML = html;
 });
-/* 隱藏老師入口：連點底部 5 次，或網址加 ?admin */
-let doorCount = 0;
-const doorEl = $("hidden-door");
-if(doorEl){
-  doorEl.addEventListener("click", () => {
-    doorCount++;
-    if(doorCount >= 5){ doorCount = 0; doTeacherLogin(); }
-  });
-}
-if(new URLSearchParams(location.search).get("admin") === "1") doTeacherLogin();
-async function doTeacherLogin(){
-  try{ await signInWithPopup(auth, new GoogleAuthProvider()); }
-  catch(e){ console.warn("teacher login fail", e); }
-}
+
 $("btn-logout").onclick = ()=> signOut(auth);
-function $(id){ return document.getElementById(id); }
 </script>
 </body>
 </html>

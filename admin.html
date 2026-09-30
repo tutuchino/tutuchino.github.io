@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panel del Profesor · 教師後台</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙</text></svg>">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+:root{
+  --bg:#f2ead8; --card:#fdf8ec; --ink:#3a3428; --sub:#7d7560; --line:#e0d5bb;
+  --accent:#D9A033; --accent-dark:#b8821e; --good:#2e7d32; --shadow:0 4px 16px rgba(60,45,20,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);padding:16px;max-width:760px;margin:0 auto;min-height:100vh}
+body.dark{--bg:#26221c;--card:#322c24;--ink:#ece3cf;--sub:#a89e88;--line:#4a4238}
+h1{font-family:"Noto Serif SC",serif;font-size:22px;font-weight:900;margin:10px 0 4px;text-align:center}
+.subtitle{text-align:center;color:var(--sub);font-size:13px;margin-bottom:16px}
+.student{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.student-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.sname{font-family:"Times New Roman",serif;font-size:17px;font-weight:700}
+.stats{font-size:12px;color:var(--sub);margin-top:4px}
+.toggles{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.toggle{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+.toggle input{width:16px;height:16px;cursor:pointer}
+.submods{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub)}
+.submods b{color:var(--ink)}
+.back{display:inline-block;margin-bottom:14px;font-size:13px;color:var(--sub);text-decoration:none}
+.back:hover{color:var(--accent)}
+.loading,.empty{text-align:center;color:var(--sub);padding:30px 0}
+.logout{position:fixed;top:12px;right:12px;font-size:12px;color:var(--sub);background:none;border:1px solid var(--line);padding:6px 12px;border-radius:20px;cursor:pointer}
+.done{color:var(--good);font-size:12px;margin-left:8px;opacity:0;transition:opacity .3s}
+.done.show{opacity:1}
+</style>
+</head>
+<body>
+<button class="logout" onclick="logout()">Salir</button>
+<a class="back" href="index.html">← Volver al inicio</a>
+<h1>Panel del Profesor</h1>
+<div class="subtitle">教師後台 · 勾選學生開放內容</div>
+<div id="list"><div class="loading">Verificando… 驗證中…</div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const fb = initializeApp({
+  apiKey: "AIzaSyC_C9Mj_xAXyVTcd34v1VfnffvgJMDMLm8",
+  authDomain: "chino-basico-por-tema.firebaseapp.com",
+  projectId: "chino-basico-por-tema",
+  storageBucket: "chino-basico-por-tema.firebasestorage.app",
+  messagingSenderId: "25772645467",
+  appId: "1:25772645467:web:325ba09f8ec4d6b229737e"
+});
+const auth = getAuth(fb);
+const db = getFirestore(fb);
+window.logout = () => signOut(auth);
+
+let statsCache = {};
+
+function fmtName(email){
+  const raw = email.split("@")[0];
+  return raw.split(".").map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(" ");
+}
+
+async function loadAll(){
+  const list = document.getElementById("list");
+  try{
+    // 讀 grants 全部學生
+    const gSnap = await getDocs(collection(db,"grants"));
+    if(gSnap.empty){ list.innerHTML = `<div class="empty">尚無學生紀錄。</div>`; return; }
+    // 讀 stats 全部
+    try{
+      const sSnap = await getDocs(collection(db,"stats"));
+      sSnap.forEach(d=>{ statsCache[d.id] = d.data(); });
+    }catch(e){}
+
+    let html = "";
+    gSnap.forEach(d=>{
+      const email = d.id;
+      const g = d.data();
+      const mods = g.modules || {};
+      const clfN = (g.clf && g.clf.batches ? g.clf.batches.length : 0);
+      const wordsN = (g.words && g.words.cats ? g.words.cats.length : 0);
+      const hanziN = (g.hanzi && g.hanzi.batches ? g.hanzi.batches.length : 0);
+      const st = statsCache[email] || {};
+      const last = st.lastSeen ? new Date(st.lastSeen.toDate ? st.lastSeen.toDate() : st.lastSeen).toLocaleString("zh-TW") : "—";
+      const notasOpen = st.notasOpen ? (st.notasOpen.count||1) : 0;
+      html += `<div class="student" id="stu-${email}">
+        <div class="student-head">
+          <div>
+            <div class="sname">${fmtName(email)}</div>
+            <div class="stats">最後活動：${last} · 看筆記次數：${notasOpen}</div>
+          </div>
+          <span class="done" id="done-${email}">✓ 已儲存</span>
+        </div>
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" data-email="${email}" data-mod="tarjetas" ${mods.tarjetas?"checked":""}> 📚 閃卡入口</label>
+          <label class="toggle"><input type="checkbox" data-email="${email}" data-mod="notas" ${mods.notas?"checked":""}> 📝 筆記入口</label>
+        </div>
+        <div class="submods">
+          已開放：<b>量詞 ${clfN} 批</b> · <b>單詞 ${wordsN} 主題</b> · <b>漢字 ${hanziN} 批</b>
+          （進入各字卡頁輸入學生名按 Enter 可繼續增減）
+        </div>
+      </div>`;
+    });
+    list.innerHTML = html;
+    // 綁定勾選
+    document.querySelectorAll(".toggle input").forEach(cb=>{
+      cb.onchange = async ()=>{
+        const email = cb.dataset.email, mod = cb.dataset.mod;
+        try{
+          await setDoc(doc(db,"grants",email),{modules:{[mod]:cb.checked}},{merge:true});
+          const d = document.getElementById("done-"+email);
+          if(d){ d.classList.add("show"); setTimeout(()=>d.classList.remove("show"),1200); }
+        }catch(e){ alert("儲存失敗："+e.message); cb.checked = !cb.checked; }
+      };
+    });
+  }catch(e){
+    list.innerHTML = `<div class="empty">載入失敗：${e.message}<br><br>請確認你是老師帳號登入。</div>`;
+  }
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ location.href = "index.html"; return; }
+  const isTeacher = user.providerData.some(p=>p.providerId==="google.com");
+  if(!isTeacher){
+    alert("此頁面僅供教師使用");
+    location.href = "index.html";
+    return;
+  }
+  await loadAll();
+});
+</script>
+</body>
+</html>
