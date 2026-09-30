@@ -255,12 +255,20 @@ $("pwSave").onclick = async () => {
   }
 };
 
+let _authResolved = false;
 onAuthStateChanged(auth, async (user) => {
   if(!user){
-    $("view-login").style.display="block";
-    $("view-home").style.display="none";
+    // session 恢復期間不立即顯示登入頁，避免閃爍
+    if(_authResolved) return;
+    setTimeout(()=>{
+      if(!auth.currentUser){
+        $("view-login").style.display="block";
+        $("view-home").style.display="none";
+      }
+    }, 1200);
     return;
   }
+  _authResolved = true;
   $("view-login").style.display="none";
   $("view-home").style.display="block";
   /* 身份切換時重置視圖，避免學生看到殘留的老師面板 */
@@ -372,6 +380,14 @@ async function loadStudentList(){
     });
     sel.innerHTML = '<option value="">— 選擇學生 —</option>' + opts.join("");
     sel.onchange = () => { if(sel.value) showStudent(sel.value); };
+    // 自動恢復上次選的學生（除非登出）
+    try{
+      const last = localStorage.getItem("tt-student");
+      if(last && [...sel.options].some(o=>o.value===last)){
+        sel.value = last;
+        showStudent(last);
+      }
+    }catch(e){}
   }catch(e){
     $("tpEmpty").textContent = "載入學生失敗：" + e.message;
   }
@@ -379,6 +395,7 @@ async function loadStudentList(){
 
 async function showStudent(email){
   selEmail = email;
+  try{ localStorage.setItem("tt-student", email); }catch(e){}
   $("tpStudent").style.display = "block";
   $("tpName").textContent = fmtName(email);
   let g = grantCache[email] || {};

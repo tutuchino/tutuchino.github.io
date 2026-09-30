@@ -197,12 +197,17 @@ function splitUrls(txt){ return (txt||"").split(/\n|\r|,/).map(s=>s.trim()).filt
 async function saveNote(){
   const email = normEmail(document.getElementById("tEmail").value);
   if(!email){ alert("請輸入學生帳號 / Escribe el email del alumno"); return; }
+  const script = parseScript(document.getElementById("tScript").value);
+  const vocab = parseVocab(document.getElementById("tVocab").value);
+  if(script.length === 0 && vocab.length === 0){
+    if(!confirm("⚠ 逐字稿和生詞都是空的！\n\n你確定要存這一筆只有影片/錄音連結的筆記嗎？\n（灰色文字是範例 placeholder，不是你輸入的內容，要在文字框裡實際打字）")) return;
+  }
   const data = {
     studentEmail: email,
     date: document.getElementById("tDate").value || new Date().toISOString().slice(0,10),
     summary: document.getElementById("tSummary").value.trim(),
-    script: parseScript(document.getElementById("tScript").value),
-    vocab: parseVocab(document.getElementById("tVocab").value),
+    script: script,
+    vocab: vocab,
     videoUrls: splitUrls(document.getElementById("tVideo").value),
     audioUrls: splitUrls(document.getElementById("tAudio").value),
     createdAt: new Date()

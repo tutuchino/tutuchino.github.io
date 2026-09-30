@@ -2722,6 +2722,7 @@ onAuthStateChanged(auth, async (user) => {
           }
         });
         if(typeof updateExportStat === "function") updateExportStat();
+    if(new URLSearchParams(location.search).get("diag") === "1"){ alert("診斷：讀到 " + cats.length + " 個批次\n前5個：" + cats.slice(0,5).join("\n")); }
         const stat = document.getElementById("exportStat");
         stat.textContent = "已載入：" + matched + "/" + cats.length + " 個主題（已自動展開有勾的分類）";
       } catch(e) { console.warn("url student load fail", e); }
@@ -2747,7 +2748,8 @@ document.getElementById("studentNameInput").addEventListener("keydown", async (e
     const g = snap.exists() ? (snap.data().words || null) : null;
     const cats = (g && g.cats) ? g.cats : [];
     document.querySelectorAll(".sub-check").forEach(cb => {
-      cb.checked = cats.includes(cb.dataset.catId + "|" + cb.dataset.subIdx);
+      cb.checked = cb.checked = cats.includes(cb.dataset.catId + "|" + cb.dataset.subIdx);
+  if(window.__diagRestore) console.log("restore", cb.dataset.catId, cb.dataset.subIdx, cb.checked);
     });
     if(typeof updateExportStat === "function") updateExportStat();
     stat.textContent = g ? ("✓ Cargado: " + cats.length + " grupos abiertos para " + email) : "Sin registros: " + email + " (todo desmarcado)";
