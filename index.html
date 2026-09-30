@@ -52,7 +52,8 @@ h1{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:900;margin-botto
 .logout-row button{background:none;border:1px solid var(--border);color:var(--sub);border-radius:20px;padding:7px 18px;font-size:13px;cursor:pointer}
 footer{margin-top:16px;font-size:12px;color:var(--sub)}
 /* 字體縮放 */
-.zoom-1{font-size:85%} .zoom-2{font-size:92%} .zoom-3{font-size:100%} .zoom-4{font-size:108%} .zoom-5{font-size:116%}
+/* 字體縮放 */
+html{zoom:1}
 </style>
 </head>
 <body class="zoom-3">
@@ -89,12 +90,12 @@ footer{margin-top:16px;font-size:12px;color:var(--sub)}
     <a class="mod" href="original/words.html"><div class="ico">詞</div><div class="txt"><div class="t">單詞閃卡</div><div class="e">Palabras · 11,781 詞</div></div></a>
     <a class="mod" href="original/clf.html"><div class="ico">量</div><div class="txt"><div class="t">量詞閃卡</div><div class="e">Clasificadores · 258 個</div></div></a>
     <div class="logout-row"><button id="btn-logout">登出 · Salir</button></div>
-    <footer>Chino Básico por Tema · 基礎中文 — 按主題學習</footer>
+    <footer id="hidden-door" style="cursor:default;">Chino Básico por Tema · 基礎中文 — 按主題學習</footer>
   </div>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 const firebaseConfig = {
   apiKey: "AIzaSyC_C9Mj_xAXyVTcd34v1VfnffvgJMDMLm8",
   authDomain: "chino-basico-por-tema.firebaseapp.com",
@@ -107,10 +108,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 /* 字體縮放 */
 let zlvl = 3;
-const ZOOMS = ["zoom-1","zoom-2","zoom-3","zoom-4","zoom-5"];
+const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
-  document.body.className = ZOOMS[zlvl-1];
+  document.documentElement.style.zoom = ZOOMS[zlvl-1];
 };
 /* 夜間模式 */
 window.toggleNight = () => {
@@ -135,6 +136,28 @@ onAuthStateChanged(auth, user => {
     $("view-home").style.display="none";
   }
 });
+/* 隱藏老師入口：連點底部 5 次，或網址加 ?admin */
+const TEACHER_CODE = "tutu2026";
+let doorCount = 0;
+const doorEl = $("hidden-door");
+if(doorEl){
+  doorEl.addEventListener("click", () => {
+    doorCount++;
+    if(doorCount >= 5){ doorCount = 0; showTeacherBox(); }
+  });
+}
+if(new URLSearchParams(location.search).get("admin") === "1") showTeacherBox();
+function showTeacherBox(){
+  $("teacher-box").style.display = "block";
+  $("f-teacher").focus();
+}
+$("btn-teacher").onclick = async () => {
+  $("teacher-err").textContent="";
+  const c = $("f-teacher").value.trim();
+  if(c !== TEACHER_CODE){ $("teacher-err").textContent="Código incorrecto"; return; }
+  try{ await signInWithPopup(auth, new GoogleAuthProvider()); $("teacher-box").style.display="none"; }
+  catch(e){ $("teacher-err").textContent="登入失敗：" + (e.message||e); }
+};
 $("btn-logout").onclick = ()=> signOut(auth);
 function $(id){ return document.getElementById(id); }
 </script>
