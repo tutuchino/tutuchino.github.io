@@ -674,6 +674,17 @@ function renderBatchChecks() {
     }
   });
   updateExportStat();
+  if (window.__pendingClfGrant) {
+    const g = window.__pendingClfGrant;
+    window.__pendingClfGrant = null;
+    document.querySelectorAll("#batchCheckRow input[data-batch]").forEach(cb => {
+      cb.checked = (g.batches || []).includes(cb.dataset.batch);
+    });
+    document.querySelectorAll("#lvCheckRow input").forEach(cb => {
+      cb.checked = (g.levels || []).includes(Number(cb.dataset.lv));
+    });
+    if(typeof syncLvFromBatches === "function") syncLvFromBatches();
+  }
 }
 function syncLvBatches(cb){
   const lv = cb.dataset.lv;
@@ -1467,12 +1478,8 @@ onAuthStateChanged(auth, async (user) => {
       if(inp) inp.value = sp;
       try {
         const snap = await getDoc(doc(db, "grants", email));
-        const g = snap.exists() ? (snap.data().clf || null) : null;
-        if(typeof updateExportStat === "function") updateExportStat();
-        const rows = document.querySelectorAll("#batchCheckRow input[data-batch]");
-        rows.forEach(cb => { cb.checked = (g && g.batches) ? g.batches.includes(cb.dataset.batch) : false; });
-        const lvRow = document.querySelectorAll("#lvCheckRow input");
-        lvRow.forEach(cb => { cb.checked = (g && g.levels) ? g.levels.includes(Number(cb.dataset.lv)) : false; });
+        const g = snap.exists() ? (snap.data().clf || null) : {batches:[],levels:[]};
+        window.__pendingClfGrant = g;
         const stat = document.getElementById("exportStat");
         if(stat) stat.textContent = "已載入：" + sp + "（老師視圖：全部批次可勾選）";
       } catch(e) { console.warn("url student load fail", e); }
