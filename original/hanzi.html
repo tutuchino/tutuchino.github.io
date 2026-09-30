@@ -1838,7 +1838,17 @@ window.applyHanziGrant = function(grant){
     return;
   }
   const allowed = new Set(grant.batches);
-  const kept = charList.filter(it => allowed.has(batchKeyOfL(it)));
+  // 同時檢查 L key 和 HSK key（不管當前模式）
+  const kept = charList.filter(it => {
+    const lKey = batchKeyOfL(it);
+    let hskKey = null;
+    if(it.hsk){
+      const arr = charList.filter(x => x.hsk === it.hsk).sort((a,b)=>parseInt(a.id,10)-parseInt(b.id,10));
+      const idx = arr.findIndex(x => x.id === it.id);
+      hskKey = 'HSK' + it.hsk + '-b' + (Math.floor(idx/20)+1);
+    }
+    return allowed.has(lKey) || (hskKey && allowed.has(hskKey));
+  });
   charList.splice(0, charList.length, ...kept);
   const gl = grant.levels || [];
   const keptG = grammarList.filter(it => gl.length === 0 || gl.includes(it.level));

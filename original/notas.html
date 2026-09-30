@@ -72,7 +72,9 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
 </style>
 </head>
 <body>
-<script>try{if(localStorage.getItem('tt-theme')==='dark')document.body.classList.add('dark');var z=localStorage.getItem('tt-zoom');if(z)document.documentElement.style.zoom=z;}catch(e){}</script>
+<script>
+window.applyDateFilter = window.applyDateFilter || function(){};
+try{if(localStorage.getItem('tt-theme')==='dark')document.body.classList.add('dark');var z=localStorage.getItem('tt-zoom');if(z)document.documentElement.style.zoom=z;}catch(e){}</script>
 <div class="tb">
   <a href="../index.html">⌂ Inicio</a>
   <button onclick="zoomPage(-1)">A−</button>
@@ -107,7 +109,7 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
 <div class="note-filter" id="noteFilter" style="display:none;flex-direction:column;gap:8px;">
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <input type="date" id="fDate" style="flex:1;min-width:120px">
-    <button class="btn-main" onclick="document.getElementById('fDate').value='';applyDateFilter();" style="flex:0">全部日期</button>
+    <button class="btn-main" onclick="document.getElementById('fDate').value='';window.applyDateFilter&&window.applyDateFilter();" style="flex:0">全部日期</button>
   </div>
   <input type="text" id="fSearch" placeholder="🔍 搜尋內容（摘要/句子/生詞）· Buscar" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line,#d4c08a);font-size:13px;background:var(--input,#fff);color:var(--text,#5a4632);box-sizing:border-box;">
 </div>
