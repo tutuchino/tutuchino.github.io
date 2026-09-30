@@ -1618,7 +1618,7 @@ function renderBatchChecks() {
         const lbl = document.createElement('label');
         lbl.className = 'check-label';
         lbl.style.fontSize = '13px';
-        lbl.innerHTML = '<input type="checkbox" data-batch="' + b.key + '" data-batchnum="' + batchNum + '"> ' + b.label + ' (' + b.chars.length + ' car.)';
+        lbl.innerHTML = '<input type="checkbox" data-batch="' + b.key + '" data-batchnum="' + batchNum + '" onchange="if(this.checked)window.__grantBatches.add(this.dataset.batch);else window.__grantBatches.delete(this.dataset.batch);"> ' + b.label + ' (' + b.chars.length + ' car.)';
         subDiv.appendChild(lbl);
       });
 
@@ -1814,6 +1814,7 @@ function setupTeacherFilterUI() {
 /* ===== 學生過濾：只顯示開放的批次與文法等級（module script 調用） ===== */
 window.__hanziGrant = null;
 window.__pendingHanziGrant = null;
+window.__grantBatches = new Set();
 function batchKeyOfL(it){
   const arr = charList.filter(x => x.level === it.level).sort((a,b)=>parseInt(a.id,10)-parseInt(b.id,10));
   const idx = arr.findIndex(x => x.id === it.id);
@@ -1876,6 +1877,7 @@ function restoreHanziGrant(g){
   if(!g) return;
   const batches = g.batches || [];
   const levels = g.levels || [];
+  window.__grantBatches = new Set(batches);
   // 切回保存時的分組模式
   if(g.groupMode && g.groupMode !== currentGroupMode){
     currentGroupMode = g.groupMode;
@@ -2001,8 +2003,7 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
       stat.textContent = "請先以老師帳號登入：名字 Blissfulmeow / 密碼 tutu1987（Login como profesora）";
       return;
     }
-    const batches = [];
-    document.querySelectorAll("#batchCheckRow input[data-batch]:checked").forEach(cb => batches.push(cb.dataset.batch));
+    const batches = [...window.__grantBatches];
     const levels = [];
     document.querySelectorAll("#gLevelCheckRow input:checked").forEach(cb => levels.push(Number(cb.dataset.gl)));
     const name = document.getElementById("studentNameInput").value.trim();
