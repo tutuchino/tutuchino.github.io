@@ -1454,7 +1454,7 @@ const db = getFirestore(fb);
 
 onAuthStateChanged(auth, async (user) => {
   if(!user) return;
-  const isTeacher = user.providerData.some(p => p.providerId === "google.com");
+  const isTeacher = user.email === "blissfulmeow@chino-basico-por-tema.firebaseapp.com";
   if(isTeacher){
     /* 支援網址帶學生名（後台跳轉） */
     const sp = new URLSearchParams(location.search).get("student");
@@ -1511,7 +1511,7 @@ document.getElementById("saveGrantBtn").addEventListener("click", async () => {
   const stat = document.getElementById("exportStat");
   try {
     let u = auth.currentUser;
-    if(!u || !u.providerData[0] || u.providerData[0].providerId !== "google.com"){
+    if(!u || u.email !== "blissfulmeow@chino-basico-por-tema.firebaseapp.com"){
       const cred = await signInWithPopup(auth, new GoogleAuthProvider());
       u = cred.user;
     }

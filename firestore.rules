@@ -2,12 +2,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /* 老師：以 Google 帳號登入（sign_in_provider = google.com） */
+    /* 老師：唯一帳號 blissfulmeow（email/password 登入） */
     function isTeacher() {
       return request.auth != null
-        && request.auth.token.firebase.sign_in_provider == 'google.com';
+        && request.auth.token.email == 'blissfulmeow@chino-basico-por-tema.firebaseapp.com';
     }
-    /* 學生：email/password 登入，只能讀寫自己的文件（email 即文件 ID） */
+    /* 學生：只能讀寫自己的文件（email 即文件 ID） */
     function isSelf(email) {
       return request.auth != null
         && request.auth.token.email == email;

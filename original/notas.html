@@ -44,6 +44,21 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
 .script-line:hover{background:var(--soft)}
 .script-zh{font-family:"Noto Serif SC",serif;font-size:19px;font-weight:700;line-height:1.5}
 .script-py{font-size:12px;color:var(--sub);margin-top:2px}
+.script-es{font-size:12px;color:var(--sub);margin-top:3px;font-style:italic}
+.study-btn{display:block;width:100%;margin:8px 0 12px;padding:12px;border:none;border-radius:14px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.study-btn:hover{opacity:.9}
+#flashOverlay{position:fixed;inset:0;background:var(--bg);z-index:999;display:none;flex-direction:column;padding:18px;overflow-y:auto}
+#flashOverlay.on{display:flex}
+.f-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.f-back{background:var(--btn-bg);border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--text)}
+.f-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:36px 20px;text-align:center;margin:10px auto;max-width:420px;min-height:280px;display:flex;flex-direction:column;justify-content:center;gap:10px;box-shadow:0 8px 24px rgba(60,40,10,.08)}
+.f-card .zh{font-family:"Noto Serif SC",serif;font-size:46px;font-weight:900;color:var(--text);line-height:1.3}
+.f-card .py{font-size:17px;color:var(--sub)}
+.f-card .es{font-size:16px;color:var(--text);opacity:.85;margin-top:4px}
+.f-listen{display:block;width:100%;max-width:420px;margin:14px auto 4px;padding:12px;border:none;border-radius:14px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.f-nav{display:flex;gap:10px;justify-content:center;max-width:420px;margin:0 auto;width:100%}
+.f-nav button{flex:1;padding:11px;border-radius:14px;border:1px solid var(--line);background:var(--btn-bg);color:var(--text);font-size:14px;cursor:pointer}
+.f-prog{text-align:center;font-size:12px;color:var(--sub);margin-top:6px}
 .vocab-box{background:var(--soft);border-radius:12px;padding:12px;margin-top:12px}
 .vocab-box h4{font-size:13px;color:var(--accent-dark);margin-bottom:8px;font-family:"Noto Serif SC",serif}
 .vocab-item{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 12px;margin:0 6px 6px 0;cursor:pointer;font-size:14px}
@@ -76,7 +91,7 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
   <label>摘要（這節課教了什麼，一兩行）</label>
   <input id="tSummary" placeholder="例：第 5 課 · 時間表達">
   <label>逐字稿（每行一句：中文|||拼音）</label>
-  <textarea id="tScript" placeholder="今天|||jīn tiān&#10;明天|||míng tiān"></textarea>
+  <textarea id="tScript" placeholder="每行一句中文即可（拼音自動生成）&#10;今天&#10;明天&#10;要加西語翻譯：今天|||Hoy"></textarea>
   <label>補充生詞（每行：中文|||拼音|||西班牙文）</label>
   <textarea id="tVocab" placeholder="後天|||hòu tiān|||pasado mañana"></textarea>
   <label>影片連結（可選）</label>
@@ -94,6 +109,7 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
 </div>
 <div id="noteList"><div class="hint">Cargando… 載入中…</div></div>
 
+<script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.26.0/dist/index.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -134,16 +150,36 @@ window.speakEs = (text) => {
 let currentUser = null;
 let isTeacher = false;
 
+function autoPy(zh){
+  try{ if(window.pinyinPro && zh) return window.pinyinPro.pinyin(zh,{toneType:"symbol",type:"string"}); }catch(e){}
+  return "";
+}
+/* 第二段含拼音聲調符號 → 視為手動拼音；否則視為西語翻譯 */
+function looksLikePinyin(s){ return /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüńň]/.test(s); }
 function parseScript(txt){
   return (txt||"").split("\n").map(l=>l.trim()).filter(Boolean).map(line=>{
-    const parts = line.split("|||");
-    return { zh: parts[0]||"", pinyin: parts[1]||"" };
+    const parts = line.split("|||").map(s=>s.trim());
+    const zh = parts[0]||"";
+    let pinyin = autoPy(zh), es = "";
+    if(parts.length>=3){ pinyin = parts[1] || autoPy(zh); es = parts[2]||""; }
+    else if(parts.length===2){
+      if(looksLikePinyin(parts[1])) pinyin = parts[1];
+      else es = parts[1];
+    }
+    return { zh, pinyin, es };
   });
 }
 function parseVocab(txt){
   return (txt||"").split("\n").map(l=>l.trim()).filter(Boolean).map(line=>{
-    const parts = line.split("|||");
-    return { zh: parts[0]||"", pinyin: parts[1]||"", es: parts[2]||"" };
+    const parts = line.split("|||").map(s=>s.trim());
+    const zh = parts[0]||"";
+    let pinyin = autoPy(zh), es = "";
+    if(parts.length>=3){ pinyin = parts[1] || autoPy(zh); es = parts[2]||""; }
+    else if(parts.length===2){
+      if(looksLikePinyin(parts[1])) pinyin = parts[1];
+      else es = parts[1];
+    }
+    return { zh, pinyin, es };
   });
 }
 
@@ -182,22 +218,27 @@ async function loadNotes(forceEmail){
     const snap = await getDocs(q);
     if(snap.empty){ list.innerHTML = `<div class="hint">尚無筆記。<br>Todavía no hay notas.</div>`; return; }
     let html = "";
+    window._notesData = {};
     snap.forEach(doc=>{
-      const n = doc.data();
+      const nn = doc.data();
+      window._notesData[doc.id] = nn;
+      const totalCards = (nn.script||[]).length + (nn.vocab||[]).length;
       html += `<div class="note" data-id="${doc.id}">
         <div class="note-head" onclick="this.parentElement.classList.toggle('open')">
-          <div class="note-date">${n.date||""}</div>
-          <div class="note-summary">${n.summary||""}</div>
+          <div class="note-date">${nn.date||""}</div>
+          <div class="note-summary">${nn.summary||""}</div>
         </div>
         <div class="note-body">
-          ${(n.script||[]).map(s=>`<div class="script-line" onclick="speak('${(s.zh||'').replace(/'/g,"\\'")}')">
+          ${totalCards>0 ? `<button class="study-btn" onclick="openFlashById('${doc.id}')">📇 Estudiar las ${totalCards} tarjetas de esta clase</button>`:""}
+          ${(nn.script||[]).map(s=>`<div class="script-line" onclick="speak('${(s.zh||'').replace(/'/g,"\\'")}')">
             <div class="script-zh">${s.zh||""}</div>
             <div class="script-py">${s.pinyin||""}</div>
+            ${s.es?`<div class="script-es" onclick="event.stopPropagation();speakEs('${(s.es||'').replace(/'/g,"\\'")}')">${s.es}</div>`:""}
           </div>`).join("")}
-          ${(n.vocab && n.vocab.length) ? `<div class="vocab-box"><h4>📖 補充生詞</h4>${n.vocab.map(v=>`<span class="vocab-item" onclick="speak('${(v.zh||'').replace(/'/g,"\\'")}')">${v.zh||""}<span class="py">${v.pinyin||""}</span><span class="es">${v.es||""}</span></span>`).join("")}</div>`:""}
-          ${(n.videoUrl||n.audioUrl) ? `<div class="links">
-            ${n.videoUrl?`<a href="${n.videoUrl}" target="_blank">▶ 影片 · Video</a>`:""}
-            ${n.audioUrl?`<a href="${n.audioUrl}" target="_blank">🎧 錄音 · Audio</a>`:""}
+          ${(nn.vocab && nn.vocab.length) ? `<div class="vocab-box"><h4>📖 補充生詞</h4>${nn.vocab.map(v=>`<span class="vocab-item" onclick="speak('${(v.zh||'').replace(/'/g,"\\'")}')">${v.zh||""}<span class="py">${v.pinyin||""}</span><span class="es">${v.es||""}</span></span>`).join("")}</div>`:""}
+          ${(nn.videoUrl||nn.audioUrl) ? `<div class="links">
+            ${nn.videoUrl?`<a href="${nn.videoUrl}" target="_blank">▶ 影片 · Video</a>`:""}
+            ${nn.audioUrl?`<a href="${nn.audioUrl}" target="_blank">🎧 錄音 · Audio</a>`:""}
           </div>`:""}
         </div>
       </div>`;
@@ -228,7 +269,7 @@ async function loadNotes(forceEmail){
 onAuthStateChanged(auth, async (user) => {
   if(!user){ location.href = "../index.html"; return; }
   currentUser = user;
-  isTeacher = user.providerData.some(p=>p.providerId==="google.com");
+  isTeacher = user.email === "blissfulmeow@chino-basico-por-tema.firebaseapp.com";
   if(isTeacher){
     document.getElementById("teacherPanel").classList.add("on");
     document.getElementById("tEmail").addEventListener("change", e=>loadNotes(e.target.value.trim().toLowerCase().replace(/[^a-z0-9.]+/g,".")));
@@ -243,6 +284,50 @@ onAuthStateChanged(auth, async (user) => {
   }
   await loadNotes(isTeacher ? "" : user.email);
 });
+/* ===== 閃卡模式 ===== */
+let flashDeck = [], flashIdx = 0;
+window.openFlashById = (id) => {
+  const nn = (window._notesData||{})[id]; if(!nn) return;
+  flashDeck = [].concat(
+    (nn.script||[]).map(s=>({zh:s.zh, py:s.pinyin, es:s.es})),
+    (nn.vocab||[]).map(v=>({zh:v.zh, py:v.pinyin, es:v.es}))
+  ).filter(c=>c.zh);
+  flashIdx = 0;
+  renderFlash();
+  document.getElementById("flashOverlay").classList.add("on");
+  document.body.style.overflow = "hidden";
+};
+window.renderFlash = () => {
+  if(!flashDeck.length) return;
+  const c = flashDeck[flashIdx];
+  document.getElementById("fProg").textContent = (flashIdx+1) + " / " + flashDeck.length;
+  document.getElementById("flashBody").innerHTML = `
+    <div class="f-card">
+      <div class="zh">${c.zh||""}</div>
+      <div class="py">${c.py||""}</div>
+      ${c.es?`<div class="es">${c.es}</div>`:""}
+    </div>
+    <button class="f-listen" onclick="speak('${(c.zh||"").replace(/'/g,"\\'")}')">🔊 Escuchar en chino</button>
+    <div class="f-nav">
+      <button onclick="flashNav(-1)">← Anterior</button>
+      <button onclick="flashNav(1)">Siguiente →</button>
+    </div>`;
+};
+window.flashNav = d => {
+  flashIdx = Math.max(0, Math.min(flashDeck.length-1, flashIdx+d));
+  renderFlash();
+};
+window.closeFlash = () => {
+  document.getElementById("flashOverlay").classList.remove("on");
+  document.body.style.overflow = "";
+};
 </script>
+<div id="flashOverlay">
+  <div class="f-top">
+    <button class="f-back" onclick="closeFlash()">← Temas</button>
+    <div class="f-prog" id="fProg"></div>
+  </div>
+  <div id="flashBody" style="flex:1"></div>
+</div>
 </body>
 </html>
