@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* 老師：以 Google 帳號登入（sign_in_provider = google.com） */
+    function isTeacher() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+    /* 學生：email/password 登入，只能讀寫自己的文件（email 即文件 ID） */
+    function isSelf(email) {
+      return request.auth != null
+        && request.auth.token.email == email;
+    }
+
+    /* grants/{email}：每位學生的開放內容（cards + modules 開關） */
+    match /grants/{email} {
+      allow read: if isTeacher() || isSelf(email);
+      allow write: if isTeacher();
+    }
+
+    /* notes/{id}：上課筆記，學生只能讀自己的 */
+    match /notes/{id} {
+      allow read: if isTeacher()
+        || (request.auth != null && resource.data.studentEmail == request.auth.token.email);
+      allow write: if isTeacher();
+    }
+
+    /* stats/{email}：活動統計 */
+    match /stats/{email} {
+      allow read: if isTeacher() || isSelf(email);
+      allow write: if isTeacher() || isSelf(email);
+    }
+  }
+}

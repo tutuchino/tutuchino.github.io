@@ -111,9 +111,9 @@
     </div>
     <div class="section-title">Niveles</div>
     <div id="lvCheckRow">
-      <label class="check-label"><input type="checkbox" data-lv="1"> L1</label>
-      <label class="check-label"><input type="checkbox" data-lv="2"> L2</label>
-      <label class="check-label"><input type="checkbox" data-lv="3"> L3</label>
+      <label class="check-label"><input type="checkbox" data-lv="1" onchange="syncLvBatches(this)"> L1</label>
+      <label class="check-label"><input type="checkbox" data-lv="2" onchange="syncLvBatches(this)"> L2</label>
+      <label class="check-label"><input type="checkbox" data-lv="3" onchange="syncLvBatches(this)"> L3</label>
     </div>
     <div class="section-title">Lotes (6 por lote)</div>
     <div id="batchCheckRow"></div>
@@ -667,11 +667,29 @@ function renderBatchChecks() {
       const slice = arr.slice((b - 1) * 6, b * 6);
       const lbl = document.createElement("label");
       lbl.className = "check-label";
-      lbl.innerHTML = '<input type="checkbox" data-batch="L' + lv + '-b' + b + '"> L' + lv + ' lote ' + b + ' (' + slice[0].c + '…' + slice[slice.length - 1].c + ', ' + slice.length + ')';
+      lbl.innerHTML = '<input type="checkbox" data-batch="L' + lv + '-b' + b + '" onchange="syncLvFromBatches();updateExportStat()"> L' + lv + ' lote ' + b + ' (' + slice[0].c + '…' + slice[slice.length - 1].c + ', ' + slice.length + ')';
       row.appendChild(lbl);
     }
   });
   updateExportStat();
+}
+function syncLvBatches(cb){
+  const lv = cb.dataset.lv;
+  /* 勾 L1 → 同級別所有批次全勾/全取消；反向同步批次全勾時自動勾 Lv */
+  document.querySelectorAll('#batchCheckRow input[data-batch^="L' + lv + '-"]').forEach(b=>{ b.checked = cb.checked; });
+  updateExportStat();
+}
+function syncLvFromBatches(){
+  /* 某級別全部批次都被勾 → 自動勾該級別；全取消 → 取消該級別 */
+  for(let lv=1; lv<=3; lv++){
+    const boxes = document.querySelectorAll('#batchCheckRow input[data-batch^="L' + lv + '-"]');
+    const master = document.querySelector('#lvCheckRow input[data-lv="' + lv + '"]');
+    if(!master || boxes.length === 0) continue;
+    const allChecked = Array.from(boxes).every(b=>b.checked);
+    const noneChecked = Array.from(boxes).every(b=>!b.checked);
+    if(allChecked && !master.checked) master.checked = true;
+    else if(noneChecked && master.checked) master.checked = false;
+  }
 }
 function updateExportStat() {
   const lvs = [];
@@ -1069,7 +1087,7 @@ function renderBatchChecks() {
       const slice = arr.slice((b - 1) * 6, b * 6);
       const lbl = document.createElement("label");
       lbl.className = "check-label";
-      lbl.innerHTML = '<input type="checkbox" data-batch="L' + lv + '-b' + b + '"> L' + lv + ' lote ' + b + ' (' + slice[0].c + '…' + slice[slice.length - 1].c + ', ' + slice.length + ')';
+      lbl.innerHTML = '<input type="checkbox" data-batch="L' + lv + '-b' + b + '" onchange="syncLvFromBatches();updateExportStat()"> L' + lv + ' lote ' + b + ' (' + slice[0].c + '…' + slice[slice.length - 1].c + ', ' + slice.length + ')';
       row.appendChild(lbl);
     }
   });

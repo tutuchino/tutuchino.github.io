@@ -223,8 +223,13 @@ onAuthStateChanged(auth, async (user) => {
   }
   $("view-login").style.display="none";
   $("view-home").style.display="block";
+  /* 身份切換時重置視圖，避免學生看到殘留的老師面板 */
+  $("tpanel").style.display = "none";
+  $("cardmods").style.display = "none";
+  $("duo").style.display = "grid";
+  $("tpStudent").style.display = "none";
 
-  const isTeacher = user.providerData.some(p => p.providerId === "google.com");
+  const isTeacher = user.providerData.some(p => p.providerId === "google.com") && !user.email.endsWith("@chino-basico-por-tema.firebaseapp.com");
   if(isTeacher){
     $("who").innerHTML = "你好，<strong>Prof. Blissfulmeow</strong>";
   } else {
