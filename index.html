@@ -443,7 +443,14 @@ $("swNotas").onchange = async e => {
   }catch(err){ $("tpSave").textContent = "儲存失敗：" + err.message; }
 };
 
-$("btn-logout").onclick = ()=> signOut(auth);
+$("btn-logout").onclick = async () => {
+  try {
+    await signOut(auth);
+    _authResolved = false; // 重置：登出後要顯示登入頁
+    try{ localStorage.removeItem("tt-student"); }catch(e){} // 清除學生記憶
+    location.reload(); // 重新載入，乾淨回到登入頁
+  } catch(e) { alert("登出失敗：" + e.message); }
+};
 </script>
 </body>
 </html>
