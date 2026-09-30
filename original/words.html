@@ -2675,7 +2675,7 @@ onAuthStateChanged(auth, async (user) => {
         });
         if(typeof updateExportStat === "function") updateExportStat();
         const stat = document.getElementById("exportStat");
-        if(stat) stat.textContent = g ? ("✓ Cargado: " + cats.length + " grupos para " + sp) : "Sin registros: " + sp;
+        if(stat) stat.textContent = g ? ("✓ Cargado: " + cats.length + " grupos · " + email) : "Sin registros para " + email + " (marca y guarda)";
       } catch(e) { console.warn("url student load fail", e); }
     }
     return;
