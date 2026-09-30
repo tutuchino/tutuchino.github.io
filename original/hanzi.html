@@ -444,12 +444,12 @@
     margin-bottom: 14px;
   }
   .ctrl-row button {
-    flex: 1;
-    min-width: 88px;
-    font-size: 14px;
+    flex: 1 1 auto;
+    min-width: 64px;
+    font-size: 13px;
     font-family: inherit;
-    padding: 12px 0;
-    border-radius: 14px;
+    padding: 8px 6px;
+    border-radius: 20px;
     border: 1.5px solid var(--accent);
     background: transparent;
     color: var(--accent);
@@ -584,6 +584,12 @@
   .view-switch { flex-wrap: wrap; }
   .view-switch .top-btn { font-size: 13px; padding: 7px 10px 6px; }
   .top-bar { flex-wrap: wrap; }
+
+  body.dark div[style*="fff8e7"] { background: #38342c !important; border-color: #544e46 !important; }
+  body.dark div[style*="fff8e7"] * { color: #e9e2d5 !important; }
+  body.dark div[style*="fff8e7"] h3, body.dark div[style*="fff8e7"] .top-btn, body.dark div[style*="fff8e7"] .section-title { color: #e9c76a !important; }
+  body.dark div[style*="fff8e7"] input[type="text"], body.dark div[style*="fff8e7"] input:not([type]), body.dark div[style*="fff8e7"] select { background:#2b2722 !important; color:#e9e2d5 !important; border-color:#544e46 !important; }
+  body.dark div[style*="fff8e7"] .top-btn { background: transparent !important; }
 </style>
 </head>
 <body>
@@ -1932,9 +1938,10 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
     document.querySelectorAll("#gLevelCheckRow input:checked").forEach(cb => levels.push(Number(cb.dataset.gl)));
     const name = document.getElementById("studentNameInput").value.trim();
     if(!name){ stat.textContent = "Escribe el nombre del alumno."; return; }
-    if(batches.length === 0){ stat.textContent = "Selecciona al menos un lote."; return; }
+    if(batches.length === 0 && levels.length === 0){ stat.textContent = "Selecciona al menos un lote o nivel."; return; }
     const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
     await setDoc(doc(db, "grants", email), { hanzi: { batches: batches, levels: levels, updatedAt: new Date() } }, { merge: true });
+    alert("✓ 已儲存雲端 · Guardado en la nube\n" + batches.length + " 個批次已開放給 " + name);
     stat.textContent = "✓ Guardado en la nube para " + email + " (" + batches.length + " lotes)";
   } catch(e) {
     stat.textContent = "Error: " + (e.message || e);

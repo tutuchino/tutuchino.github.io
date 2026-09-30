@@ -58,6 +58,40 @@ h1{font-family:"Times New Roman","Noto Serif SC",serif;font-size:34px;font-weigh
 .logout-row button{background:none;border:1px solid var(--line);color:var(--sub);border-radius:20px;padding:7px 18px;font-size:13px;cursor:pointer;font-family:inherit}
 .logout-row button:hover{color:var(--warm2);border-color:var(--warm2)}
 footer{margin-top:18px;font-size:12px;color:var(--sub)}
+/* 雙入口並排 */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.duo .bigmod{padding:18px 12px;margin-bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:120px}
+.duo .big-t{font-size:19px}
+.duo .big-e{font-size:11px;text-align:center}
+.duo .big-ico{font-size:34px;line-height:1}
+@media(max-width:380px){.duo{grid-template-columns:1fr}.duo .bigmod{min-height:auto;padding:16px 12px}}
+/* 老師管理面板 */
+.tpanel{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:var(--shadow);text-align:left}
+.tpanel h2{font-size:15px;color:var(--warm2);font-weight:700;margin-bottom:4px;letter-spacing:.5px}
+.tpanel .tp-sub{font-size:12px;color:var(--sub);margin-bottom:12px}
+.tpanel select{width:100%;padding:10px 12px;font-size:15px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font-family:inherit;margin-bottom:12px}
+.tp-student{display:none;border-top:1.5px dashed var(--line);padding-top:12px}
+.tp-name{font-family:"Times New Roman",serif;font-size:20px;font-weight:700;color:var(--warm2);margin-bottom:2px}
+.tp-stats{font-size:12px;color:var(--sub);margin-bottom:12px}
+.tp-switch{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.tp-switch label{display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;border:1.5px solid var(--line);border-radius:20px;padding:7px 14px;background:transparent}
+.tp-switch input{width:17px;height:17px;accent-color:var(--warm2)}
+.tp-actions{display:flex;gap:8px;flex-wrap:wrap}
+.tp-actions a{font-size:13px;padding:9px 14px;border-radius:20px;text-decoration:none;font-weight:600}
+.tp-go-tar{background:linear-gradient(135deg,#fdf3d8,#f2e3b8);color:#5a4416;border:1px solid var(--warm3)}
+.tp-go-notas{background:linear-gradient(135deg,var(--orange4),#ffe3c2);color:#8a3c0a;border:1px solid var(--orange1)}
+.tp-save{font-size:12px;color:var(--good,#2e7d32);margin-top:8px;min-height:16px}
+.tp-empty{font-size:12px;color:var(--sub);padding:8px 0}
+/* 字卡模組清單（老師管理閃卡內容） */
+.cardmods{display:none;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:var(--shadow);text-align:left}
+.cardmods h2{font-size:15px;color:var(--warm2);font-weight:700;margin-bottom:12px}
+.cardmods a{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;text-decoration:none;border:1.5px solid var(--line);margin-bottom:8px;color:var(--ink)}
+.cardmods a:hover{border-color:var(--warm2)}
+.cardmods .c-ico{font-size:24px;font-weight:900;color:var(--warm2)}
+.cardmods .c-t{font-size:14px;font-weight:600}
+.cardmods .c-e{font-size:11px;color:var(--sub)}
+.cardmods .back-row{margin-top:6px}
+.cardmods .back-row a{display:inline-block;border:none;background:none;color:var(--sub);font-size:12px;padding:4px 0}
 .loading{color:var(--sub);font-size:14px;padding:20px 0}
 </style>
 </head>
@@ -91,10 +125,51 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
     <h1>T U T U</h1>
     <div class="small-title">Chino Básico por Tema</div>
     <div class="who" id="who"></div>
-    <div id="home-modules"></div>
-    <div class="teacher-row" id="teacher-row" style="display:none">
-      <a href="admin.html">後台 · Panel</a>
+
+    <!-- 雙入口：Tarjetas | Por Clase -->
+    <div class="duo" id="duo">
+      <a class="bigmod mod-tarjetas" id="entryTarjetas" style="display:none" href="#tarjetas">
+        <div class="big-ico">字</div>
+        <div class="big-t">Tarjetas</div>
+        <div class="big-e">閃卡區 · 漢字/單詞/量詞</div>
+      </a>
+      <a class="bigmod mod-notas" id="entryNotas" style="display:none" href="original/notas.html">
+        <div class="big-ico">記</div>
+        <div class="big-t">Por Clase</div>
+        <div class="big-e">上課筆記 · 逐字稿朗讀</div>
+      </a>
     </div>
+
+    <!-- 字卡模組清單（Tarjetas 點入後） -->
+    <div class="cardmods" id="cardmods">
+      <h2>📚 Tarjetas · 字卡模組</h2>
+      <a href="original/hanzi.html"><span class="c-ico">字</span><span><span class="c-t">漢字閃卡</span><br><span class="c-e">Hanzi · 4,475 字</span></span></a>
+      <a href="original/words.html"><span class="c-ico">詞</span><span><span class="c-t">單詞閃卡</span><br><span class="c-e">Palabras · 11,781 詞</span></span></a>
+      <a href="original/clf.html"><span class="c-ico">量</span><span><span class="c-t">量詞閃卡</span><br><span class="c-e">Clasificadores · 258 個</span></span></a>
+      <div class="back-row"><a href="#top" onclick="showHomeModules();return false;">← 回首頁入口</a></div>
+    </div>
+
+    <!-- 老師管理面板 -->
+    <div class="tpanel" id="tpanel" style="display:none">
+      <h2>🎓 管理學生 · Gestionar alumnos</h2>
+      <div class="tp-sub">選擇學生 → 看開放狀態 → 新增或取消</div>
+      <select id="studentSelect"><option value="">— 選擇學生 —</option></select>
+      <div class="tp-empty" id="tpEmpty"></div>
+      <div class="tp-student" id="tpStudent">
+        <div class="tp-name" id="tpName"></div>
+        <div class="tp-stats" id="tpStats"></div>
+        <div class="tp-switch">
+          <label><input type="checkbox" id="swTarjetas"> 📚 閃卡入口</label>
+          <label><input type="checkbox" id="swNotas"> 📝 筆記入口</label>
+        </div>
+        <div class="tp-actions">
+          <a class="tp-go-tar" id="goTarjetas" href="#">✎ 管理閃卡內容</a>
+          <a class="tp-go-notas" id="goNotas" href="#">✎ 管理上課筆記</a>
+        </div>
+        <div class="tp-save" id="tpSave">✓ 開關勾選後自動儲存</div>
+      </div>
+    </div>
+
     <div class="logout-row"><button id="btn-logout">登出 · Salir</button></div>
     <footer>Chino Básico por Tema · 基礎中文 — 按主題學習</footer>
   </div>
@@ -103,7 +178,7 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const fb = initializeApp({
   apiKey: "AIzaSyC_C9Mj_xAXyVTcd34v1VfnffvgJMDMLm8",
@@ -150,7 +225,6 @@ onAuthStateChanged(auth, async (user) => {
   $("view-home").style.display="block";
 
   const isTeacher = user.providerData.some(p => p.providerId === "google.com");
-  $("teacher-row").style.display = isTeacher ? "flex" : "none";
   if(isTeacher){
     $("who").innerHTML = "你好，<strong>Prof. Blissfulmeow</strong>";
   } else {
@@ -169,46 +243,118 @@ onAuthStateChanged(auth, async (user) => {
   const showTarjetas = isTeacher || mods.tarjetas === true;
   const showNotas    = isTeacher || mods.notas === true;
 
+  /* 雙入口：Tarjetas | Por Clase */
+  $("entryTarjetas").style.display = showTarjetas ? "flex" : "none";
+  $("entryNotas").style.display    = showNotas ? "flex" : "none";
+  $("entryTarjetas").onclick = () => {
+    $("cardmods").style.display = "block";
+    $("duo").style.display = "none";
+    return false;
+  };
+  if(!showTarjetas && !showNotas){
+    $("duo").insertAdjacentHTML("beforeend",
+      `<div style="font-size:13px;color:var(--sub);padding:12px 0">目前尚未開放內容，請等候老師通知。<br>Todavía no hay contenido disponible.</div>`);
+  }
+
+  window.showHomeModules = () => {
+    $("cardmods").style.display = "none";
+    $("duo").style.display = "grid";
+  };
+
   try{
     await setDoc(doc(db, "stats", user.email), {
       lastSeen: new Date(), lastModule: "inicio"
     }, { merge: true });
   }catch(e){}
 
-  const box = $("home-modules");
-  let html = "";
-  /* 筆記入口永遠在最上方 */
-  if(showNotas){
-    html += `<div style="font-size:13px;color:var(--sub);text-align:left;margin:0 4px 10px;font-weight:700">📝 Notas de Clase · 上課筆記</div>`;
-    html += `<a class="bigmod mod-notas" href="original/notas.html">
-      <div class="big-ico">記</div>
-      <div class="big-t">Notas de Clase</div>
-      <div class="big-e">逐字稿朗讀 · 影片 · 錄音 · 按日期排列</div>
-    </a>`;
+  /* ===== 老師：選擇學生 + 開關 ===== */
+  if(isTeacher){
+    $("tpanel").style.display = "block";
+    await loadStudentList();
   }
-  if(showTarjetas){
-    html += `<div style="font-size:13px;color:var(--sub);text-align:left;margin:0 4px 10px;font-weight:700">📚 Tarjetas de Chino · 字卡</div>`;
-    html += `<a class="bigmod mod-tarjetas" style="padding:16px 18px;margin-bottom:10px" href="original/hanzi.html">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div class="big-ico" style="font-size:30px">字</div>
-        <div style="text-align:left"><div class="big-t" style="font-size:18px;margin-top:0">漢字閃卡</div><div class="big-e">Hanzi</div></div>
-      </div></a>`;
-    html += `<a class="bigmod mod-tarjetas" style="padding:16px 18px;margin-bottom:10px" href="original/words.html">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div class="big-ico" style="font-size:30px">詞</div>
-        <div style="text-align:left"><div class="big-t" style="font-size:18px;margin-top:0">單詞閃卡</div><div class="big-e">Palabras</div></div>
-      </div></a>`;
-    html += `<a class="bigmod mod-tarjetas" style="padding:16px 18px;margin-bottom:18px" href="original/clf.html">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div class="big-ico" style="font-size:30px">量</div>
-        <div style="text-align:left"><div class="big-t" style="font-size:18px;margin-top:0">量詞閃卡</div><div class="big-e">Clasificadores</div></div>
-      </div></a>`;
-  }
-  if(!html){
-    html = `<div class="loading">目前尚未開放內容，請等候老師通知。<br>Todavía no hay contenido disponible.</div>`;
-  }
-  box.innerHTML = html;
 });
+
+/* ---------- 老師管理學生 ---------- */
+let grantCache = {};
+let statsCache = {};
+let selEmail = null;
+
+function fmtName(email){
+  const raw = email.split("@")[0];
+  return raw.split(".").map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(" ");
+}
+function shortBatch(b){ return b.replace(/^L/,"N").replace(/-b/, " · "); }
+
+async function loadStudentList(){
+  const sel = $("studentSelect");
+  try{
+    const snap = await getDocs(collection(db, "grants"));
+    if(snap.empty){
+      $("tpEmpty").textContent = "尚無學生紀錄。請先在任一字卡頁輸入學生名並儲存一次。";
+      return;
+    }
+    $("tpEmpty").textContent = "";
+    snap.forEach(d=>{ grantCache[d.id] = d.data(); });
+    try{
+      const st = await getDocs(collection(db, "stats"));
+      st.forEach(d=>{ statsCache[d.id] = d.data(); });
+    }catch(e){}
+    sel.innerHTML = '<option value="">— 選擇學生 —</option>' +
+      snap.docs.map(d=>`<option value="${d.id}">${fmtName(d.id)}</option>`).join("");
+    sel.onchange = () => { if(sel.value) showStudent(sel.value); };
+  }catch(e){
+    $("tpEmpty").textContent = "載入學生失敗：" + e.message;
+  }
+}
+
+async function showStudent(email){
+  selEmail = email;
+  $("tpStudent").style.display = "block";
+  $("tpName").textContent = fmtName(email);
+  let g = grantCache[email] || {};
+  try{
+    const s = await getDoc(doc(db, "grants", email));
+    if(s.exists()){ g = s.data(); grantCache[email] = g; }
+  }catch(e){}
+  const mods = g.modules || {};
+  $("swTarjetas").checked = !!mods.tarjetas;
+  $("swNotas").checked = !!mods.notas;
+  const st = statsCache[email] || {};
+  const rawLast = st.lastSeen;
+  const last = rawLast ? (rawLast.toDate ? rawLast.toDate() : new Date(rawLast)).toLocaleString("zh-TW") : "—";
+  const notasOpen = st.notasOpen ? (st.notasOpen.count||1) : 0;
+  $("tpStats").textContent = "最後活動：" + last + " · 看筆記次數：" + notasOpen;
+  $("goTarjetas").href = "#tarjetas";
+  $("goTarjetas").onclick = () => {
+    $("cardmods").style.display = "block";
+    $("duo").style.display = "none";
+    $("cardmods").querySelectorAll("a").forEach(a=>{
+      if(a.classList.contains("back-row")) return;
+      a.href = a.href.replace("original/hanzi.html","original/hanzi.html?student="+encodeURIComponent(email.split("@")[0]))
+                     .replace("original/words.html","original/words.html?student="+encodeURIComponent(email.split("@")[0]))
+                     .replace("original/clf.html","original/clf.html?student="+encodeURIComponent(email.split("@")[0]));
+    });
+    return false;
+  };
+  $("goNotas").href = "original/notas.html?student=" + encodeURIComponent(email.split("@")[0]);
+}
+
+$("swTarjetas").onchange = async e => {
+  if(!selEmail) return;
+  try{
+    await setDoc(doc(db,"grants",selEmail),{modules:{tarjetas:e.target.checked}},{merge:true});
+    $("tpSave").textContent = "✓ 已儲存：閃卡入口 " + (e.target.checked?"開放":"關閉");
+    setTimeout(()=>$("tpSave").textContent = "✓ 開關勾選後自動儲存", 2500);
+  }catch(err){ $("tpSave").textContent = "儲存失敗：" + err.message; }
+};
+$("swNotas").onchange = async e => {
+  if(!selEmail) return;
+  try{
+    await setDoc(doc(db,"grants",selEmail),{modules:{notas:e.target.checked}},{merge:true});
+    $("tpSave").textContent = "✓ 已儲存：筆記入口 " + (e.target.checked?"開放":"關閉");
+    setTimeout(()=>$("tpSave").textContent = "✓ 開關勾選後自動儲存", 2500);
+  }catch(err){ $("tpSave").textContent = "儲存失敗：" + err.message; }
+};
 
 $("btn-logout").onclick = ()=> signOut(auth);
 </script>

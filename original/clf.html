@@ -111,9 +111,9 @@
     </div>
     <div class="section-title">Niveles</div>
     <div id="lvCheckRow">
-      <label class="check-label"><input type="checkbox" data-lv="1" checked> L1</label>
-      <label class="check-label"><input type="checkbox" data-lv="2" checked> L2</label>
-      <label class="check-label"><input type="checkbox" data-lv="3" checked> L3</label>
+      <label class="check-label"><input type="checkbox" data-lv="1"> L1</label>
+      <label class="check-label"><input type="checkbox" data-lv="2"> L2</label>
+      <label class="check-label"><input type="checkbox" data-lv="3"> L3</label>
     </div>
     <div class="section-title">Lotes (6 por lote)</div>
     <div id="batchCheckRow"></div>
@@ -667,7 +667,7 @@ function renderBatchChecks() {
       const slice = arr.slice((b - 1) * 6, b * 6);
       const lbl = document.createElement("label");
       lbl.className = "check-label";
-      lbl.innerHTML = '<input type="checkbox" data-batch="L' + lv + '-b' + b + '" checked> L' + lv + ' lote ' + b + ' (' + slice[0].c + '…' + slice[slice.length - 1].c + ', ' + slice.length + ')';
+      lbl.innerHTML = '<input type="checkbox" data-batch="L' + lv + '-b' + b + '"> L' + lv + ' lote ' + b + ' (' + slice[0].c + '…' + slice[slice.length - 1].c + ', ' + slice.length + ')';
       row.appendChild(lbl);
     }
   });
@@ -1069,7 +1069,7 @@ function renderBatchChecks() {
       const slice = arr.slice((b - 1) * 6, b * 6);
       const lbl = document.createElement("label");
       lbl.className = "check-label";
-      lbl.innerHTML = '<input type="checkbox" data-batch="L' + lv + '-b' + b + '" checked> L' + lv + ' lote ' + b + ' (' + slice[0].c + '…' + slice[slice.length - 1].c + ', ' + slice.length + ')';
+      lbl.innerHTML = '<input type="checkbox" data-batch="L' + lv + '-b' + b + '"> L' + lv + ' lote ' + b + ' (' + slice[0].c + '…' + slice[slice.length - 1].c + ', ' + slice.length + ')';
       row.appendChild(lbl);
     }
   });
@@ -1154,6 +1154,12 @@ function generateClfHtml(clfData, studentName) {
   .t-py { font-size:12px; color:var(--mid); width:44px; }
   .t-use { flex:1; font-size:12px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .t-marks { width:30px; text-align:center; font-size:13px; color:var(--ok); }
+
+  body.dark div[style*="fff8e7"] { background: #38342c !important; border-color: #544e46 !important; }
+  body.dark div[style*="fff8e7"] * { color: #e9e2d5 !important; }
+  body.dark div[style*="fff8e7"] h3, body.dark div[style*="fff8e7"] .top-btn, body.dark div[style*="fff8e7"] .section-title { color: #e9c76a !important; }
+  body.dark div[style*="fff8e7"] input[type="text"], body.dark div[style*="fff8e7"] input:not([type]), body.dark div[style*="fff8e7"] select { background:#2b2722 !important; color:#e9e2d5 !important; border-color:#544e46 !important; }
+  body.dark div[style*="fff8e7"] .top-btn { background: transparent !important; }
 </style>
 </head>
 <body>
@@ -1499,6 +1505,7 @@ document.getElementById("saveGrantBtn").addEventListener("click", async () => {
     if(!name){ stat.textContent = "Escribe el nombre del estudiante."; return; }
     const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
     await setDoc(doc(db, "grants", email), { clf: { batches: batches, levels: lvs, updatedAt: new Date() } }, { merge: true });
+    alert("✓ 已儲存雲端 · Guardado en la nube\n" + batches.length + " 個批次已開放");
     stat.textContent = "✓ Guardado en la nube para " + email;
   } catch(e) {
     stat.textContent = "Error: " + (e.message || e);

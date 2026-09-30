@@ -88,6 +88,10 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
   </div>
 </div>
 
+<div class="note-filter" id="noteFilter" style="display:none">
+  <input type="date" id="fDate" style="flex:1;min-width:120px">
+  <button class="btn-main" onclick="document.getElementById('fDate').value='';applyDateFilter();" style="flex:0">全部日期</button>
+</div>
 <div id="noteList"><div class="hint">Cargando… 載入中…</div></div>
 
 <script type="module">
@@ -199,6 +203,21 @@ async function loadNotes(forceEmail){
       </div>`;
     });
     list.innerHTML = html;
+    // 日期篩選器
+    const filter = document.getElementById("noteFilter");
+    if(filter){
+      filter.style.display = "flex";
+      filter.style.gap = "8px";
+      filter.style.marginBottom = "10px";
+      filter.style.flexWrap = "wrap";
+      document.getElementById("fDate").onchange = applyDateFilter;
+    }
+    window.applyDateFilter = () => {
+      const d = document.getElementById("fDate").value;
+      document.querySelectorAll("#noteList .note").forEach(n=>{
+        n.style.display = (!d || (n.querySelector(".note-date")||{}).textContent === d) ? "" : "none";
+      });
+    };
     // 統計：記錄開啟次數
     try{ await setDoc(doc(db,"stats",currentUser.email),{notasOpen:{count:1,last:new Date()}},{merge:true}); }catch(e){}
   }catch(e){
