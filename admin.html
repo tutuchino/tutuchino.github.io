@@ -9,41 +9,104 @@
 <style>
 :root{
   --bg:#f2ead8; --card:#fdf8ec; --ink:#3a3428; --sub:#7d7560; --line:#e0d5bb;
-  --accent:#D9A033; --accent-dark:#b8821e; --good:#2e7d32; --shadow:0 4px 16px rgba(60,45,20,.1);
+  --accent:#D9A033; --accent-dark:#b8821e; --good:#2e7d32; --warn:#c0392b;
+  --shadow:0 4px 16px rgba(60,45,20,.1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:"Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);padding:16px;max-width:760px;margin:0 auto;min-height:100vh}
+body{font-family:"Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);padding:16px;max-width:720px;margin:0 auto;min-height:100vh}
 body.dark{--bg:#26221c;--card:#322c24;--ink:#ece3cf;--sub:#a89e88;--line:#4a4238}
-h1{font-family:"Noto Serif SC",serif;font-size:22px;font-weight:900;margin:10px 0 4px;text-align:center}
+.tb{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+.tb a,.tb button{font-size:13px;font-family:"Times New Roman",serif;padding:7px 14px;border-radius:20px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;text-decoration:none}
+.tb a:hover,.tb button:hover{background:var(--accent);color:#fff}
+h1{font-family:"Noto Serif SC",serif;font-size:22px;font-weight:900;margin:4px 0 4px;text-align:center}
 .subtitle{text-align:center;color:var(--sub);font-size:13px;margin-bottom:16px}
-.student{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
-.student-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.sname{font-family:"Times New Roman",serif;font-size:17px;font-weight:700}
-.stats{font-size:12px;color:var(--sub);margin-top:4px}
-.toggles{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
-.toggle{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
-.toggle input{width:16px;height:16px;cursor:pointer}
-.submods{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub)}
-.submods b{color:var(--ink)}
-.back{display:inline-block;margin-bottom:14px;font-size:13px;color:var(--sub);text-decoration:none}
-.back:hover{color:var(--accent)}
-.loading,.empty{text-align:center;color:var(--sub);padding:30px 0}
-.logout{position:fixed;top:12px;right:12px;font-size:12px;color:var(--sub);background:none;border:1px solid var(--line);padding:6px 12px;border-radius:20px;cursor:pointer}
+/* 選學生 */
+.picker{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px;box-shadow:var(--shadow)}
+.picker label{font-size:13px;color:var(--sub);font-weight:700;display:block;margin-bottom:6px}
+.picker select{width:100%;padding:11px 12px;font-size:15px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font-family:inherit}
+/* 學生詳情 */
+.detail{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.detail .head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.detail .sname{font-family:"Times New Roman",serif;font-size:20px;font-weight:700;color:var(--accent-dark)}
+.detail .stats{font-size:12px;color:var(--sub);margin-top:2px}
+.section{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.section h3{font-size:13px;color:var(--accent-dark);margin-bottom:8px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.section h3 .edit-link{font-size:12px;color:var(--good);text-decoration:none;border:1px solid var(--good);padding:4px 12px;border-radius:16px;font-family:inherit}
+.section h3 .edit-link:hover{background:var(--good);color:#fff}
+.switch-row{display:flex;gap:18px;flex-wrap:wrap}
+.switch-row label{display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;padding:6px 12px;border:1.5px solid var(--line);border-radius:20px;background:var(--card)}
+.switch-row label input{width:17px;height:17px;accent-color:var(--accent)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 10px;font-size:12px;color:var(--ink)}
+.tag.on{border-color:var(--accent);color:var(--accent-dark);background:#fdf3d8}
+.empty,.loading{text-align:center;color:var(--sub);padding:24px 0;font-size:14px}
 .done{color:var(--good);font-size:12px;margin-left:8px;opacity:0;transition:opacity .3s}
 .done.show{opacity:1}
+.hint{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.6}
 </style>
 </head>
 <body>
-<button class="logout" onclick="logout()">Salir</button>
-<a class="back" href="index.html">← Volver al inicio</a>
+<div class="tb">
+  <a href="index.html">⌂ Inicio</a>
+  <button onclick="zoomPage(-1)">A−</button>
+  <button onclick="zoomPage(1)">A+</button>
+  <button onclick="toggleDarkAll()">◐</button>
+</div>
 <h1>Panel del Profesor</h1>
-<div class="subtitle">教師後台 · 勾選學生開放內容</div>
-<div id="list"><div class="loading">Verificando… 驗證中…</div></div>
+<div class="subtitle">選學生 → 看開放狀態 → 新增或取消</div>
+
+<div class="picker">
+  <label>1. 選擇學生 · Elegir estudiante</label>
+  <select id="studentSelect"><option value="">— 選擇學生 —</option></select>
+</div>
+
+<div id="detail" style="display:none">
+  <div class="detail">
+    <div class="head">
+      <div>
+        <div class="sname" id="dName"></div>
+        <div class="stats" id="dStats"></div>
+      </div>
+      <span class="done" id="dDone">✓ 已儲存</span>
+    </div>
+
+    <div class="section">
+      <h3>模組入口開關 · Acceso</h3>
+      <div class="switch-row">
+        <label><input type="checkbox" id="swTarjetas"> 📚 閃卡入口</label>
+        <label><input type="checkbox" id="swNotas"> 📝 筆記入口</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>📚 閃卡開放內容 <a class="edit-link" id="linkClf" href="#" target="_blank">✎ 到量詞卡增減</a></h3>
+      <div class="tags" id="tagClf"></div>
+    </div>
+
+    <div class="section">
+      <h3>✎ 單詞主題 <a class="edit-link" id="linkWords" href="#" target="_blank">到單詞卡增減</a></h3>
+      <div class="tags" id="tagWords"></div>
+    </div>
+
+    <div class="section">
+      <h3>✎ 漢字批次 <a class="edit-link" id="linkHanzi" href="#" target="_blank">到漢字卡增減</a></h3>
+      <div class="tags" id="tagHanzi"></div>
+    </div>
+
+    <div class="section">
+      <h3>📝 上課筆記 <a class="edit-link" id="linkNotas" href="#" target="_blank">管理筆記</a></h3>
+      <div class="tags" id="tagNotas"></div>
+    </div>
+
+    <div class="hint">💡 小提醒：模組入口開關（上面）直接勾選即儲存。各字卡的「批次/主題」細項，按右邊連結進入對應字卡頁（已自動帶入學生名），勾選新增的、取消要收回的，再按「Guardar en la nube」。</div>
+  </div>
+</div>
+<div id="list" class="loading">Verificando… 驗證中…</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const fb = initializeApp({
   apiKey: "AIzaSyC_C9Mj_xAXyVTcd34v1VfnffvgJMDMLm8",
@@ -55,82 +118,104 @@ const fb = initializeApp({
 });
 const auth = getAuth(fb);
 const db = getFirestore(fb);
-window.logout = () => signOut(auth);
 
+window.zoomPage = function(d){ const c=parseFloat(document.documentElement.style.zoom||1); document.documentElement.style.zoom=Math.max(0.85,Math.min(1.25,c+d*0.07)); };
+window.toggleDarkAll = function(){ document.body.classList.toggle("dark"); };
+
+let grantsCache = {};
 let statsCache = {};
+let currentEmail = null;
 
 function fmtName(email){
   const raw = email.split("@")[0];
   return raw.split(".").map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(" ");
 }
+function shortBatch(b){ return b.replace(/^L/,"N").replace(/-b/, " · "); }
 
-async function loadAll(){
-  const list = document.getElementById("list");
+async function loadStudent(email){
+  currentEmail = email;
+  document.getElementById("dName").textContent = fmtName(email);
+  let g = grantsCache[email] || {};
+  try{ const s = await getDoc(doc(db,"grants",email)); if(s.exists()){ g = s.data(); grantsCache[email] = g; } }catch(e){}
+  const mods = g.modules || {};
+  document.getElementById("swTarjetas").checked = !!mods.tarjetas;
+  document.getElementById("swNotas").checked = !!mods.notas;
+
+  const st = statsCache[email] || {};
+  const rawLast = st.lastSeen;
+  const last = rawLast ? (rawLast.toDate ? rawLast.toDate() : new Date(rawLast)).toLocaleString("zh-TW") : "—";
+  const notasOpen = st.notasOpen ? (st.notasOpen.count||1) : 0;
+  document.getElementById("dStats").textContent = "最後活動：" + last + " · 看筆記次數：" + notasOpen;
+
+  const clf = g.clf || {};
+  const bTags = (clf.batches||[]).map(b=>`<span class="tag on">${shortBatch(b)}</span>`).join("");
+  document.getElementById("tagClf").innerHTML = bTags || '<span class="tag">尚未開放</span>';
+  document.getElementById("linkClf").href = "original/clf.html?student=" + encodeURIComponent(email.split("@")[0]);
+
+  const words = g.words || {};
+  const wTags = (words.cats||[]).map(c=>`<span class="tag on">${c}</span>`).join("");
+  document.getElementById("tagWords").innerHTML = wTags || '<span class="tag">尚未開放</span>';
+  document.getElementById("linkWords").href = "original/words.html?student=" + encodeURIComponent(email.split("@")[0]);
+
+  const hanzi = g.hanzi || {};
+  const hTags = (hanzi.batches||[]).map(b=>`<span class="tag on">${shortBatch(b)}</span>`).join("");
+  document.getElementById("tagHanzi").innerHTML = hTags || '<span class="tag">尚未開放</span>';
+  document.getElementById("linkHanzi").href = "original/hanzi.html?student=" + encodeURIComponent(email.split("@")[0]);
+
+  const nq = query(collection(db,"notes"), where("studentEmail","==",email));
+  let nTags = '<span class="tag">尚未開放</span>';
   try{
-    // 讀 grants 全部學生
+    const ns = await getDocs(nq);
+    if(!ns.empty){
+      const dates = [];
+      ns.forEach(d=>{ dates.push(d.data().date||""); });
+      nTags = dates.sort().reverse().map(d=>`<span class="tag on">${d}</span>`).join("");
+    }
+  }catch(e){}
+  document.getElementById("tagNotas").innerHTML = nTags;
+  document.getElementById("linkNotas").href = "original/notas.html?student=" + encodeURIComponent(email.split("@")[0]);
+
+  document.getElementById("detail").style.display = "block";
+  document.getElementById("list").style.display = "none";
+}
+
+async function loadStudents(){
+  const list = document.getElementById("list");
+  const sel = document.getElementById("studentSelect");
+  try{
     const gSnap = await getDocs(collection(db,"grants"));
-    if(gSnap.empty){ list.innerHTML = `<div class="empty">尚無學生紀錄。</div>`; return; }
-    // 讀 stats 全部
+    if(gSnap.empty){ list.innerHTML = '<div class="empty">尚無學生紀錄。請先在任一字卡頁輸入學生名並儲存一次。</div>'; return; }
+    gSnap.forEach(d=>{ grantsCache[d.id] = d.data(); });
     try{
       const sSnap = await getDocs(collection(db,"stats"));
       sSnap.forEach(d=>{ statsCache[d.id] = d.data(); });
     }catch(e){}
-
-    let html = "";
-    gSnap.forEach(d=>{
-      const email = d.id;
-      const g = d.data();
-      const mods = g.modules || {};
-      const clfN = (g.clf && g.clf.batches ? g.clf.batches.length : 0);
-      const wordsN = (g.words && g.words.cats ? g.words.cats.length : 0);
-      const hanziN = (g.hanzi && g.hanzi.batches ? g.hanzi.batches.length : 0);
-      const st = statsCache[email] || {};
-      const last = st.lastSeen ? new Date(st.lastSeen.toDate ? st.lastSeen.toDate() : st.lastSeen).toLocaleString("zh-TW") : "—";
-      const notasOpen = st.notasOpen ? (st.notasOpen.count||1) : 0;
-      html += `<div class="student" id="stu-${email}">
-        <div class="student-head">
-          <div>
-            <div class="sname">${fmtName(email)}</div>
-            <div class="stats">最後活動：${last} · 看筆記次數：${notasOpen}</div>
-          </div>
-          <span class="done" id="done-${email}">✓ 已儲存</span>
-        </div>
-        <div class="toggles">
-          <label class="toggle"><input type="checkbox" data-email="${email}" data-mod="tarjetas" ${mods.tarjetas?"checked":""}> 📚 閃卡入口</label>
-          <label class="toggle"><input type="checkbox" data-email="${email}" data-mod="notas" ${mods.notas?"checked":""}> 📝 筆記入口</label>
-        </div>
-        <div class="submods">
-          已開放：<b>量詞 ${clfN} 批</b> · <b>單詞 ${wordsN} 主題</b> · <b>漢字 ${hanziN} 批</b>
-          （進入各字卡頁輸入學生名按 Enter 可繼續增減）
-        </div>
-      </div>`;
-    });
-    list.innerHTML = html;
-    // 綁定勾選
-    document.querySelectorAll(".toggle input").forEach(cb=>{
-      cb.onchange = async ()=>{
-        const email = cb.dataset.email, mod = cb.dataset.mod;
-        try{
-          await setDoc(doc(db,"grants",email),{modules:{[mod]:cb.checked}},{merge:true});
-          const d = document.getElementById("done-"+email);
-          if(d){ d.classList.add("show"); setTimeout(()=>d.classList.remove("show"),1200); }
-        }catch(e){ alert("儲存失敗："+e.message); cb.checked = !cb.checked; }
-      };
-    });
+    sel.innerHTML = '<option value="">— 選擇學生 —</option>' + gSnap.docs.map(d=>`<option value="${d.id}">${fmtName(d.id)}</option>`).join("");
+    sel.onchange = () => { if(sel.value) loadStudent(sel.value); };
+    list.style.display = "none";
   }catch(e){
-    list.innerHTML = `<div class="empty">載入失敗：${e.message}<br><br>請確認你是老師帳號登入。</div>`;
+    list.innerHTML = '<div class="empty">載入失敗：' + e.message + '</div>';
   }
 }
+
+document.getElementById("swTarjetas").onchange = async (e) => {
+  if(!currentEmail) return;
+  try{ await setDoc(doc(db,"grants",currentEmail),{modules:{tarjetas:e.target.checked}},{merge:true});
+    const d=document.getElementById("dDone"); d.classList.add("show"); setTimeout(()=>d.classList.remove("show"),1200);
+  }catch(err){ alert("儲存失敗："+err.message); }
+};
+document.getElementById("swNotas").onchange = async (e) => {
+  if(!currentEmail) return;
+  try{ await setDoc(doc(db,"grants",currentEmail),{modules:{notas:e.target.checked}},{merge:true});
+    const d=document.getElementById("dDone"); d.classList.add("show"); setTimeout(()=>d.classList.remove("show"),1200);
+  }catch(err){ alert("儲存失敗："+err.message); }
+};
 
 onAuthStateChanged(auth, async (user) => {
   if(!user){ location.href = "index.html"; return; }
   const isTeacher = user.providerData.some(p=>p.providerId==="google.com");
-  if(!isTeacher){
-    alert("此頁面僅供教師使用");
-    location.href = "index.html";
-    return;
-  }
-  await loadAll();
+  if(!isTeacher){ alert("此頁面僅供教師使用"); location.href = "index.html"; return; }
+  await loadStudents();
 });
 </script>
 </body>

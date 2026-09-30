@@ -9,7 +9,7 @@
 <style>
   :root {
     --bg:#e9dfd0; --text:#3d2b1f; --front1:#fbf7f0; --front2:#f2ead9; --back:#fffdf8;
-    --accent:#D9A033; --mid:#8b7355; --light:#b0a088; --soft:#f5eee2; --line:#d8c9ad;
+    --accent:#8a6d3b; --mid:#8b7355; --light:#b0a088; --soft:#f5eee2; --line:#d8c9ad;
     --example-bg:#f1eadf; --btn-bg:#fff; --flip-bg:#3d2b1f; --flip-fg:#fff;
     --shadow:rgba(61,43,31,0.15); --level1:#a03a2e; --level2:#8a6d3b; --level3:#3b6d8a;
     --ok:#2e7d32; --ok-bg:#e3f0e4;
@@ -69,16 +69,22 @@
   .check-label { display:inline-flex; align-items:center; gap:5px; font-size:13px; color:var(--text); margin:4px 12px 4px 0; cursor:pointer; }
   .footer { text-align:center; padding:20px 0 10px; font-size:12px; color:var(--mid); }
   
+
+  .toolbar { display:flex; align-items:center; gap:8px; padding:10px 0; margin:0 auto 10px; max-width:520px; }
+  .toolbar .tb { font-size:13px; font-family:inherit; padding:6px 12px; border-radius:8px; border:1px solid var(--line); background:var(--btn-bg); color:var(--text); text-decoration:none; cursor:pointer; line-height:1.2; }
+  .toolbar .tb:hover { border-color:var(--accent); color:var(--accent); }
 </style>
 
 </head>
 <body>
 
-<div style="display:flex;justify-content:flex-end;gap:6px;margin-bottom:6px;">
-  <button class="top-btn" onclick="zoomClf(-1)" style="padding:5px 12px;font-size:13px;" title="Más pequeño">A-</button>
-  <button class="top-btn" onclick="zoomClf(1)" style="padding:5px 12px;font-size:13px;" title="Más grande">A+</button>
-  <button class="top-btn" id="darkBtn2" style="padding:5px 12px;font-size:13px;" onclick="toggleDark()">◐</button>
+<div class="toolbar">
+  <a class="tb" href="../index.html" title="Volver al inicio">⌂ Inicio</a>
+  <button class="tb" onclick="zoomPage(-1)" title="Más pequeño">A−</button>
+  <button class="tb" onclick="zoomPage(1)" title="Más grande">A+</button>
+  <button class="tb" id="darkToggleBtn" onclick="toggleDarkAll()" title="Tema claro / oscuro">◐</button>
 </div>
+
 <div style="text-align:center;margin-bottom:14px;">
   <div style="font-family:var(--serif,serif);font-size:26px;font-weight:900;color:var(--text);letter-spacing:1px;">Clasificadores</div>
 </div>
@@ -459,6 +465,18 @@ function toggleClfPanel(headerEl) {
 }
 
 /* ===== 字體縮放 + 夜間切換 ===== */
+
+/* ===== 統一工具條：字體縮放 + 暗色 ===== */
+function zoomPage(d){
+  const cur = parseFloat(document.documentElement.style.zoom || 1);
+  document.documentElement.style.zoom = Math.max(0.85, Math.min(1.25, cur + d*0.07));
+}
+function toggleDarkAll(){
+  document.body.classList.toggle("dark");
+  const b = document.getElementById("darkToggleBtn");
+  if(b) b.textContent = document.body.classList.contains("dark") ? "◐" : "◐";
+}
+
 function zoomClf(d) {
   const cur = parseFloat(document.documentElement.style.zoom || 1);
   document.documentElement.style.zoom = Math.max(0.85, Math.min(1.25, cur + d*0.07));
@@ -576,6 +594,7 @@ function closeList() {
 }
 
 /* ================= 事件 ================= */
+document.querySelectorAll(".card-face").forEach(f => f.addEventListener("click", flipCard));
 document.getElementById("frontClf").addEventListener("click", flipCard);
 document.getElementById("backClf").addEventListener("click", flipCard);
 document.getElementById("prevBtn").onclick = goPrev;
@@ -591,7 +610,7 @@ function speakExample() {
     window.speechSynthesis.speak(utter);
   }
 }
-document.getElementById("speakExBtn").onclick = speakExample;
+document.getElementById("speakExBtn").onclick = (e) => { e.stopPropagation(); speakExample(); };
 document.getElementById("markLearnedBtn").onclick = () => {
   const id = clfList[currentIndex].id;
   store.learned = store.learned.includes(id) ? store.learned.filter(x => x !== id) : store.learned.concat(id);
@@ -625,10 +644,6 @@ document.querySelectorAll("#filterRow button").forEach(btn => {
     renderTotalList();
   };
 });
-document.getElementById("darkBtn2").onclick = () => {
-  document.body.classList.toggle("dark");
-  document.getElementById("darkBtn2").textContent = document.body.classList.contains("dark") ? "Modo claro" : "Modo oscuro";
-};
 
 /* ===== panel de envio（每批 6 个） ===== */
 function selectAllClf(val) {
@@ -945,10 +960,6 @@ document.querySelectorAll("#filterRow button").forEach(btn => {
     renderTotalList();
   };
 });
-document.getElementById("darkBtn2").onclick = () => {
-  document.body.classList.toggle("dark");
-  document.getElementById("darkBtn2").textContent = document.body.classList.contains("dark") ? "Modo claro" : "Modo oscuro";
-};
 
 
 renderClf();
@@ -1035,10 +1046,6 @@ document.querySelectorAll("#filterRow button").forEach(btn => {
     renderTotalList();
   };
 });
-document.getElementById("darkBtn2").onclick = () => {
-  document.body.classList.toggle("dark");
-  document.getElementById("darkBtn2").textContent = document.body.classList.contains("dark") ? "Modo claro" : "Modo oscuro";
-};
 
 /* ===== panel de envio（每批 6 个） ===== */
 function selectAllClf(val) {
@@ -1355,10 +1362,6 @@ document.querySelectorAll("#filterRow button").forEach(btn => {
     renderTotalList();
   };
 });
-document.getElementById("darkBtn2").onclick = () => {
-  document.body.classList.toggle("dark");
-  document.getElementById("darkBtn2").textContent = document.body.classList.contains("dark") ? "Modo claro" : "Modo oscuro";
-};
 
 
 renderClf();
@@ -1428,12 +1431,56 @@ const db = getFirestore(fb);
 onAuthStateChanged(auth, async (user) => {
   if(!user) return;
   const isTeacher = user.providerData.some(p => p.providerId === "google.com");
-  if(isTeacher) return; // 老師：顯示全部 + 發放面板
+  if(isTeacher){
+    /* 支援網址帶學生名（後台跳轉） */
+    const sp = new URLSearchParams(location.search).get("student");
+    if(sp){
+      const email = sp.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
+      const inp = document.getElementById("studentNameInput");
+      if(inp) inp.value = sp;
+      try {
+        const snap = await getDoc(doc(db, "grants", email));
+        const g = snap.exists() ? (snap.data().clf || null) : null;
+        if (window.applyClfGrant) window.applyClfGrant(g);
+        if(typeof updateExportStat === "function") updateExportStat();
+        const rows = document.querySelectorAll("#batchCheckRow input[data-batch]");
+        rows.forEach(cb => { cb.checked = (g && g.batches) ? g.batches.includes(cb.dataset.batch) : false; });
+        const lvRow = document.querySelectorAll("#lvCheckRow input");
+        lvRow.forEach(cb => { cb.checked = (g && g.levels) ? g.levels.includes(Number(cb.dataset.lv)) : false; });
+        const stat = document.getElementById("exportStat");
+        if(stat) stat.textContent = "已載入：" + sp;
+      } catch(e) { console.warn("url student load fail", e); }
+    }
+    return;
+  } // 老師：顯示全部 + 發放面板
   try {
     const snap = await getDoc(doc(db, "grants", user.email));
     const g = snap.exists() ? (snap.data().clf || null) : null;
     if (window.applyClfGrant) window.applyClfGrant(g);
   } catch(e) { console.warn("grant read fail", e); }
+});
+
+
+document.getElementById("studentNameInput").addEventListener("keydown", async (e) => {
+  if(e.key !== "Enter") return;
+  const stat = document.getElementById("exportStat");
+  const name = e.target.value.trim();
+  if(!name){ stat.textContent = "Escribe el nombre del estudiante."; return; }
+  const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
+  try {
+    const snap = await getDoc(doc(db, "grants", email));
+    const g = snap.exists() ? (snap.data().clf || null) : null;
+    const batches = (g && g.batches) ? g.batches : [];
+    const levels = (g && g.levels) ? g.levels : [];
+    document.querySelectorAll("#batchCheckRow input[data-batch]").forEach(cb => {
+      cb.checked = batches.includes(cb.dataset.batch);
+    });
+    document.querySelectorAll("#lvCheckRow input").forEach(cb => {
+      cb.checked = levels.includes(Number(cb.dataset.lv));
+    });
+    if(typeof updateExportStat === "function") updateExportStat();
+    stat.textContent = g ? ("✓ Cargado: " + batches.length + " lotes abiertos para " + email) : "Sin registros: " + email + " (todo desmarcado)";
+  } catch(e) { stat.textContent = "Error: " + (e.message || e); }
 });
 
 document.getElementById("saveGrantBtn").addEventListener("click", async () => {
@@ -1458,5 +1505,5 @@ document.getElementById("saveGrantBtn").addEventListener("click", async () => {
   }
 });
 </script>
-</body></body>
+</body>
 </html>

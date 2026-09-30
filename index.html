@@ -25,7 +25,8 @@ html.night{--paper:#26221c;--card:#322c24;--ink:#ece3cf;--sub:#a89e88;--line:#4a
 .logo{width:96px;height:96px;border-radius:50%;background:var(--card);border:3px solid var(--gold);box-shadow:0 6px 24px rgba(201,168,106,.3);overflow:hidden;display:flex;align-items:center;justify-content:center}
 .logo img{width:100%;height:100%;object-fit:cover}
 .logo-name{font-family:"Times New Roman",serif;font-size:14px;font-weight:700;letter-spacing:6px;color:var(--warm2);margin-top:12px}
-h1{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:900;margin-bottom:6px;letter-spacing:1px}
+h1{font-family:"Times New Roman","Noto Serif SC",serif;font-size:34px;font-weight:900;margin:6px 0 4px;letter-spacing:10px;color:var(--warm2)}
+.small-title{font-family:"Noto Serif SC",serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--sub);margin-bottom:6px}
 .sub{color:var(--sub);font-size:13px;margin-bottom:8px}
 .who{font-size:15px;color:var(--sub);margin-bottom:22px}
 .who strong{color:var(--warm2);font-family:"Noto Serif SC",serif;font-size:17px}
@@ -53,6 +54,9 @@ h1{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:900;margin-botto
 .teacher-row{margin-top:18px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
 .teacher-row a, .teacher-row button{background:none;border:1px solid var(--line);color:var(--sub);border-radius:20px;padding:8px 18px;font-size:13px;cursor:pointer;text-decoration:none}
 .teacher-row a:hover,.teacher-row button:hover{color:var(--warm2);border-color:var(--warm2)}
+.logout-row{margin-top:14px;display:flex;justify-content:center}
+.logout-row button{background:none;border:1px solid var(--line);color:var(--sub);border-radius:20px;padding:7px 18px;font-size:13px;cursor:pointer;font-family:inherit}
+.logout-row button:hover{color:var(--warm2);border-color:var(--warm2)}
 footer{margin-top:18px;font-size:12px;color:var(--sub)}
 .loading{color:var(--sub);font-size:14px;padding:20px 0}
 </style>
@@ -68,9 +72,9 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
   <div id="view-login">
     <div class="logo-wrap">
       <div class="logo"><img src="logo.png" alt="TUTU"></div>
-      <div class="logo-name">T U T U</div>
     </div>
-    <h1>Chino Básico por Tema</h1>
+    <h1>T U T U</h1>
+    <div class="small-title">Chino Básico por Tema</div>
     <div class="sub">基礎中文 · 按主題學習</div>
     <div class="form">
       <div class="field"><label>名字 · Nombre</label><input id="f-user" placeholder="nombre.apellido" autocomplete="username"></div>
@@ -83,14 +87,15 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
   <div id="view-home" class="home">
     <div class="logo-wrap">
       <div class="logo"><img src="logo.png" alt="TUTU"></div>
-      <div class="logo-name">T U T U</div>
     </div>
+    <h1>T U T U</h1>
+    <div class="small-title">Chino Básico por Tema</div>
     <div class="who" id="who"></div>
     <div id="home-modules"></div>
     <div class="teacher-row" id="teacher-row" style="display:none">
       <a href="admin.html">後台 · Panel</a>
-      <button id="btn-logout">登出 · Salir</button>
     </div>
+    <div class="logout-row"><button id="btn-logout">登出 · Salir</button></div>
     <footer>Chino Básico por Tema · 基礎中文 — 按主題學習</footer>
   </div>
 </div>
@@ -143,12 +148,16 @@ onAuthStateChanged(auth, async (user) => {
   }
   $("view-login").style.display="none";
   $("view-home").style.display="block";
-  const raw = user.email.split("@")[0];
-  const first = raw.split(".")[0];
-  $("who").innerHTML = "你好，<strong>" + first.charAt(0).toUpperCase()+first.slice(1) + "</strong>";
 
   const isTeacher = user.providerData.some(p => p.providerId === "google.com");
   $("teacher-row").style.display = isTeacher ? "flex" : "none";
+  if(isTeacher){
+    $("who").innerHTML = "你好，<strong>Prof. Blissfulmeow</strong>";
+  } else {
+    const raw = user.email.split("@")[0];
+    const first = raw.split(".")[0];
+    $("who").innerHTML = "你好，<strong>" + first.charAt(0).toUpperCase()+first.slice(1) + "</strong>";
+  }
 
   let grant = null;
   try{
@@ -168,8 +177,17 @@ onAuthStateChanged(auth, async (user) => {
 
   const box = $("home-modules");
   let html = "";
+  /* 筆記入口永遠在最上方 */
+  if(showNotas){
+    html += `<div style="font-size:13px;color:var(--sub);text-align:left;margin:0 4px 10px;font-weight:700">📝 Notas de Clase · 上課筆記</div>`;
+    html += `<a class="bigmod mod-notas" href="original/notas.html">
+      <div class="big-ico">記</div>
+      <div class="big-t">Notas de Clase</div>
+      <div class="big-e">逐字稿朗讀 · 影片 · 錄音 · 按日期排列</div>
+    </a>`;
+  }
   if(showTarjetas){
-    html += `<div style="font-size:13px;color:var(--sub);text-align:left;margin:0 4px 10px;font-weight:700;">📚 Tarjetas de Chino · 字卡</div>`;
+    html += `<div style="font-size:13px;color:var(--sub);text-align:left;margin:0 4px 10px;font-weight:700">📚 Tarjetas de Chino · 字卡</div>`;
     html += `<a class="bigmod mod-tarjetas" style="padding:16px 18px;margin-bottom:10px" href="original/hanzi.html">
       <div style="display:flex;align-items:center;gap:14px">
         <div class="big-ico" style="font-size:30px">字</div>
@@ -185,14 +203,6 @@ onAuthStateChanged(auth, async (user) => {
         <div class="big-ico" style="font-size:30px">量</div>
         <div style="text-align:left"><div class="big-t" style="font-size:18px;margin-top:0">量詞閃卡</div><div class="big-e">Clasificadores</div></div>
       </div></a>`;
-  }
-  if(showNotas){
-    html += `<div style="font-size:13px;color:var(--sub);text-align:left;margin:0 4px 10px;font-weight:700">📝 Notas de Clase · 上課筆記</div>`;
-    html += `<a class="bigmod mod-notas" href="original/notas.html">
-      <div class="big-ico">記</div>
-      <div class="big-t">Notas de Clase</div>
-      <div class="big-e">逐字稿朗讀 · 影片 · 錄音 · 按日期排列</div>
-    </a>`;
   }
   if(!html){
     html = `<div class="loading">目前尚未開放內容，請等候老師通知。<br>Todavía no hay contenido disponible.</div>`;

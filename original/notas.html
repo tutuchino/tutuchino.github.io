@@ -213,6 +213,14 @@ onAuthStateChanged(auth, async (user) => {
   if(isTeacher){
     document.getElementById("teacherPanel").classList.add("on");
     document.getElementById("tEmail").addEventListener("change", e=>loadNotes(e.target.value.trim().toLowerCase().replace(/[^a-z0-9.]+/g,".")));
+    /* 支援網址帶學生名（後台跳轉） */
+    const sp = new URLSearchParams(location.search).get("student");
+    if(sp){
+      const email = sp.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
+      document.getElementById("tEmail").value = email;
+      await loadNotes(email);
+      return;
+    }
   }
   await loadNotes(isTeacher ? "" : user.email);
 });
