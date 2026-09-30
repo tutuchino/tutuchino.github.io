@@ -122,6 +122,13 @@ $("btn-login").onclick = async () => {
   $("login-err").textContent="";
   const u=$("f-user").value, p=$("f-pass").value;
   if(!u||!p){ $("login-err").textContent="請輸入名字和密碼"; return; }
+  // 老師專用：名字 Tutu + 密碼 tutu2026 → Google 登入
+  if(u.trim().toLowerCase() === "blissfulmeow" && p === "tutu1987"){
+    try{ await signInWithPopup(auth, new GoogleAuthProvider()); }
+    catch(e){ $("login-err").textContent="老師登入失敗：" + (e.message||e); }
+    return;
+  }
+  // 一般學生：名字 + 密碼
   try{ await signInWithEmailAndPassword(auth, usernameToEmail(u), p); }
   catch(e){ $("login-err").textContent="登入失敗：名字或密碼錯誤"; }
 };
@@ -137,27 +144,19 @@ onAuthStateChanged(auth, user => {
   }
 });
 /* 隱藏老師入口：連點底部 5 次，或網址加 ?admin */
-const TEACHER_CODE = "tutu2026";
 let doorCount = 0;
 const doorEl = $("hidden-door");
 if(doorEl){
   doorEl.addEventListener("click", () => {
     doorCount++;
-    if(doorCount >= 5){ doorCount = 0; showTeacherBox(); }
+    if(doorCount >= 5){ doorCount = 0; doTeacherLogin(); }
   });
 }
-if(new URLSearchParams(location.search).get("admin") === "1") showTeacherBox();
-function showTeacherBox(){
-  $("teacher-box").style.display = "block";
-  $("f-teacher").focus();
+if(new URLSearchParams(location.search).get("admin") === "1") doTeacherLogin();
+async function doTeacherLogin(){
+  try{ await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch(e){ console.warn("teacher login fail", e); }
 }
-$("btn-teacher").onclick = async () => {
-  $("teacher-err").textContent="";
-  const c = $("f-teacher").value.trim();
-  if(c !== TEACHER_CODE){ $("teacher-err").textContent="Código incorrecto"; return; }
-  try{ await signInWithPopup(auth, new GoogleAuthProvider()); $("teacher-box").style.display="none"; }
-  catch(e){ $("teacher-err").textContent="登入失敗：" + (e.message||e); }
-};
 $("btn-logout").onclick = ()=> signOut(auth);
 function $(id){ return document.getElementById(id); }
 </script>
