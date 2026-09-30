@@ -2672,12 +2672,16 @@ onAuthStateChanged(auth, async (user) => {
         const snap = await getDoc(doc(db, "grants", email));
         const g = snap.exists() ? (snap.data().words || null) : null;
         const cats = (g && g.cats) ? g.cats : [];
+        let matched = 0;
         document.querySelectorAll(".sub-check").forEach(cb => {
-          cb.checked = cats.includes(cb.dataset.catId + "|" + cb.dataset.subIdx);
+          const v = cb.dataset.catId + "|" + cb.dataset.subIdx;
+          cb.checked = cats.includes(v);
+          if(cb.checked) matched++;
         });
         if(typeof updateExportStat === "function") updateExportStat();
         const stat = document.getElementById("exportStat");
-        if(stat) stat.textContent = g ? ("✓ Cargado: " + cats.length + " grupos · " + email) : "Sin registros para " + email + " (marca y guarda)";
+        stat.textContent = "讀到 " + cats.length + " 個已存主題 · 恢復勾選 " + matched + " 個 · " + email;
+        alert("診斷：讀到 " + cats.length + " 個已存主題\n恢復勾選 " + matched + " 個\n前3個: " + cats.slice(0,3).join(", "));
       } catch(e) { console.warn("url student load fail", e); }
     }
     return;
