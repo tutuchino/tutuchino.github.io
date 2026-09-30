@@ -2678,10 +2678,23 @@ onAuthStateChanged(auth, async (user) => {
           cb.checked = cats.includes(v);
           if(cb.checked) matched++;
         });
+        document.querySelectorAll(".cat-master-check").forEach(mc => {
+          const cid = mc.dataset.catId;
+          const subs = document.querySelectorAll('.sub-check[data-cat-id="' + cid + '"]');
+          const checkedCount = [...subs].filter(s => s.checked).length;
+          mc.checked = (subs.length > 0 && checkedCount === subs.length);
+          if(checkedCount > 0){
+            const header = mc.closest("[onclick]");
+            if(header && header.nextElementSibling){
+              header.nextElementSibling.style.display = "";
+              const arrow = header.querySelector("span");
+              if(arrow) arrow.textContent = "▼";
+            }
+          }
+        });
         if(typeof updateExportStat === "function") updateExportStat();
         const stat = document.getElementById("exportStat");
-        stat.textContent = "讀到 " + cats.length + " 個已存主題 · 恢復勾選 " + matched + " 個 · " + email;
-        alert("診斷：讀到 " + cats.length + " 個已存主題\n恢復勾選 " + matched + " 個\n前3個: " + cats.slice(0,3).join(", "));
+        stat.textContent = "已載入：" + matched + "/" + cats.length + " 個主題（已自動展開有勾的分類）";
       } catch(e) { console.warn("url student load fail", e); }
     }
     return;
