@@ -1618,7 +1618,7 @@ function renderBatchChecks() {
         const lbl = document.createElement('label');
         lbl.className = 'check-label';
         lbl.style.fontSize = '13px';
-        lbl.innerHTML = '<input type="checkbox" data-batch="' + b.key + '" data-batchnum="' + batchNum + '" onchange="if(this.checked)window.__grantBatches.add(this.dataset.batch);else window.__grantBatches.delete(this.dataset.batch);"> ' + b.label + ' (' + b.chars.length + ' car.)';
+        lbl.innerHTML = '<input type="checkbox" data-batch="' + b.key + '" data-batchnum="' + batchNum + '" onchange="if(this.checked)window.__grantBatches[currentGroupMode].add(this.dataset.batch);else window.__grantBatches[currentGroupMode].delete(this.dataset.batch);"> ' + b.label + ' (' + b.chars.length + ' car.)';
         subDiv.appendChild(lbl);
       });
 
@@ -1643,8 +1643,8 @@ function renderBatchChecks() {
       // 小组复选框联动
       subDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.onchange = () => {
-          if(cb.checked) window.__grantBatches.add(cb.dataset.batch);
-          else window.__grantBatches.delete(cb.dataset.batch);
+          if(cb.checked) window.__grantBatches[currentGroupMode].add(cb.dataset.batch);
+          else window.__grantBatches[currentGroupMode].delete(cb.dataset.batch);
           const allChecked = [...subDiv.querySelectorAll('input[type="checkbox"]')].every(x => x.checked);
           groupCb.checked = allChecked;
           updateExportStat();
@@ -1781,7 +1781,7 @@ document.querySelectorAll('input[name="groupMode"]').forEach(radio => {
   radio.onchange = () => {
     // 切模式前：先把當前 DOM 的 checked 同步到全局 Set（防止丟失）
     document.querySelectorAll("#batchCheckRow input[data-batch]:checked").forEach(cb => {
-      window.__grantBatches.add(cb.dataset.batch);
+      window.__grantBatches[currentGroupMode].add(cb.dataset.batch);
     });
     currentGroupMode = document.querySelector('input[name="groupMode"]:checked').value;
     renderBatchChecks();
@@ -1824,7 +1824,7 @@ function setupTeacherFilterUI() {
 /* ===== 學生過濾：只顯示開放的批次與文法等級（module script 調用） ===== */
 window.__hanziGrant = null;
 window.__pendingHanziGrant = null;
-window.__grantBatches = new Set();
+window.__grantBatches = { L: new Set(), HSK: new Set() };
 function batchKeyOfL(it){
   const arr = charList.filter(x => x.level === it.level).sort((a,b)=>parseInt(a.id,10)-parseInt(b.id,10));
   const idx = arr.findIndex(x => x.id === it.id);
@@ -1897,7 +1897,11 @@ function restoreHanziGrant(g){
   if(!g) return;
   const batches = g.batches || [];
   const levels = g.levels || [];
-  window.__grantBatches = new Set(batches);
+  window.__grantBatches = { L: new Set(), HSK: new Set() };
+  batches.forEach(b => {
+    if(b.startsWith("HSK")) window.__grantBatches.HSK.add(b);
+    else window.__grantBatches.L.add(b);
+  });
   // 切回保存時的分組模式
   if(g.groupMode && g.groupMode !== currentGroupMode){
     currentGroupMode = g.groupMode;
@@ -2023,31 +2027,24 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
       stat.textContent = "請先以老師帳號登入：名字 Blissfulmeow / 密碼 tutu1987（Login como profesora）";
       return;
     }
-    // 同時收集當前 DOM checked + 全局 Set（雙保險）
+    // 收集兩個模式的所有勾選 + 當前 DOM checked
     const domBatches = [...document.querySelectorAll("#batchCheckRow input[data-batch]:checked")].map(cb => cb.dataset.batch);
-    const batches = [...new Set([...window.__grantBatches, ...domBatches])];
+    const allBatches = new Set([...(window.__grantBatches.L||[]), ...(window.__grantBatches.HSK||[]), ...domBatches]);
+    const batches = [...allBatches];
     const levels = [];
     document.querySelectorAll("#gLevelCheckRow input:checked").forEach(cb => levels.push(Number(cb.dataset.gl)));
     const name = document.getElementById("studentNameInput").value.trim();
     if(!name){ stat.textContent = "Escribe el nombre del alumno."; return; }
     if(batches.length === 0 && levels.length === 0){ stat.textContent = "Selecciona al menos un lote o nivel."; return; }
     const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
-    // 先讀現有 grants，合併舊 batches（防止覆蓋其他模式的勾選）
+    await setDoc(doc(db, "grants", email), { hanzi: { batches: batches, levels: levels, groupMode: currentGroupMode, updatedAt: new Date() } }, { merge: true });
+    const mergedBatches = batches;
     let oldBatches = [];
-    try {
-      const oldSnap = await getDoc(doc(db, "grants", email));
-      if(oldSnap.exists()){
-        const oldHanzi = oldSnap.data().hanzi || {};
-        oldBatches = oldHanzi.batches || [];
-      }
-    } catch(e) {}
-    const mergedBatches = [...new Set([...oldBatches, ...batches])];
-    await setDoc(doc(db, "grants", email), { hanzi: { batches: mergedBatches, levels: levels, groupMode: currentGroupMode, updatedAt: new Date() } }, { merge: true });
     // 立即重新讀回確認
     const verify = await getDoc(doc(db, "grants", email));
     const vData = verify.exists() ? (verify.data().hanzi || {}) : {};
     const vBatches = vData.batches || [];
-    alert("✓ 已儲存雲端\n寫入: " + mergedBatches.length + " 批次（含舊 " + oldBatches.length + "）\n讀回: " + vBatches.length + " 批次\n給: " + email + (vBatches.length !== batches.length ? "\n⚠️ 讀回數量不符！" : ""));
+    alert("✓ 已儲存雲端\n寫入: " + mergedBatches.length + " 批次\n讀回: " + vBatches.length + " 批次\n給: " + email + (vBatches.length !== batches.length ? "\n⚠️ 讀回數量不符！" : ""));
     stat.textContent = "✓ Guardado (" + vBatches.length + "/" + batches.length + " lotes) → " + email;
   } catch(e) {
     stat.textContent = "Error: " + (e.message || e);
