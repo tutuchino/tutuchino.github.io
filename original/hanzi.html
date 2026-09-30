@@ -1876,6 +1876,13 @@ function restoreHanziGrant(g){
   if(!g) return;
   const batches = g.batches || [];
   const levels = g.levels || [];
+  // 切回保存時的分組模式
+  if(g.groupMode && g.groupMode !== currentGroupMode){
+    currentGroupMode = g.groupMode;
+    const radio = document.querySelector('input[name="groupMode"][value="' + g.groupMode + '"]');
+    if(radio) radio.checked = true;
+    renderBatchChecks();
+  }
   document.querySelectorAll("#batchCheckRow input[data-batch]").forEach(cb => {
     cb.checked = batches.includes(cb.dataset.batch);
   });
@@ -1969,7 +1976,7 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
     if(!name){ stat.textContent = "Escribe el nombre del alumno."; return; }
     if(batches.length === 0 && levels.length === 0){ stat.textContent = "Selecciona al menos un lote o nivel."; return; }
     const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
-    await setDoc(doc(db, "grants", email), { hanzi: { batches: batches, levels: levels, updatedAt: new Date() } }, { merge: true });
+    await setDoc(doc(db, "grants", email), { hanzi: { batches: batches, levels: levels, groupMode: currentGroupMode, updatedAt: new Date() } }, { merge: true });
     // 立即重新讀回確認
     const verify = await getDoc(doc(db, "grants", email));
     const vData = verify.exists() ? (verify.data().hanzi || {}) : {};
