@@ -423,6 +423,7 @@
 </style>
 </head>
 <body>
+<script>try{if(localStorage.getItem('tt-theme')==='dark')document.body.classList.add('dark');var z=localStorage.getItem('tt-zoom');if(z)document.documentElement.style.zoom=z;}catch(e){}</script>
 <div class="container">
 <div class="toolbar">
   <a class="tb" href="../index.html" title="Volver al inicio">⌂ Inicio</a>
@@ -2645,10 +2646,11 @@ const db = getFirestore(fb);
 /* 工具條：字體縮放 + 暗色（掛 window 供頁面 onclick 調用） */
 window.zoomPage = function(d){
   const cur = parseFloat(document.documentElement.style.zoom || 1);
-  document.documentElement.style.zoom = Math.max(0.85, Math.min(1.25, cur + d*0.07));
+  document.documentElement.style.zoom = Math.max(0.85, Math.min(1.25, cur + d*0.07)); try{localStorage.setItem("tt-zoom", document.documentElement.style.zoom);}catch(e){}
 };
 window.toggleDarkAll = function(){
   document.body.classList.toggle("dark");
+  try{localStorage.setItem("tt-theme", document.body.classList.contains("dark")?"dark":"light");}catch(e){}
   const b = document.getElementById("darkToggleBtn");
   if(b) b.textContent = document.body.classList.contains("dark") ? "◐" : "◐";
 };

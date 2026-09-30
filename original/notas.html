@@ -72,6 +72,7 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
 </style>
 </head>
 <body>
+<script>try{if(localStorage.getItem('tt-theme')==='dark')document.body.classList.add('dark');var z=localStorage.getItem('tt-zoom');if(z)document.documentElement.style.zoom=z;}catch(e){}</script>
 <div class="tb">
   <a href="../index.html">⌂ Inicio</a>
   <button onclick="zoomPage(-1)">A−</button>
@@ -128,8 +129,8 @@ const db = getFirestore(fb);
 
 /* 工具條 */
 let zlvl = 3; const ZOOMS = [0.85,0.92,1.0,1.1,1.2];
-window.zoomPage = d => { zlvl=Math.max(1,Math.min(5,zlvl+d)); document.documentElement.style.zoom=ZOOMS[zlvl-1]; };
-window.toggleDarkAll = () => document.body.classList.toggle("dark");
+window.zoomPage = d => { zlvl=Math.max(1,Math.min(5,zlvl+d)); document.documentElement.style.zoom=ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){} };
+window.toggleDarkAll = () => { document.body.classList.toggle("dark"); try{localStorage.setItem("tt-theme", document.body.classList.contains("dark")?"dark":"light");}catch(e){} };
 
 /* 朗讀 */
 window.speak = (text) => {

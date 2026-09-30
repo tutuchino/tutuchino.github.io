@@ -97,6 +97,7 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
 </style>
 </head>
 <body>
+<script>try{if(localStorage.getItem('tt-theme')==='night')document.documentElement.classList.add('night');var z=localStorage.getItem('tt-zoom');if(z)document.documentElement.style.zoom=z;}catch(e){}</script>
 <div class="wrap">
   <div class="tools">
     <button onclick="zoom(-1)" title="縮小">A−</button>
@@ -194,9 +195,9 @@ let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
-  document.documentElement.style.zoom = ZOOMS[zlvl-1];
+  document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};
 };
-window.toggleNight = () => { document.documentElement.classList.toggle("night"); };
+window.toggleNight = () => { document.documentElement.classList.toggle("night"); try{localStorage.setItem("tt-theme", document.documentElement.classList.contains("night")?"night":"light");}catch(e){} };
 
 function $(id){ return document.getElementById(id); }
 function usernameToEmail(u){ return u.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com"; }

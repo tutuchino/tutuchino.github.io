@@ -77,6 +77,7 @@
 
 </head>
 <body>
+<script>try{if(localStorage.getItem('tt-theme')==='dark')document.body.classList.add('dark');var z=localStorage.getItem('tt-zoom');if(z)document.documentElement.style.zoom=z;}catch(e){}</script>
 
 <div class="toolbar">
   <a class="tb" href="../index.html" title="Volver al inicio">⌂ Inicio</a>
@@ -469,10 +470,11 @@ function toggleClfPanel(headerEl) {
 /* ===== 統一工具條：字體縮放 + 暗色 ===== */
 function zoomPage(d){
   const cur = parseFloat(document.documentElement.style.zoom || 1);
-  document.documentElement.style.zoom = Math.max(0.85, Math.min(1.25, cur + d*0.07));
+  document.documentElement.style.zoom = Math.max(0.85, Math.min(1.25, cur + d*0.07)); try{localStorage.setItem("tt-zoom", document.documentElement.style.zoom);}catch(e){}
 }
 function toggleDarkAll(){
   document.body.classList.toggle("dark");
+  try{localStorage.setItem("tt-theme", document.body.classList.contains("dark")?"dark":"light");}catch(e){}
   const b = document.getElementById("darkToggleBtn");
   if(b) b.textContent = document.body.classList.contains("dark") ? "◐" : "◐";
 }
