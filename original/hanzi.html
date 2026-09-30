@@ -1632,10 +1632,11 @@ function renderBatchChecks() {
 
       // 大组复选框联动
       groupCb.onchange = () => {
+        const mode = currentGroupMode;
         subDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
           cb.checked = groupCb.checked;
-          if(groupCb.checked) window.__grantBatches.add(cb.dataset.batch);
-          else window.__grantBatches.delete(cb.dataset.batch);
+          if(groupCb.checked) window.__grantBatches[mode].add(cb.dataset.batch);
+          else window.__grantBatches[mode].delete(cb.dataset.batch);
         });
         updateExportStat();
       };
