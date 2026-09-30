@@ -167,7 +167,6 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
         <div class="tp-stats" id="tpStats"></div>
         <div class="tp-switch">
           <label><input type="checkbox" id="swTarjetas"> 📚 閃卡入口</label>
-          <label><input type="checkbox" id="swNotas" style="display:none" style="display:none"> 📝 筆記入口</label>
         </div>
         <div class="tp-actions">
           <a class="tp-go-tar" id="goTarjetas" href="#">✎ 管理閃卡內容</a>
@@ -214,7 +213,7 @@ const db = getFirestore(fb);
 
 let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
-const VER = "20261001a"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
+const VER = "20261001b"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
   document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};

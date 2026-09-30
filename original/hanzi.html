@@ -2028,8 +2028,10 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
       stat.textContent = "請先以老師帳號登入：名字 Blissfulmeow / 密碼 tutu1987（Login como profesora）";
       return;
     }
-    // 先讀舊 Firestore grants，按前綴分 L/HSK，合併當前勾選
+    const name = document.getElementById("studentNameInput").value.trim();
+    if(!name){ stat.textContent = "Escribe el nombre del alumno."; return; }
     const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
+    // 先讀舊 Firestore grants，按前綴分 L/HSK，合併當前勾選
     const domBatches = [...document.querySelectorAll("#batchCheckRow input[data-batch]:checked")].map(cb => cb.dataset.batch);
     const oldL = new Set(), oldH = new Set();
     try {
@@ -2044,8 +2046,6 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
     const batches = [...allBatches];
     const levels = [];
     document.querySelectorAll("#gLevelCheckRow input:checked").forEach(cb => levels.push(Number(cb.dataset.gl)));
-    const name = document.getElementById("studentNameInput").value.trim();
-    if(!name){ stat.textContent = "Escribe el nombre del alumno."; return; }
     await setDoc(doc(db, "grants", email), { hanzi: { batches: batches, levels: levels, groupMode: currentGroupMode, updatedAt: new Date() } }, { merge: true });
     const mergedBatches = batches;
     let oldBatches = [];
