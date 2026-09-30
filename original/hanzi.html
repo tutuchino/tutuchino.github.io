@@ -1917,9 +1917,11 @@ function restoreHanziGrant(g){
     cb.checked = levels.includes(Number(cb.dataset.gl));
   });
   // 展開有勾選的 group + 同步大組複選框
+  let restored = 0;
   document.querySelectorAll("#batchCheckRow .check-label").forEach(lbl => {
     const cb = lbl.querySelector("input[data-batch]");
     if(cb && cb.checked){
+      restored++;
       const subDiv = lbl.parentElement;
       if(subDiv) subDiv.style.display = "block";
       const header = subDiv.previousElementSibling;
@@ -1933,6 +1935,11 @@ function restoreHanziGrant(g){
       }
     }
   });
+  if(typeof updateExportStat === "function") updateExportStat();
+  console.log("restoreHanziGrant: batches=" + batches.length + " restored=" + restored + " mode=" + currentGroupMode);
+  if(location.search.includes("student=") && batches.length > 0){
+    setTimeout(() => alert("除錯：恢復 " + batches.length + " 個批次，實際勾選 " + restored + " 個，模式 " + currentGroupMode), 500);
+  }
   if(typeof updateExportStat === "function") updateExportStat();
   // 雙保險：200ms 後再恢復一次（防止渲染時序問題）
   setTimeout(() => {
