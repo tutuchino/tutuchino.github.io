@@ -214,6 +214,7 @@ const db = getFirestore(fb);
 
 let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
+const VER = "20260930a"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
   document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};
@@ -399,13 +400,13 @@ async function showStudent(email){
     $("duo").style.display = "none";
     $("cardmods").querySelectorAll("a").forEach(a=>{
       if(a.classList.contains("back-row")) return;
-      a.href = a.href.replace("original/hanzi.html","original/hanzi.html?student="+encodeURIComponent(email.split("@")[0]))
-                     .replace("original/words.html","original/words.html?student="+encodeURIComponent(email.split("@")[0]))
-                     .replace("original/clf.html","original/clf.html?student="+encodeURIComponent(email.split("@")[0]));
+      a.href = a.href.replace("original/hanzi.html","original/hanzi.html?v="+VER+"&student="+encodeURIComponent(email.split("@")[0]))
+                     .replace("original/words.html","original/words.html?v="+VER+"&student="+encodeURIComponent(email.split("@")[0]))
+                     .replace("original/clf.html","original/clf.html?v="+VER+"&student="+encodeURIComponent(email.split("@")[0]));
     });
     return false;
   };
-  $("goNotas").href = "original/notas.html?student=" + encodeURIComponent(email.split("@")[0]);
+  $("goNotas").href = "original/notas.html?v=" + VER + "&student=" + encodeURIComponent(email.split("@")[0]);
 }
 
 $("swTarjetas").onchange = async e => {

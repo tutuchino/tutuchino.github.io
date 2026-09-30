@@ -85,8 +85,8 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
 
 <!-- 老師：新增筆記面板 -->
 <div class="teacher-panel" id="teacherPanel">
-  <label>學生帳號（如 facundo.garcia）</label>
-  <input id="tEmail" placeholder="nombre.apellido" value="">
+  <div id="tEmailRow"><label>學生帳號（如 facundo.garcia，或完整 email）</label>
+  <input id="tEmail" placeholder="nombre.apellido" value=""></div>
   <label>上課日期</label>
   <input id="tDate" type="date">
   <label>摘要（這節課教了什麼，一兩行）</label>
@@ -95,18 +95,21 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
   <textarea id="tScript" placeholder="每行一句中文即可（拼音自動生成）&#10;今天&#10;明天&#10;要加西語翻譯：今天|||Hoy"></textarea>
   <label>補充生詞（每行：中文|||拼音|||西班牙文）</label>
   <textarea id="tVocab" placeholder="後天|||hòu tiān|||pasado mañana"></textarea>
-  <label>影片連結（可選）</label>
-  <input id="tVideo" placeholder="https://...">
-  <label>錄音連結（可選，vocaroo 等）</label>
-  <input id="tAudio" placeholder="https://...">
+  <label>影片連結（可選，一行一個，可多個）</label>
+  <textarea id="tVideo" placeholder="https://...\nhttps://..." rows="2"></textarea>
+  <label>錄音連結（可選，vocaroo 等，一行一個，可多個）</label>
+  <textarea id="tAudio" placeholder="https://...\nhttps://..." rows="2"></textarea>
   <div style="display:flex;gap:8px;margin-top:8px">
     <button class="btn-main" onclick="saveNote()">儲存筆記 · Guardar</button>
   </div>
 </div>
 
-<div class="note-filter" id="noteFilter" style="display:none">
-  <input type="date" id="fDate" style="flex:1;min-width:120px">
-  <button class="btn-main" onclick="document.getElementById('fDate').value='';applyDateFilter();" style="flex:0">全部日期</button>
+<div class="note-filter" id="noteFilter" style="display:none;flex-direction:column;gap:8px;">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <input type="date" id="fDate" style="flex:1;min-width:120px">
+    <button class="btn-main" onclick="document.getElementById('fDate').value='';applyDateFilter();" style="flex:0">全部日期</button>
+  </div>
+  <input type="text" id="fSearch" placeholder="🔍 搜尋內容（摘要/句子/生詞）· Buscar" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line,#d4c08a);font-size:13px;background:var(--input,#fff);color:var(--text,#5a4632);box-sizing:border-box;">
 </div>
 <div id="noteList"><div class="hint">Cargando… 載入中…</div></div>
 
@@ -114,7 +117,7 @@ h1{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;margin:6px 0
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, query, where, orderBy, getDocs, addDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const fb = initializeApp({
   apiKey: "AIzaSyC_C9Mj_xAXyVTcd34v1VfnffvgJMDMLm8",
@@ -184,22 +187,29 @@ function parseVocab(txt){
   });
 }
 
+function normEmail(raw){
+  const v = (raw||"").trim().toLowerCase();
+  if(!v) return "";
+  if(v.includes("@")) return v.replace(/[^a-z0-9.@]+/g,".");
+  return v.replace(/[^a-z0-9.]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
+}
+function splitUrls(txt){ return (txt||"").split(/\n|\r|,/).map(s=>s.trim()).filter(Boolean); }
 async function saveNote(){
-  const email = document.getElementById("tEmail").value.trim().toLowerCase().replace(/[^a-z0-9.]+/g,".");
-  if(!email){ alert("請輸入學生帳號"); return; }
+  const email = normEmail(document.getElementById("tEmail").value);
+  if(!email){ alert("請輸入學生帳號 / Escribe el email del alumno"); return; }
   const data = {
     studentEmail: email,
     date: document.getElementById("tDate").value || new Date().toISOString().slice(0,10),
     summary: document.getElementById("tSummary").value.trim(),
     script: parseScript(document.getElementById("tScript").value),
     vocab: parseVocab(document.getElementById("tVocab").value),
-    videoUrl: document.getElementById("tVideo").value.trim(),
-    audioUrl: document.getElementById("tAudio").value.trim(),
+    videoUrls: splitUrls(document.getElementById("tVideo").value),
+    audioUrls: splitUrls(document.getElementById("tAudio").value),
     createdAt: new Date()
   };
   try{
     await addDoc(collection(db, "notes"), data);
-    alert("已儲存 ✓");
+    alert("已儲存 ✓ 共 " + data.script.length + " 句 + " + data.vocab.length + " 詞");
     document.getElementById("tSummary").value="";
     document.getElementById("tScript").value="";
     document.getElementById("tVocab").value="";
@@ -215,12 +225,17 @@ async function loadNotes(forceEmail){
   const targetEmail = forceEmail || currentUser.email;
   list.innerHTML = `<div class="hint">Cargando…</div>`;
   try{
-    const q = query(collection(db,"notes"), where("studentEmail","==",targetEmail), orderBy("date","desc"));
+    const q = query(collection(db,"notes"), where("studentEmail","==",targetEmail));
     const snap = await getDocs(q);
     if(snap.empty){ list.innerHTML = `<div class="hint">尚無筆記。<br>Todavía no hay notas.</div>`; return; }
     let html = "";
     window._notesData = {};
-    snap.forEach(doc=>{
+    // 客戶端按日期新→舊排序（避免 Firestore 複合索引）
+    const docs = [...snap.docs].sort((a,b)=>{
+      const da = (a.data().date||""), db_ = (b.data().date||"");
+      return da === db_ ? 0 : (da < db_ ? 1 : -1);
+    });
+    docs.forEach(doc=>{
       const nn = doc.data();
       window._notesData[doc.id] = nn;
       const totalCards = (nn.script||[]).length + (nn.vocab||[]).length;
@@ -237,9 +252,9 @@ async function loadNotes(forceEmail){
             ${s.es?`<div class="script-es" onclick="event.stopPropagation();speakEs('${(s.es||'').replace(/'/g,"\\'")}')">${s.es}</div>`:""}
           </div>`).join("")}
           ${(nn.vocab && nn.vocab.length) ? `<div class="vocab-box"><h4>📖 補充生詞</h4>${nn.vocab.map(v=>`<span class="vocab-item" onclick="speak('${(v.zh||'').replace(/'/g,"\\'")}')">${v.zh||""}<span class="py">${v.pinyin||""}</span><span class="es">${v.es||""}</span></span>`).join("")}</div>`:""}
-          ${(nn.videoUrl||nn.audioUrl) ? `<div class="links">
-            ${nn.videoUrl?`<a href="${nn.videoUrl}" target="_blank">▶ 影片 · Video</a>`:""}
-            ${nn.audioUrl?`<a href="${nn.audioUrl}" target="_blank">🎧 錄音 · Audio</a>`:""}
+          ${((nn.videoUrls||[]).length || (nn.audioUrls||[]).length || nn.videoUrl || nn.audioUrl) ? `<div class="links">
+            ${(nn.videoUrls||(nn.videoUrl?[nn.videoUrl]:[])).map(u=>`<a href="${u}" target="_blank">▶ 影片 · Video</a>`).join("")}
+            ${(nn.audioUrls||(nn.audioUrl?[nn.audioUrl]:[])).map(u=>`<a href="${u}" target="_blank">🎧 錄音 · Audio</a>`).join("")}
           </div>`:""}
         </div>
       </div>`;
@@ -256,10 +271,15 @@ async function loadNotes(forceEmail){
     }
     window.applyDateFilter = () => {
       const d = document.getElementById("fDate").value;
+      const kw = (document.getElementById("fSearch").value||"").trim().toLowerCase();
       document.querySelectorAll("#noteList .note").forEach(n=>{
-        n.style.display = (!d || (n.querySelector(".note-date")||{}).textContent === d) ? "" : "none";
+        const okDate = !d || (n.querySelector(".note-date")||{}).textContent === d;
+        const okKw = !kw || n.textContent.toLowerCase().includes(kw);
+        n.style.display = (okDate && okKw) ? "" : "none";
       });
     };
+    const fSearch = document.getElementById("fSearch");
+    if(fSearch) fSearch.oninput = applyDateFilter;
     // 統計：記錄開啟次數
     try{ await setDoc(doc(db,"stats",currentUser.email),{notasOpen:{count:1,last:new Date()}},{merge:true}); }catch(e){}
   }catch(e){
@@ -277,8 +297,9 @@ onAuthStateChanged(auth, async (user) => {
     /* 支援網址帶學生名（後台跳轉） */
     const sp = new URLSearchParams(location.search).get("student");
     if(sp){
-      const email = sp.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
+      const email = normEmail(sp);
       document.getElementById("tEmail").value = email;
+      const tr = document.getElementById("tEmailRow"); if(tr) tr.style.display = "none";
       await loadNotes(email);
       return;
     }

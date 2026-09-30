@@ -1889,14 +1889,21 @@ function restoreHanziGrant(g){
   document.querySelectorAll("#gLevelCheckRow input").forEach(cb => {
     cb.checked = levels.includes(Number(cb.dataset.gl));
   });
-  // 展開有勾選的 group
+  // 展開有勾選的 group + 同步大組複選框
   document.querySelectorAll("#batchCheckRow .check-label").forEach(lbl => {
     const cb = lbl.querySelector("input[data-batch]");
     if(cb && cb.checked){
       const subDiv = lbl.parentElement;
       if(subDiv) subDiv.style.display = "block";
       const header = subDiv.previousElementSibling;
-      if(header){ const t = header.querySelector("span"); if(t) t.textContent = "▼"; }
+      if(header){
+        const t = header.querySelector("span");
+        if(t && t.textContent.trim() === "▶") t.textContent = "▼";
+        const boxes = subDiv.querySelectorAll("input[data-batch]");
+        const allChecked = boxes.length > 0 && [...boxes].every(b => b.checked);
+        const groupCb = header.querySelector("input[type=checkbox]");
+        if(groupCb) groupCb.checked = allChecked;
+      }
     }
   });
   if(typeof updateExportStat === "function") updateExportStat();
@@ -1913,7 +1920,7 @@ onAuthStateChanged(auth, async (user) => {
       const email = sp.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
       const inp = document.getElementById("studentNameInput");
       if(inp){ inp.value = sp; inp.style.display = "none";
-        const lbl = inp.closest(".section-title"); if(lbl) lbl.style.display = "none";
+        const lbl = inp.previousElementSibling; if(lbl && lbl.classList.contains("section-title")) lbl.style.display = "none";
       }
       try {
         const snap = await getDoc(doc(db, "grants", email));

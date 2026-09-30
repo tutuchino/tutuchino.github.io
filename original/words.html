@@ -2678,17 +2678,46 @@ onAuthStateChanged(auth, async (user) => {
           cb.checked = cats.includes(v);
           if(cb.checked) matched++;
         });
+        // 先展開 HSK level 層級（有勾的 Nivel 展開其 Parte 列表）
+        document.querySelectorAll(".level-master-check").forEach(lc => {
+          const lvlIdx = Number(lc.dataset.levelIdx);
+          const cat = CATEGORIES.find(c => c.id === lc.dataset.catId);
+          let idxs = [];
+          if(cat && cat.levels && cat.levels[lvlIdx]) idxs = cat.levels[lvlIdx].subs.map(s => s._origIdx);
+          const boxes = [...document.querySelectorAll('.sub-check[data-cat-id="' + lc.dataset.catId + '"]')].filter(b => idxs.includes(Number(b.dataset.subIdx)));
+          const n = boxes.filter(b => b.checked).length;
+          if(n > 0){
+            lc.checked = (n === boxes.length);
+            const header = lc.parentElement;
+            if(header){
+              const subList = header.nextElementSibling;
+              if(subList && subList.classList && subList.classList.contains("level-sub-list")) subList.style.display = "";
+              const arr = header.querySelector("span");
+              if(arr && arr.textContent.trim() === "▸") arr.textContent = "▼";
+              const catSubList = header.parentElement;
+              if(catSubList && catSubList.classList && catSubList.classList.contains("cat-sub-list")){
+                catSubList.style.display = "";
+                const catHeader = catSubList.previousElementSibling;
+                if(catHeader){
+                  const a2 = catHeader.querySelector("span");
+                  if(a2 && a2.textContent.trim() === "▸") a2.textContent = "▼";
+                }
+              }
+            }
+          }
+        });
+        // 再展開 cat 層級（有勾的分類展開其子列表）
         document.querySelectorAll(".cat-master-check").forEach(mc => {
           const cid = mc.dataset.catId;
           const subs = document.querySelectorAll('.sub-check[data-cat-id="' + cid + '"]');
           const checkedCount = [...subs].filter(s => s.checked).length;
           mc.checked = (subs.length > 0 && checkedCount === subs.length);
           if(checkedCount > 0){
-            const header = mc.closest("[onclick]");
+            const header = mc.parentElement;
             if(header && header.nextElementSibling){
               header.nextElementSibling.style.display = "";
               const arrow = header.querySelector("span");
-              if(arrow) arrow.textContent = "▼";
+              if(arrow && arrow.textContent.trim() === "▸") arrow.textContent = "▼";
             }
           }
         });
