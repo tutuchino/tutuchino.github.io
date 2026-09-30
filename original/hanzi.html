@@ -1632,13 +1632,19 @@ function renderBatchChecks() {
 
       // 大组复选框联动
       groupCb.onchange = () => {
-        subDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = groupCb.checked);
+        subDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          cb.checked = groupCb.checked;
+          if(groupCb.checked) window.__grantBatches.add(cb.dataset.batch);
+          else window.__grantBatches.delete(cb.dataset.batch);
+        });
         updateExportStat();
       };
 
       // 小组复选框联动
       subDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.onchange = () => {
+          if(cb.checked) window.__grantBatches.add(cb.dataset.batch);
+          else window.__grantBatches.delete(cb.dataset.batch);
           const allChecked = [...subDiv.querySelectorAll('input[type="checkbox"]')].every(x => x.checked);
           groupCb.checked = allChecked;
           updateExportStat();
