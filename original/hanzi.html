@@ -1907,6 +1907,32 @@ function restoreHanziGrant(g){
     }
   });
   if(typeof updateExportStat === "function") updateExportStat();
+  // 雙保險：200ms 後再恢復一次（防止渲染時序問題）
+  setTimeout(() => {
+    document.querySelectorAll("#batchCheckRow input[data-batch]").forEach(cb => {
+      cb.checked = batches.includes(cb.dataset.batch);
+    });
+    document.querySelectorAll("#gLevelCheckRow input").forEach(cb => {
+      cb.checked = levels.includes(Number(cb.dataset.gl));
+    });
+    document.querySelectorAll("#batchCheckRow .check-label").forEach(lbl => {
+      const cb = lbl.querySelector("input[data-batch]");
+      if(cb && cb.checked){
+        const subDiv = lbl.parentElement;
+        if(subDiv) subDiv.style.display = "block";
+        const header = subDiv.previousElementSibling;
+        if(header){
+          const t = header.querySelector("span");
+          if(t && t.textContent.trim() === "▶") t.textContent = "▼";
+          const boxes = subDiv.querySelectorAll("input[data-batch]");
+          const allChecked = boxes.length > 0 && [...boxes].every(b => b.checked);
+          const groupCb = header.querySelector("input[type=checkbox]");
+          if(groupCb) groupCb.checked = allChecked;
+        }
+      }
+    });
+    if(typeof updateExportStat === "function") updateExportStat();
+  }, 200);
 }
 
 onAuthStateChanged(auth, async (user) => {
