@@ -177,14 +177,28 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
       </div>
     </div>
 
-    <div class="logout-row"><button id="btn-logout">登出 · Salir</button></div>
+    <div class="logout-row">
+  <button id="btn-logout">登出 · Salir</button>
+  <button id="btn-changepw" style="margin-left:8px;">修改密碼 · Cambiar contraseña</button>
+</div>
+<div id="pwModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:var(--card);border-radius:14px;padding:24px;width:90%;max-width:340px;">
+    <h3 style="margin:0 0 14px;font-size:16px;">修改密碼</h3>
+    <input id="pwOld" type="password" placeholder="舊密碼" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--input);color:var(--text);box-sizing:border-box;">
+    <input id="pwNew1" type="password" placeholder="新密碼（至少6碼）" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--input);color:var(--text);box-sizing:border-box;">
+    <input id="pwNew2" type="password" placeholder="再輸入新密碼" style="width:100%;padding:10px;margin-bottom:12px;border:1px solid var(--line);border-radius:8px;background:var(--input);color:var(--text);box-sizing:border-box;">
+    <div id="pwMsg" style="font-size:12px;color:var(--warn);margin-bottom:10px;"></div>
+    <button id="pwSave" style="width:100%;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;">確認修改</button>
+    <button id="pwCancel" style="width:100%;padding:9px;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--text);cursor:pointer;">取消</button>
+  </div>
+</div>
     <footer>Chino Básico por Tema · 基礎中文 — 按主題學習</footer>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const fb = initializeApp({
@@ -220,6 +234,24 @@ $("btn-login").onclick = async () => {
   }
   try{ await signInWithEmailAndPassword(auth, usernameToEmail(u), p); }
   catch(e){ $("login-err").textContent="登入失敗：名字或密碼錯誤"; }
+};
+
+$("btn-changepw").onclick = () => { $("pwModal").style.display = "flex"; };
+$("pwCancel").onclick = () => { $("pwModal").style.display = "none"; $("pwMsg").textContent=""; };
+$("pwSave").onclick = async () => {
+  const oldP = $("pwOld").value, n1 = $("pwNew1").value, n2 = $("pwNew2").value;
+  if(!oldP || !n1){ $("pwMsg").textContent = "請填寫完整"; return; }
+  if(n1.length < 6){ $("pwMsg").textContent = "新密碼至少6碼"; return; }
+  if(n1 !== n2){ $("pwMsg").textContent = "兩次新密碼不一致"; return; }
+  try {
+    const u = auth.currentUser;
+    const cred = await signInWithEmailAndPassword(auth, u.email, oldP);
+    await updatePassword(cred.user, n1);
+    $("pwMsg").textContent = "✓ 密碼已更新";
+    setTimeout(()=>{ $("pwModal").style.display="none"; $("pwOld").value=""; $("pwNew1").value=""; $("pwNew2").value=""; }, 1500);
+  } catch(e) {
+    $("pwMsg").textContent = "錯誤：" + (e.code === "auth/wrong-password" ? "舊密碼不正確" : (e.message||e));
+  }
 };
 
 onAuthStateChanged(auth, async (user) => {

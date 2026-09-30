@@ -1970,8 +1970,12 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
     if(batches.length === 0 && levels.length === 0){ stat.textContent = "Selecciona al menos un lote o nivel."; return; }
     const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
     await setDoc(doc(db, "grants", email), { hanzi: { batches: batches, levels: levels, updatedAt: new Date() } }, { merge: true });
-    alert("✓ 已儲存雲端 · Guardado en la nube\n" + batches.length + " 個批次已開放給 " + name);
-    stat.textContent = "✓ Guardado en la nube para " + email + " (" + batches.length + " lotes)";
+    // 立即重新讀回確認
+    const verify = await getDoc(doc(db, "grants", email));
+    const vData = verify.exists() ? (verify.data().hanzi || {}) : {};
+    const vBatches = vData.batches || [];
+    alert("✓ 已儲存雲端\n寫入: " + batches.length + " 批次\n讀回: " + vBatches.length + " 批次\n給: " + email + (vBatches.length !== batches.length ? "\n⚠️ 讀回數量不符！" : ""));
+    stat.textContent = "✓ Guardado (" + vBatches.length + "/" + batches.length + " lotes) → " + email;
   } catch(e) {
     stat.textContent = "Error: " + (e.message || e);
   }
