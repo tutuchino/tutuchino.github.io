@@ -1475,7 +1475,9 @@ onAuthStateChanged(auth, async (user) => {
     if(sp){
       const email = sp.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
       const inp = document.getElementById("studentNameInput");
-      if(inp) inp.value = sp;
+      if(inp){ inp.value = sp; inp.style.display = "none";
+        const lbl = inp.previousElementSibling; if(lbl && lbl.classList.contains("section-title")) lbl.style.display = "none";
+      }
       try {
         const snap = await getDoc(doc(db, "grants", email));
         const g = snap.exists() ? (snap.data().clf || null) : {batches:[],levels:[]};
