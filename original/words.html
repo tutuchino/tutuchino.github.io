@@ -445,7 +445,7 @@
     <div class="page-subtitle">Selecciona una categoría para empezar</div>
     
 <!-- 老师版发放面板 -->
-<div id="teacherPanel" style="background:linear-gradient(135deg,#fff8e7 0%,#fef3d6 100%);border-radius:14px;padding:14px 18px;margin-bottom:16px;border:1px solid #e0c98a;">
+<div id="teacherPanel" style="display:none;background:linear-gradient(135deg,#fff8e7 0%,#fef3d6 100%);border-radius:14px;padding:14px 18px;margin-bottom:16px;border:1px solid #e0c98a;">
   <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="toggleTeacherPanel(this)">
     <span style="font-size:12px;color:#8b6914;transition:transform 0.2s;">▸</span>
     <h3 style="font-family:var(--serif);font-size:17px;color:#6b5423;letter-spacing:0.5px;flex:1;">Panel del Profesor</h3>
@@ -2659,6 +2659,7 @@ onAuthStateChanged(auth, async (user) => {
   if(!user) return;
   const isTeacher = user.email === "blissfulmeow@chino-basico-por-tema.firebaseapp.com";
   if(isTeacher){
+    const tp = document.getElementById("teacherPanel"); if(tp) tp.style.display = "block";
     /* 支援網址帶學生名（後台跳轉） */
     const sp = new URLSearchParams(location.search).get("student");
     if(sp){

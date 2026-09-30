@@ -99,7 +99,7 @@
 </div>
 
 <!-- 老師發放面板（折疊） -->
-<div style="background:linear-gradient(135deg,#fff8e7 0%,#fef3d6 100%);border-radius:14px;padding:12px 16px;margin:0 auto 14px;max-width:480px;border:1px solid #e0c98a;">
+<div id="teacherPanel" style="display:none;background:linear-gradient(135deg,#fff8e7 0%,#fef3d6 100%);border-radius:14px;padding:12px 16px;margin:0 auto 14px;max-width:480px;border:1px solid #e0c98a;">
   <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="toggleClfPanel(this)">
     <span style="font-size:12px;color:#8b6914;transition:transform 0.2s;">▸</span>
     <h3 style="font-family:var(--serif,serif);font-size:16px;color:#6b5423;letter-spacing:0.5px;flex:1;">Panel del Profesor</h3>
@@ -1458,6 +1458,7 @@ onAuthStateChanged(auth, async (user) => {
   if(!user) return;
   const isTeacher = user.email === "blissfulmeow@chino-basico-por-tema.firebaseapp.com";
   if(isTeacher){
+    document.querySelectorAll('div[style*="#fff8e7"]').forEach(p => { p.style.display = "block"; });
     /* 支援網址帶學生名（後台跳轉） */
     const sp = new URLSearchParams(location.search).get("student");
     if(sp){
@@ -1467,14 +1468,13 @@ onAuthStateChanged(auth, async (user) => {
       try {
         const snap = await getDoc(doc(db, "grants", email));
         const g = snap.exists() ? (snap.data().clf || null) : null;
-        if (window.applyClfGrant) window.applyClfGrant(g);
         if(typeof updateExportStat === "function") updateExportStat();
         const rows = document.querySelectorAll("#batchCheckRow input[data-batch]");
         rows.forEach(cb => { cb.checked = (g && g.batches) ? g.batches.includes(cb.dataset.batch) : false; });
         const lvRow = document.querySelectorAll("#lvCheckRow input");
         lvRow.forEach(cb => { cb.checked = (g && g.levels) ? g.levels.includes(Number(cb.dataset.lv)) : false; });
         const stat = document.getElementById("exportStat");
-        if(stat) stat.textContent = "已載入：" + sp;
+        if(stat) stat.textContent = "已載入：" + sp + "（老師視圖：全部批次可勾選）";
       } catch(e) { console.warn("url student load fail", e); }
     }
     return;

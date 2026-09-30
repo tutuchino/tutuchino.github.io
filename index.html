@@ -329,8 +329,15 @@ async function loadStudentList(){
       const st = await getDocs(collection(db, "stats"));
       st.forEach(d=>{ statsCache[d.id] = d.data(); });
     }catch(e){}
-    sel.innerHTML = '<option value="">— 選擇學生 —</option>' +
-      snap.docs.map(d=>`<option value="${d.id}">${fmtName(d.id)}</option>`).join("");
+    const seen = new Set();
+    const opts = [];
+    snap.docs.forEach(d=>{
+      const nm = fmtName(d.id);
+      if(seen.has(nm)) return;
+      seen.add(nm);
+      opts.push(`<option value="${d.id}">${nm}</option>`);
+    });
+    sel.innerHTML = '<option value="">— 選擇學生 —</option>' + opts.join("");
     sel.onchange = () => { if(sel.value) showStudent(sel.value); };
   }catch(e){
     $("tpEmpty").textContent = "載入學生失敗：" + e.message;

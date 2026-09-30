@@ -819,7 +819,7 @@
       <button class="top-btn" id="exportBackBtn">← Volver</button>
       <span class="search-status" id="exportStat" style="margin-left:auto;"></span>
     </div>
-    <div class="grammar-card">
+    <div class="grammar-card" id="teacherPanel" style="display:none">
       <div class="grammar-title">Exportar para alumno</div>
       <div class="grammar-sub">Selecciona los lotes que quieres abrir para este alumno (20 caracteres por lote). Los lotes no marcados no se incluirán en el archivo.</div>
       <div style="display:flex;gap:15px;margin:10px 0;padding:8px;background:var(--soft);border-radius:8px;align-items:center;flex-wrap:wrap;">
@@ -1875,6 +1875,7 @@ onAuthStateChanged(auth, async (user) => {
   if(!user) return;
   const isTeacher = user.email === "blissfulmeow@chino-basico-por-tema.firebaseapp.com";
   if(isTeacher){
+    const tp = document.getElementById("teacherPanel"); if(tp) tp.style.display = "block";
     /* 支援網址帶學生名（後台跳轉） */
     const sp = new URLSearchParams(location.search).get("student");
     if(sp){
@@ -1884,7 +1885,6 @@ onAuthStateChanged(auth, async (user) => {
       try {
         const snap = await getDoc(doc(db, "grants", email));
         const g = snap.exists() ? (snap.data().hanzi || null) : null;
-        if (window.applyHanziGrant) window.applyHanziGrant(g);
         if(typeof updateExportStat === "function") updateExportStat();
         const rows = document.querySelectorAll("#batchCheckRow input[data-batch]");
         rows.forEach(cb => { cb.checked = (g && g.batches) ? g.batches.includes(cb.dataset.batch) : false; });
