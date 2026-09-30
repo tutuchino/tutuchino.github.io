@@ -1845,7 +1845,7 @@ window.applyHanziGrant = function(grant){
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const fb = initializeApp({
@@ -1931,8 +1931,8 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
   try {
     let u = auth.currentUser;
     if(!u || u.email !== "blissfulmeow@chino-basico-por-tema.firebaseapp.com"){
-      const cred = await signInWithPopup(auth, new GoogleAuthProvider());
-      u = cred.user;
+      stat.textContent = "請先以老師帳號登入：名字 Blissfulmeow / 密碼 tutu1987（Login como profesora）";
+      return;
     }
     const batches = [];
     document.querySelectorAll("#batchCheckRow input[data-batch]:checked").forEach(cb => batches.push(cb.dataset.batch));

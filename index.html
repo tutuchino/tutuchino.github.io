@@ -71,6 +71,9 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
 .tpanel h2{font-size:15px;color:var(--warm2);font-weight:700;margin-bottom:4px;letter-spacing:.5px}
 .tpanel .tp-sub{font-size:12px;color:var(--sub);margin-bottom:12px}
 .tpanel select{width:100%;padding:10px 12px;font-size:15px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font-family:inherit;margin-bottom:12px}
+.tpanel .tp-add{display:flex;gap:8px;margin-bottom:12px}
+.tpanel .tp-add input{flex:1;padding:10px 12px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font-family:inherit}
+.tpanel .tp-add button{padding:10px 14px;font-size:14px;border:none;border-radius:10px;background:var(--warm2);color:#fff;cursor:pointer;white-space:nowrap}
 .tp-student{display:none;border-top:1.5px dashed var(--line);padding-top:12px}
 .tp-name{font-family:"Times New Roman",serif;font-size:20px;font-weight:700;color:var(--warm2);margin-bottom:2px}
 .tp-stats{font-size:12px;color:var(--sub);margin-bottom:12px}
@@ -154,6 +157,10 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
       <h2>🎓 管理學生 · Gestionar alumnos</h2>
       <div class="tp-sub">選擇學生 → 看開放狀態 → 新增或取消</div>
       <select id="studentSelect"><option value="">— 選擇學生 —</option></select>
+      <div class="tp-add">
+        <input id="tpNewName" placeholder="新增學生名字（如 Facundo García）" onkeydown="if(event.key==='Enter')addStudent()">
+        <button onclick="addStudent()">＋ 新增</button>
+      </div>
       <div class="tp-empty" id="tpEmpty"></div>
       <div class="tp-student" id="tpStudent">
         <div class="tp-name" id="tpName"></div>
@@ -177,7 +184,7 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const fb = initializeApp({
@@ -289,6 +296,24 @@ function fmtName(email){
   return raw.split(".").map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(" ");
 }
 function shortBatch(b){ return b.replace(/^L/,"N").replace(/-b/, " · "); }
+
+async function addStudent(){
+  const name = document.getElementById("tpNewName").value.trim();
+  if(!name){ alert("請輸入學生名字 · Escribí el nombre del alumno"); return; }
+  const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
+  try{
+    await setDoc(doc(db, "grants", email), { modules:{}, createdAt: new Date() }, { merge: true });
+    document.getElementById("tpNewName").value = "";
+    await loadStudentList();
+    const sel = document.getElementById("studentSelect");
+    [...sel.options].forEach(o=>{ if(o.value===email){ sel.value = email; } });
+    showStudent(email);
+    document.getElementById("tpEmpty").textContent = "✓ 已新增 " + name.split(" ").map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(" ") + "（" + email + "）";
+  }catch(e){
+    document.getElementById("tpEmpty").textContent = "新增失敗：" + e.message;
+  }
+}
+window.addStudent = addStudent;
 
 async function loadStudentList(){
   const sel = $("studentSelect");
