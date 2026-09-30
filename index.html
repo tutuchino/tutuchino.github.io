@@ -100,7 +100,7 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
 </style>
 </head>
 <body>
-<script>try{if(localStorage.getItem('tt-theme')==='night')document.documentElement.classList.add('night');var z=localStorage.getItem('tt-zoom');if(z)document.documentElement.style.zoom=z;}catch(e){}</script>
+<script>try{if(localStorage.getItem('tt-theme')==='dark')document.documentElement.classList.add('night');var z=localStorage.getItem('tt-zoom');if(z)document.documentElement.style.zoom=z;}catch(e){}</script>
 <div class="wrap">
   <div class="tools">
     <button onclick="zoom(-1)" title="縮小">A−</button>
@@ -158,7 +158,7 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
       <div class="tp-sub">選擇學生 → 看開放狀態 → 新增或取消</div>
       <select id="studentSelect"><option value="">— 選擇學生 —</option></select>
       <div class="tp-add">
-        <input id="tpNewName" placeholder="新增學生名字（如 Facundo García）" onkeydown="if(event.key==='Enter')addStudent()">
+        <input id="tpNewName" placeholder="學生 email（如 facundo.garcia）" onkeydown="if(event.key==='Enter')addStudent()">
         <button onclick="addStudent()">＋ 新增</button>
       </div>
       <div class="tp-empty" id="tpEmpty"></div>
@@ -204,7 +204,7 @@ window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
   document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};
 };
-window.toggleNight = () => { document.documentElement.classList.toggle("night"); try{localStorage.setItem("tt-theme", document.documentElement.classList.contains("night")?"night":"light");}catch(e){} };
+window.toggleNight = () => { document.documentElement.classList.toggle("night"); try{localStorage.setItem("tt-theme", document.documentElement.classList.contains("night")?"dark":"light");}catch(e){} };
 
 function $(id){ return document.getElementById(id); }
 function usernameToEmail(u){ return u.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com"; }
