@@ -213,7 +213,7 @@ const db = getFirestore(fb);
 
 let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
-const VER = "20261001d"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
+const VER = "20261001e"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
   document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};
@@ -399,7 +399,7 @@ async function showStudent(email){
   }catch(e){}
   const mods = g.modules || {};
   $("swTarjetas").checked = !!mods.tarjetas;
-  $("swNotas").checked = !!mods.notas;
+  const swN = $("swNotas"); if(swN) swN.checked = !!mods.notas;
   const st = statsCache[email] || {};
   const rawLast = st.lastSeen;
   const last = rawLast ? (rawLast.toDate ? rawLast.toDate() : new Date(rawLast)).toLocaleString("zh-TW") : "—";
@@ -417,7 +417,7 @@ async function showStudent(email){
     });
     return false;
   };
-  $("goNotas").href = "original/notas.html?v=" + VER + "&student=" + encodeURIComponent(email.split("@")[0]);
+  const gN = $("goNotas"); if(gN) gN.href = "original/notas.html?v=" + VER + "&student=" + encodeURIComponent(email.split("@")[0]);
 }
 
 $("swTarjetas").onchange = async e => {
@@ -428,15 +428,6 @@ $("swTarjetas").onchange = async e => {
     setTimeout(()=>$("tpSave").textContent = "✓ 開關勾選後自動儲存", 2500);
   }catch(err){ $("tpSave").textContent = "儲存失敗：" + err.message; }
 };
-$("swNotas").onchange = async e => {
-  if(!selEmail) return;
-  try{
-    await setDoc(doc(db,"grants",selEmail),{modules:{notas:e.target.checked}},{merge:true});
-    $("tpSave").textContent = "✓ 已儲存：筆記入口 " + (e.target.checked?"開放":"關閉");
-    setTimeout(()=>$("tpSave").textContent = "✓ 開關勾選後自動儲存", 2500);
-  }catch(err){ $("tpSave").textContent = "儲存失敗：" + err.message; }
-};
-
 $("btn-logout").onclick = () => {
   _authResolved = false;
   try{ localStorage.removeItem("tt-student"); }catch(e){}
