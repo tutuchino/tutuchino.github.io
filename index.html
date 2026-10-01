@@ -165,6 +165,7 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
       <div class="tp-student" id="tpStudent">
         <div class="tp-name" id="tpName"></div>
         <div class="tp-stats" id="tpStats"></div>
+        <div class="tp-stats" id="tpGrantSum" style="margin-top:2px;"></div>
         <div class="tp-switch">
           <label><input type="checkbox" id="swTarjetas"> 📚 閃卡入口</label>
         </div>
@@ -213,7 +214,7 @@ const db = getFirestore(fb);
 
 let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
-const VER = "20261001l"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
+const VER = "20261001m"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
   document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};
@@ -405,6 +406,20 @@ async function showStudent(email){
   const last = rawLast ? (rawLast.toDate ? rawLast.toDate() : new Date(rawLast)).toLocaleString("zh-TW") : "—";
   const notasOpen = st.notasOpen ? (st.notasOpen.count||1) : 0;
   $("tpStats").textContent = "最後活動：" + last + " · 看筆記次數：" + notasOpen;
+  // 開放摘要：三張卡各自已開放幾組
+  const gz = (g.hanzi && g.hanzi.batches) ? g.hanzi.batches.length : 0;
+  const gw = (g.words && g.words.cats) ? g.words.cats.length : 0;
+  const gc = (g.clf && g.clf.batches) ? g.clf.batches.length : 0;
+  const sumEl = document.getElementById("tpGrantSum");
+  if(sumEl){
+    const part = [];
+    if(gz > 0) part.push("漢字卡 " + gz + " 組");
+    if(gw > 0) part.push("單詞卡 " + gw + " 組");
+    if(gc > 0) part.push("量詞卡 " + gc + " 組");
+    sumEl.innerHTML = part.length
+      ? '<span style="color:#2e7d32;">已開放：' + part.join(" · ") + '</span>'
+      : '<span style="color:#c0392b;">尚未開放任何閃卡內容（三卡均 0 組）</span>';
+  }
   $("goTarjetas").href = "#tarjetas";
   $("goTarjetas").onclick = () => {
     $("cardmods").style.display = "block";
