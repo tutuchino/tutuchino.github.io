@@ -1990,6 +1990,7 @@ onAuthStateChanged(auth, async (user) => {
         const snap = await getDoc(doc(db, "grants", email));
         const g = snap.exists() ? (snap.data().hanzi || null) : {batches:[],levels:[]};
         window.__pendingHanziGrant = g;
+        setTimeout(() => alert("【除錯】\n網址 student=" + sp + "\nemail=" + email + "\ngrants存在=" + snap.exists() + "\nbatches數=" + ((g&&g.batches)||[]).length + "\n內容=" + JSON.stringify((g&&g.batches)||[])), 800);
         // 如果批次 checkbox 已渲染，立即恢復；否則等 Promise.all
         if(document.querySelectorAll("#batchCheckRow input[data-batch]").length > 0){
           restoreHanziGrant(g);
@@ -2043,7 +2044,8 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
       stat.textContent = "請先以老師帳號登入：名字 Blissfulmeow / 密碼 tutu1987（Login como profesora）";
       return;
     }
-    const name = document.getElementById("studentNameInput").value.trim();
+    const spUrl = new URLSearchParams(location.search).get("student");
+    const name = (spUrl || document.getElementById("studentNameInput").value.trim());
     if(!name){ stat.textContent = "Escribe el nombre del alumno."; return; }
     const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
     // 先讀舊 Firestore grants，按前綴分 L/HSK，合併當前勾選
