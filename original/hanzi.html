@@ -1982,7 +1982,6 @@ onAuthStateChanged(auth, async (user) => {
       if(inp){
         inp.value = sp;
         inp.style.display = "none";
-        if(inp.parentElement) inp.parentElement.style.display = "none";
         const lbl = inp.previousElementSibling;
         if(lbl && (lbl.classList.contains("section-title") || lbl.tagName === "LABEL")) lbl.style.display = "none";
       }
@@ -2004,7 +2003,7 @@ onAuthStateChanged(auth, async (user) => {
   }
   /* 學生端：輸入框永不顯示 */
   const inp2 = document.getElementById("studentNameInput");
-  if(inp2){ inp2.style.display = "none"; if(inp2.parentElement) inp2.parentElement.style.display = "none"; }
+  if(inp2){ inp2.style.display = "none"; const l2 = inp2.previousElementSibling; if(l2) l2.style.display = "none"; }
   /* 老師：顯示全部 */
   try {
     const snap = await getDoc(doc(db, "grants", user.email));
