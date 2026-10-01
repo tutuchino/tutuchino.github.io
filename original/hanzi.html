@@ -1678,6 +1678,19 @@ function renderBatchChecks() {
     renderHierarchy(hskGroups);
   }
 
+  // 恢復已勾選狀態（切模式時也會跑這裡）
+  const saved = (window.__grantBatches && window.__grantBatches[currentGroupMode]) || new Set();
+  document.querySelectorAll("#batchCheckRow input[data-batch]").forEach(cb => {
+    cb.checked = saved.has(cb.dataset.batch);
+  });
+  // 同步大組 checkbox 狀態
+  document.querySelectorAll("#batchCheckRow .grammar-card, #batchCheckRow > div").forEach(groupDiv => {
+    const boxes = groupDiv.querySelectorAll("input[data-batch]");
+    if(boxes.length){
+      const groupCb = groupDiv.querySelector("div[style*='cursor'] input[type=checkbox], input[type=checkbox]");
+      if(groupCb) groupCb.checked = [...boxes].every(b=>b.checked);
+    }
+  });
   // 填充范围选择下拉框
   const startSel = document.getElementById('rangeStart');
   const endSel = document.getElementById('rangeEnd');
