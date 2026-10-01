@@ -213,7 +213,7 @@ const db = getFirestore(fb);
 
 let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
-const VER = "20261001f"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
+const VER = "20261001g"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
   document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};
@@ -409,11 +409,13 @@ async function showStudent(email){
   $("goTarjetas").onclick = () => {
     $("cardmods").style.display = "block";
     $("duo").style.display = "none";
+    const _s = encodeURIComponent(email.split("@")[0]);
     $("cardmods").querySelectorAll("a").forEach(a=>{
       if(a.classList.contains("back-row")) return;
-      a.href = a.href.replace("original/hanzi.html","original/hanzi.html?v="+VER+"&student="+encodeURIComponent(email.split("@")[0]))
-                     .replace("original/words.html","original/words.html?v="+VER+"&student="+encodeURIComponent(email.split("@")[0]))
-                     .replace("original/clf.html","original/clf.html?v="+VER+"&student="+encodeURIComponent(email.split("@")[0]));
+      const base = a.getAttribute("href").split("?")[0];
+      if(base.indexOf("hanzi.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
+      else if(base.indexOf("words.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
+      else if(base.indexOf("clf.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
     });
     return false;
   };

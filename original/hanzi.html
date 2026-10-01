@@ -1975,8 +1975,8 @@ onAuthStateChanged(auth, async (user) => {
   if(isTeacher){
     const tp = document.getElementById("teacherPanel"); if(tp) tp.style.display = "block";
     /* 支援網址帶學生名（後台跳轉） */
-    const sp = new URLSearchParams(location.search).get("student");
-    if(sp){
+    let sp = new URLSearchParams(location.search).get("student");
+    if(sp){ sp = sp.split("?")[0];
       const email = sp.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
       const inp = document.getElementById("studentNameInput");
       if(inp){
@@ -2044,7 +2044,7 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
       stat.textContent = "請先以老師帳號登入：名字 Blissfulmeow / 密碼 tutu1987（Login como profesora）";
       return;
     }
-    const spUrl = new URLSearchParams(location.search).get("student");
+    let spUrl = new URLSearchParams(location.search).get("student"); if(spUrl) spUrl = spUrl.split("?")[0];
     const name = (spUrl || document.getElementById("studentNameInput").value.trim());
     if(!name){ stat.textContent = "Escribe el nombre del alumno."; return; }
     const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
