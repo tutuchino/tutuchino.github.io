@@ -2000,7 +2000,11 @@ onAuthStateChanged(auth, async (user) => {
       } catch(e) { console.warn("url student load fail", e); }
     }
     return;
-  } /* 老師：顯示全部 */
+  }
+  /* 學生端：輸入框永不顯示 */
+  const inp2 = document.getElementById("studentNameInput");
+  if(inp2){ inp2.style.display = "none"; if(inp2.parentElement) inp2.parentElement.style.display = "none"; }
+  /* 老師：顯示全部 */
   try {
     const snap = await getDoc(doc(db, "grants", user.email));
     const g = snap.exists() ? (snap.data().hanzi || null) : null;

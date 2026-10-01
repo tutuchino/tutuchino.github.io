@@ -213,7 +213,7 @@ const db = getFirestore(fb);
 
 let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
-const VER = "20261001c"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
+const VER = "20261001d"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
   document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};
@@ -437,14 +437,12 @@ $("swNotas").onchange = async e => {
   }catch(err){ $("tpSave").textContent = "儲存失敗：" + err.message; }
 };
 
-$("btn-logout").onclick = async () => {
-  try {
-    await signOut(auth);
-  } catch(e) {}
+$("btn-logout").onclick = () => {
   _authResolved = false;
+  try{ localStorage.removeItem("tt-student"); }catch(e){}
   try{ localStorage.clear(); }catch(e){}
-  location.replace("../index.html");
-  setTimeout(()=>location.reload(), 500);
+  try{ signOut(auth); }catch(e){}
+  location.href = "index.html";
 };
 </script>
 </body>
