@@ -712,6 +712,9 @@
         <option value="6">HSK 6</option>
       </select>
     </div>
+    <div class="filter-row">
+      <input id="charSearch" class="search-input" type="search" placeholder="🔍 Buscar carácter / pinyin / español" style="flex:1;min-width:0;">
+    </div>
     <div id="totalList"></div>
     <div class="pagination" id="pagination" style="display:none;justify-content:center;align-items:center;gap:10px;padding:16px 0;flex-wrap:wrap;">
       <button class="top-btn" id="prevPageBtn">← Ant.</button>
@@ -859,7 +862,7 @@
 <script>
 /* ================= 字庫（可持續追加） ================= */
 let charList = [];
-Promise.all(["hanzi-data-1.json","hanzi-data-2.json","hanzi-data-3.json"].map(f=>fetch(f).then(r=>r.json()))).then(d=>{charList=d[0].concat(d[1]).concat(d[2]);setupTeacherFilterUI();renderBatchChecks();renderCard();if(window.applyHanziGrant && window.__hanziGrant !== null) window.applyHanziGrant(window.__hanziGrant);if(window.__pendingHanziGrant){restoreHanziGrant(window.__pendingHanziGrant);window.__pendingHanziGrant=null;}if(typeof updateExportStat==="function")updateExportStat();});;
+Promise.all(["hanzi-data-1.json","hanzi-data-2.json","hanzi-data-3.json"].map(f=>fetch(f).then(r=>r.json()))).then(d=>{window.__fullCharList = d[0].concat(d[1]).concat(d[2]); charList = window.__fullCharList.slice();setupTeacherFilterUI();renderBatchChecks();renderCard();if(window.applyHanziGrant && window.__hanziGrant !== null) window.applyHanziGrant(window.__hanziGrant);if(window.__pendingHanziGrant){restoreHanziGrant(window.__pendingHanziGrant);window.__pendingHanziGrant=null;}if(typeof updateExportStat==="function")updateExportStat();});;
 
 /* ================= 語法庫（可持續追加） ================= */
 const grammarList = [{"id": "G-01", "level": 1, "title": "和 / 跟", "sub": "preposición / conjunción — con / y", "structure": "A + 和/跟 + B + 動作（做某事）", "usageCn": "「和」有兩個用法：① 連詞 = y（連接兩個名詞）；② 介詞 = con（和某人一起做）。「跟」= con，口語更常用，帶「跟著、伴隨」的意味。", "usageEs": "«和» tiene dos usos: ① conjunción = y (une dos sustantivos); ② preposición = con (hacer algo junto con alguien). «跟» también significa con, más usado en el habla oral, con el matiz de «acompañar».", "examples": [{"py": "Wǒ gēn tā jiǎnghuà.", "zh": "我跟他講話。", "es": "Yo hablo con él."}, {"py": "Nǐ hé wǒ shì péngyou.", "zh": "你和我（跟）是朋友。", "es": "Tú y yo somos amigos."}, {"py": "Tā hé wǒ yīqǐ xuéxí.", "zh": "她和我一起學習。", "es": "Ella estudia conmigo."}], "notes": "學生易錯：把「和」的 y 用法與 con 用法混淆。記住：連接兩個名詞時用 y；表示「和某人一起做」時用 con（和/跟都行）。口語中「跟」更自然。", "notesEs": "Error común: confundir «y» con «con». Regla: para unir dos sustantivos usa y; para «hacer algo con alguien» usa con (和 o 跟). En el habla oral, 跟 suena más natural."}, {"id": "G-02", "level": 1, "title": "把", "sub": "partícula — objeto antepuesto (construcción 把)", "structure": "S + 把 + O + V + 補語（結果）", "usageCn": "「把」把受詞提前，強調「對這個東西做了什麼」。動詞後面必須帶結果（關了、給我、寫完），不能單獨用。西語沒有直接對應，類似把賓語提前的強調結構。", "usageEs": "«把» adelanta el objeto para enfatizar qué se hace con él. El verbo debe llevar un resultado (cerrar, dar, terminar). En español no hay equivalente directo: es como enfatizar el objeto antes del verbo.", "examples": [{"py": "Wǒ bǎ mén guān le.", "zh": "我把門關了。", "es": "Cerré la puerta."}, {"py": "Qǐng bǎ shū gěi wǒ.", "zh": "請把書給我。", "es": "Por favor, dame el libro."}, {"py": "Tā bǎ fàn chī wán le.", "zh": "他把飯吃完了。", "es": "Terminó de comer la comida."}], "notes": "不是所有句子都能用把。動詞必須帶結果或方向：不能說「我把書看」，要說「我把書看完了」。", "notesEs": "No todas las oraciones admiten 把. El verbo debe llevar un resultado o dirección: no se dice «我把書看», sino «我把書看完了»."}, {"id": "G-03", "level": 1, "title": "被", "sub": "partícula — voz pasiva", "structure": "S + 被 +（施事者）+ V", "usageCn": "「被」表示被動：主語是動作的承受者。西語對應 voz pasiva 或 se + verbo。口語中常用「讓、給」代替被。", "usageEs": "«被» marca la voz pasiva: el sujeto recibe la acción. Corresponde a la voz pasiva del español. En el habla oral se usa a menudo 讓 o 給 en lugar de 被.", "examples": [{"py": "Wǒ bèi tā mà le.", "zh": "我被他罵了。", "es": "Me regañó él. / Fui regañado por él."}, {"py": "Shū bèi ná zǒu le.", "zh": "書被拿走了。", "es": "El libro fue llevado."}], "notes": "被動句常用於「不如意」的事（被打、被罵、被偷）。好消息一般用主動句：「我通過考試」，不說「我被考試通過」。", "notesEs": "La pasiva con 被 suele usarse para cosas negativas (ser golpeado, regañado, robado). Las buenas noticias van en voz activa."}, {"id": "G-04", "level": 1, "title": "了", "sub": "partícula — aspecto completivo (le)", "structure": "V + 了（動作完成）｜句子 + 了（情況變化）", "usageCn": "「了」有兩個位置：① 動詞後：動作已完成（我吃了飯）。② 句尾：情況發生變化（下雨了）。初學者先記動詞後的「了」。", "usageEs": "«了» tiene dos posiciones: ① después del verbo: acción completada; ② al final de la oración: cambio de estado. Primero aprende la del verbo.", "examples": [{"py": "Wǒ chī le fàn.", "zh": "我吃了飯。", "es": "Comí (la comida)."}, {"py": "Xià yǔ le.", "zh": "下雨了。", "es": "Está lloviendo (ha empezado a llover)."}], "notes": "否定句用「沒（有）+ V」，不加了：我沒吃飯。不能說「我沒吃了飯」。", "notesEs": "La negación usa 沒(有) + verbo, sin 了: 我沒吃飯. No digas 我沒吃了飯."}, {"id": "G-05", "level": 1, "title": "着", "sub": "partícula — aspecto durativo (zhe)", "structure": "V + 着（動作或狀態持續）", "usageCn": "「着」表示動作或狀態正在持續：他看著書（正在讀）；門開著（狀態持續）。「着」= 進行/持續，「了」= 完成，兩者相反。", "usageEs": "«着» indica que la acción o el estado continúa: 他看著書 (está leyendo); 門開著 (la puerta está abierta). 着 es durativo; 了 es completivo.", "examples": [{"py": "Tā kàn zhe shū.", "zh": "他看著書。", "es": "Está leyendo (con el libro abierto)."}, {"py": "Mén kāi zhe.", "zh": "門開著。", "es": "La puerta está abierta."}], "notes": "口語北方常說「著」，南方口語較少用，但書面語和普通話都要用。", "notesEs": "En el norte oral se usa mucho 着; en el sur oral menos, pero en la lengua escrita y el mandarín estándar siempre se usa."}, {"id": "G-06", "level": 2, "title": "的 / 地 / 得", "sub": "tres «de» — atributivo / adverbial / complemento", "structure": "的：修飾名詞｜地：修飾動詞｜得：動詞後的補語", "usageCn": "三個 de 發音相同、寫法不同：① 的：修飾名詞（我的書、美麗的花）。② 地：修飾動詞（慢慢地走）。③ 得：動詞後的補語，說明程度或結果（跑得快、說得好）。", "usageEs": "Los tres «de» suenan igual pero se escriben distinto: 的 modifica sustantivos, 地 modifica verbos, 得 introduce un complemento de grado o resultado después del verbo.", "examples": [{"py": "Wǒ de shū.", "zh": "我的書。", "es": "Mi libro."}, {"py": "Mànman de zǒu.", "zh": "慢慢地走。", "es": "Camina lentamente."}, {"py": "Tā pǎo de hěn kuài.", "zh": "他跑得很快。", "es": "Corre muy rápido."}], "notes": "初學最常錯：該用「的」寫成「地」、該用「得」寫成「的」。口語聽不出差別，寫作一定要分。", "notesEs": "Error típico: confundir los tres de al escribir. Al hablar no se notan, pero al escribir hay que distinguirlos."}, {"id": "G-07", "level": 2, "title": "吗 / 呢", "sub": "partículas interrogativas", "structure": "陳述句 + 嗎？（是非問）｜…… + 呢？（追問）", "usageCn": "「嗎」放在句尾，把陳述句變成是非問句（sí/no）。「呢」用於追問、反問：你呢？（¿y tú?）「嗎」只能用於是非問句，特指問不用嗎。", "usageEs": "«嗎» al final convierte la oración en pregunta de sí/no. «呢» se usa para devolver la pregunta o preguntar por algo más: 你呢？ = ¿y tú? 嗎 solo sirve para preguntas de sí/no.", "examples": [{"py": "Nǐ shì lǎoshī ma?", "zh": "你是老師嗎？", "es": "¿Eres profesor?"}, {"py": "Wǒ qù, nǐ ne?", "zh": "我去，你呢？", "es": "Yo voy, ¿y tú?"}], "notes": "特指問（什麼、哪裡、誰）不用「嗎」：你是誰？不是「你是誰嗎」。", "notesEs": "Las preguntas con palabra interrogativa (qué, dónde, quién) no usan 吗: 你是誰？, nunca 你是誰嗎."}, {"id": "G-08", "level": 1, "title": "量詞卡", "sub": "clasificadores — 26 個常用量詞", "items": [{"c": "個", "py": "gè", "use": "personas y cosas en general", "ex": "一個人、三個蘋果"}, {"c": "只", "py": "zhī", "use": "animales pequeños", "ex": "一隻貓、兩隻鳥"}, {"c": "條", "py": "tiáo", "use": "cosas largas (pez, camino, pantalón)", "ex": "一條魚、一條路"}, {"c": "張", "py": "zhāng", "use": "cosas planas (papel, mesa, cama)", "ex": "一張紙、一張桌子"}, {"c": "本", "py": "běn", "use": "libros, cuadernos", "ex": "一本書"}, {"c": "杯", "py": "bēi", "use": "bebidas en vaso/taza", "ex": "一杯茶"}, {"c": "雙", "py": "shuāng", "use": "pares (zapatos, guantes)", "ex": "一雙鞋"}, {"c": "把", "py": "bǎ", "use": "herramientas, sillas, llaves", "ex": "一把刀、一把椅子"}, {"c": "位", "py": "wèi", "use": "personas (cortés)", "ex": "一位老師"}, {"c": "件", "py": "jiàn", "use": "ropa, asuntos", "ex": "一件衣服、一件事"}, {"c": "輛", "py": "liàng", "use": "vehículos (coche, autobús)", "ex": "一輛車"}, {"c": "台", "py": "tái", "use": "máquinas, aparatos", "ex": "一台電腦"}, {"c": "朵", "py": "duǒ", "use": "flores, nubes", "ex": "一朵花"}, {"c": "顆", "py": "kē", "use": "cosas pequeñas y redondas", "ex": "一顆糖、一顆星"}, {"c": "根", "py": "gēn", "use": "cosas largas y delgadas", "ex": "一根筷子"}, {"c": "塊", "py": "kuài", "use": "cosas en bloque (torta, piedra)", "ex": "一塊蛋糕"}, {"c": "片", "py": "piàn", "use": "cosas finas y planas (pan, pastilla)", "ex": "一片麵包"}, {"c": "層", "py": "céng", "use": "pisos, capas", "ex": "一層樓"}, {"c": "間", "py": "jiān", "use": "habitaciones", "ex": "一間房"}, {"c": "封", "py": "fēng", "use": "cartas, correos", "ex": "一封信"}, {"c": "首", "py": "shǒu", "use": "canciones, poemas", "ex": "一首歌"}, {"c": "支", "py": "zhī", "use": "bolígrafos, objetos alargados", "ex": "一支筆"}, {"c": "瓶", "py": "píng", "use": "botellas, envases", "ex": "一瓶水"}, {"c": "碗", "py": "wǎn", "use": "cuencos (arroz, sopa)", "ex": "一碗飯"}, {"c": "串", "py": "chuàn", "use": "cosas en fila (uvas, llaves)", "ex": "一串葡萄"}, {"c": "群", "py": "qún", "use": "grupos (personas, animales)", "ex": "一群人"}], "structure": "數詞 + 量詞 + 名詞（兩個人、三本書）", "usageCn": "中文名詞不能直接數數，必須用量詞。常用：個（人、一般事物）、只（動物）、條（長形物：魚、路）、張（平面物：紙、桌子）、本（書）、杯（飲料）、雙（成對物：鞋、手套）、把（工具：刀、椅子）、位（人，禮貌）、件（衣服、事情）。", "usageEs": "En chino los sustantivos no se cuentan sin un clasificador. Comunes: 個 personas/cosas en general; 只 animales; 條 cosas largas (pez, camino); 張 cosas planas (papel, mesa); 本 libros; 杯 bebidas; 雙 pares (zapatos, guantes); 把 herramientas (cuchillo, silla); 位 personas (cortés); 件 ropa/asuntos.", "examples": [{"py": "Liǎng gè rén.", "zh": "兩個人。", "es": "Dos personas."}, {"py": "Yī zhī māo.", "zh": "一隻貓。", "es": "Un gato."}, {"py": "Sān běn shū.", "zh": "三本書。", "es": "Tres libros."}, {"py": "Zhè bēi chá hěn hǎo.", "zh": "這杯茶很好。", "es": "Esta taza de té está muy buena."}], "notes": "量詞不能省略，也不能亂配。學生最常錯：把「個」用於一切（「一個貓」）。動物、長形物、平面物各有專用量詞。", "notesEs": "El clasificador es obligatorio y no se combina al azar. Error típico: usar 個 para todo («un gato» no es 一個貓). Animales, objetos largos y planos tienen su propio clasificador."}];
@@ -872,6 +875,8 @@ function saveStore() { localStorage.setItem("hanziCardStore", JSON.stringify(sto
 let currentIndex = 0;
 let hideLearned = false;
 let currentFilter = "all";
+let charSearch = "";
+let __fullCharList = null;
 let writer = null;
 let strokeInited = false;
 let currentView = "hanzi";
@@ -1036,7 +1041,7 @@ let currentPage = 1;
 function renderTotalList() {
   const box = document.getElementById("totalList");
   box.innerHTML = "";
-  const list = charList.filter(it => {
+  let list = charList.filter(it => {
     if (currentFilter === "lv1") return it.level === 1;
     if (currentFilter === "lv2") return it.level === 2;
     if (currentFilter === "lv3") return it.level === 3;
@@ -1044,6 +1049,15 @@ function renderTotalList() {
     if (currentFilter === "learned") return store.learned.includes(it.id);
     return true;
   }).filter(it => hskFilter === "all" || String(it.hsk) === hskFilter);
+  if (charSearch) {
+    const q = charSearch.toLowerCase();
+    list = list.filter(it =>
+      (it.char && it.char.includes(charSearch)) ||
+      (it.pinyin && it.pinyin.toLowerCase().includes(q)) ||
+      (it.es && it.es.toLowerCase().includes(q)) ||
+      (it.id && it.id.includes(charSearch))
+    );
+  }
 
   const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
   if (currentPage > totalPages) currentPage = totalPages;
@@ -1086,6 +1100,9 @@ function renderTotalList() {
     }
   }
 }
+
+const cs = document.getElementById("charSearch");
+if (cs) cs.addEventListener("input", (e) => { charSearch = e.target.value.trim(); currentPage = 1; renderTotalList(); });
 
 if (document.getElementById("prevPageBtn")) {
   document.getElementById("prevPageBtn").onclick = () => { if (currentPage > 1) { currentPage--; renderTotalList(); } };
@@ -1846,6 +1863,7 @@ function batchKeyOfL(it){
 }
 window.applyHanziGrant = function(grant){
   window.__hanziGrant = grant;
+  if(window.__fullCharList && window.__fullCharList.length) charList = window.__fullCharList.slice();
   if(charList.length === 0) return;
   const exportBtn = document.getElementById("exportViewBtn"); if(exportBtn) exportBtn.style.display = "none";
   if(!grant || !grant.batches || grant.batches.length === 0){
