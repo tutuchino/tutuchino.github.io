@@ -343,6 +343,21 @@
     color: var(--flip-fg);
     border-color: transparent;
   }
+  /* ===== SRS ===== */
+  .srs-row { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; justify-content:center; }
+  .srs-btn { flex:1; min-width:60px; padding:10px 4px; border-radius:12px; border:1.5px solid var(--line); background:var(--btn-bg); color:var(--text); font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; line-height:1.3; }
+  .srs-btn.again { border-color:#c0392b; color:#c0392b; }
+  .srs-btn.hard  { border-color:#d97706; color:#d97706; }
+  .srs-btn.good  { border-color:#2e7d32; color:#2e7d32; }
+  .srs-btn.easy  { border-color:#1e6091; color:#1e6091; }
+  .srs-btn:hover { filter:brightness(0.95); }
+  .srs-custom { display:flex; gap:4px; justify-content:center; flex-wrap:wrap; margin-bottom:10px; }
+  .srs-custom button { padding:5px 10px; border-radius:10px; border:1px solid var(--line); background:transparent; color:var(--mid); font-size:11px; cursor:pointer; font-family:inherit; }
+  .srs-custom button:hover { background:var(--soft); color:var(--accent); }
+  .review-hero { background:linear-gradient(135deg,var(--front1),var(--front2)); border:1.5px solid var(--accent); border-radius:18px; padding:18px; margin-bottom:14px; cursor:pointer; text-align:center; box-shadow:0 4px 14px var(--shadow); }
+  .review-hero .big { font-family:var(--serif,serif); font-size:24px; font-weight:900; color:var(--accent); }
+  .review-hero .sub { font-size:12px; color:var(--mid); margin-top:4px; }
+
   .filter-row {
     display: flex;
     flex-wrap: wrap;
@@ -1947,6 +1962,10 @@
   </div>
 </div>
 
+    <div class="review-hero" id="reviewHero" onclick="enterReviewMode()" style="display:none;">
+      <div class="big">Hoy toca repasar · 今日複習</div>
+      <div class="sub"><span id="reviewCount">0</span> tarjetas pendientes</div>
+    </div>
     <div class="cat-list" id="catList"></div>
   </div>
 
@@ -1990,8 +2009,23 @@
         </div>
       </div>
     </div>
-    <div class="ctrl-row">
+    <div class="ctrl-row" id="learnedRow">
       <button id="markLearnedBtn">Aprendida</button>
+    </div>
+    <div id="srsRow" style="display:none;">
+      <div class="srs-row">
+        <button class="srs-btn again" onclick="srsRate('again')">Olvidado<br><small>1天</small></button>
+        <button class="srs-btn hard"  onclick="srsRate('hard')">Difícil<br><small>~2天</small></button>
+        <button class="srs-btn good"  onclick="srsRate('good')">Bien<br><small>依進度</small></button>
+        <button class="srs-btn easy"  onclick="srsRate('easy')">Fácil<br><small>+30%</small></button>
+      </div>
+      <div class="srs-custom">
+        <button onclick="srsCustom(1)">明天</button>
+        <button onclick="srsCustom(3)">3天後</button>
+        <button onclick="srsCustom(7)">1週後</button>
+        <button onclick="srsCustom(30)">1月後</button>
+        <button onclick="srsCustom(60)">2月後</button>
+      </div>
     </div>
     <div class="ctrl-row">
       <button class="nav-btn" id="prevBtn">← Anterior</button>
@@ -2760,6 +2794,8 @@ onAuthStateChanged(auth, async (user) => {
     const g = snap.exists() ? (snap.data().words || null) : null;
     if (window.applyWordsGrant) window.applyWordsGrant(g);
   } catch(e) { console.warn("grant read fail", e); }
+  /* 學生端啟用 SRS */
+  if(window.enableSRS) window.enableSRS(user.email);
 });
 
 /* 輸入學生名按 Enter → 載入該學生已開放的內容（自動打勾） */
@@ -2804,6 +2840,163 @@ document.getElementById("saveWordsGrantBtn").addEventListener("click", async () 
     stat.textContent = "Error: " + (e.message || e);
   }
 });
+
+/* ================= SRS（間隔重複） ================= */
+const SRS = {
+  email: null,
+  cards: {},        // { "w_<idx>": {due, iv, ease, reps, lapses} }
+  loaded: false,
+  reviewMode: false, // 今日複習模式
+  queue: [],        // reviewMode 下的卡片序列
+};
+const SRS_KEY = 'w_';
+
+function todayDays(){ return Math.floor(Date.now()/86400000); }
+function cardKey(c){ return SRS_KEY + c._globalIdx; }
+
+async function srsLoad(email){
+  SRS.email = email;
+  try {
+    const snap = await getDoc(doc(db, "srs", email));
+    if(snap.exists() && snap.data().cards){
+      SRS.cards = snap.data().cards;
+    } else {
+      // 第一次：從舊 localStorage learned 遷移
+      const saved = JSON.parse(localStorage.getItem('vocabStore') || '{}');
+      if(saved.learned && saved.learned.length){
+        const today = todayDays();
+        saved.learned.forEach(idx => {
+          SRS.cards[SRS_KEY + idx] = { due: today+3, iv: 3, ease: 2.5, reps: 1, lapses: 0 };
+        });
+        await srsFlush(true);
+      }
+    }
+  } catch(e){ console.warn("srs load fail", e); }
+  SRS.loaded = true;
+  srsUpdateReviewCount();
+}
+
+async function srsFlush(forceAll){
+  if(!SRS.email) return;
+  try {
+    await setDoc(doc(db, "srs", SRS.email), { cards: SRS.cards, updatedAt: new Date() }, { merge: true });
+  } catch(e){
+    // 離線：queue 到 localStorage
+    try{
+      const q = JSON.parse(localStorage.getItem('srsQueue') || '[]');
+      q.push({ ts: Date.now(), cards: SRS.cards });
+      localStorage.setItem('srsQueue', JSON.stringify(q.slice(-5)));
+    }catch(_){}
+    console.warn("srs flush queued", e);
+  }
+}
+
+function srsRate(grade){
+  if(!window.state || !state.reviewQueue || state.reviewQueue.length === 0) return;
+  const card = state.reviewQueue[state.cardIndex];
+  if(!card) return;
+  const key = cardKey(card);
+  const today = todayDays();
+  let item = SRS.cards[key] || { due: today, iv: 0, ease: 2.5, reps: 0, lapses: 0 };
+  if(grade === 'again'){
+    item.reps = 0; item.iv = 1; item.ease = Math.max(1.3, item.ease - 0.2); item.due = today + 1; item.lapses = (item.lapses||0)+1;
+  } else if(grade === 'hard'){
+    item.reps++;
+    item.iv = item.iv <= 1 ? 2 : Math.round(item.iv * 1.2);
+    item.ease = Math.max(1.3, item.ease - 0.15);
+    item.due = today + item.iv;
+  } else if(grade === 'good'){
+    item.reps++;
+    if(item.reps === 1) item.iv = 3;
+    else if(item.reps === 2) item.iv = 7;
+    else item.iv = Math.round(item.iv * item.ease);
+    item.due = today + item.iv;
+  } else if(grade === 'easy'){
+    item.reps++;
+    item.iv = item.iv <= 1 ? 4 : Math.round(item.iv * item.ease * 1.3);
+    item.ease += 0.15;
+    item.due = today + item.iv;
+  }
+  SRS.cards[key] = item;
+  srsFlush();
+  // 推進到下一張
+  if(SRS.reviewMode){
+    state.reviewQueue.splice(state.cardIndex, 1);
+    if(state.cardIndex >= state.reviewQueue.length) state.cardIndex = state.reviewQueue.length - 1;
+  } else {
+    if(state.cardIndex < state.reviewQueue.length - 1) state.cardIndex++;
+  }
+  renderCard();
+  srsUpdateReviewCount();
+}
+
+function srsCustom(days){
+  if(!window.state || !state.reviewQueue || state.reviewQueue.length === 0) return;
+  const card = state.reviewQueue[state.cardIndex];
+  if(!card) return;
+  const key = cardKey(card);
+  const today = todayDays();
+  let item = SRS.cards[key] || { due: today, iv: 0, ease: 2.5, reps: 0, lapses: 0 };
+  item.due = today + days;
+  if(days > (item.iv||0)){ item.iv = days; item.reps++; }
+  SRS.cards[key] = item;
+  srsFlush();
+  if(SRS.reviewMode){
+    state.reviewQueue.splice(state.cardIndex, 1);
+    if(state.cardIndex >= state.reviewQueue.length) state.cardIndex = state.reviewQueue.length - 1;
+  } else {
+    if(state.cardIndex < state.reviewQueue.length - 1) state.cardIndex++;
+  }
+  renderCard();
+  srsUpdateReviewCount();
+}
+
+function srsUpdateReviewCount(){
+  const hero = document.getElementById('reviewHero');
+  if(!hero) return;
+  const today = todayDays();
+  let n = 0;
+  for(const k in SRS.cards){
+    const c = SRS.cards[k];
+    if(c.due <= today) n++;
+  }
+  document.getElementById('reviewCount').textContent = n;
+  hero.style.display = n > 0 ? 'block' : 'none';
+}
+
+function enterReviewMode(){
+  // 收集所有 due <= today 的卡，按 due 排序
+  const today = todayDays();
+  const due = [];
+  // 走遍 CATEGORIES 所有 subs
+  CATEGORIES.forEach(cat => {
+    (cat.subs||[]).forEach(sub => {
+      sub.cards.forEach(card => {
+        const k = cardKey(card);
+        if(SRS.cards[k] && SRS.cards[k].due <= today){
+          due.push({ card, due: SRS.cards[k].due });
+        }
+      });
+    });
+  });
+  due.sort((a,b) => a.due - b.due);
+  if(due.length === 0){ alert('No tienes tarjetas pendientes hoy.'); return; }
+  SRS.reviewMode = true;
+  state.reviewQueue = due.map(d => d.card);
+  state.cardIndex = 0;
+  document.getElementById('homeView').classList.remove('open');
+  document.getElementById('subView').classList.remove('open');
+  document.getElementById('cardView').classList.add('open');
+  document.getElementById('cardTitle').textContent = 'Repaso diario · 今日複習 (' + due.length + ')';
+  renderCard();
+}
+
+/* 學生端啟用 SRS：在 onAuthStateChanged 學生分支呼叫 */
+window.enableSRS = function(email){
+  document.getElementById('srsRow').style.display = 'block';
+  const lr = document.getElementById('learnedRow'); if(lr) lr.style.display = 'none';
+  srsLoad(email);
+};
 </script>
 </body></body>
 </html>

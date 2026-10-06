@@ -31,5 +31,11 @@ service cloud.firestore {
       allow read: if isTeacher() || isSelf(email);
       allow write: if isTeacher() || isSelf(email);
     }
+
+    /* srs/{email}：SRS 間隔重複進度（學生讀寫自己，老師可讀） */
+    match /srs/{email} {
+      allow read: if isTeacher() || isSelf(email);
+      allow write: if isTeacher() || isSelf(email);
+    }
   }
 }
