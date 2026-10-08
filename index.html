@@ -97,6 +97,28 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
 .cardmods .back-row{margin-top:6px}
 .cardmods .back-row a{display:inline-block;border:none;background:none;color:var(--sub);font-size:12px;padding:4px 0}
 .loading{color:var(--sub);font-size:14px;padding:20px 0}
+.srs-home{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:var(--shadow);text-align:left}
+.srs-home h2{font-size:15px;color:var(--warm2);font-weight:700;margin-bottom:2px}
+.srs-home .srs-sub{font-size:11px;color:var(--sub);margin-bottom:10px}
+.srs-cal-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.srs-cal-title{flex:1;text-align:center;font-size:13px;font-weight:800;color:var(--ink)}
+.srs-mini{padding:6px 11px;border-radius:10px;border:1px solid var(--warm3);background:transparent;color:var(--warm2);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.srs-mini:hover{background:var(--warm2);color:#fff}
+.srs-cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.srs-cal-week span{text-align:center;font-size:10px;color:var(--sub);font-weight:700}
+.srs-cal-body{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.srs-cal-day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;aspect-ratio:1/1;border-radius:10px;background:var(--paper);border:1px solid var(--line);cursor:pointer;font-size:12px;color:var(--ink);transition:transform .12s, box-shadow .12s}
+.srs-cal-day:hover{transform:scale(1.06);box-shadow:var(--shadow)}
+.srs-cal-day .n{font-size:10px;font-weight:800;color:#fff;background:var(--warm2);border-radius:9px;padding:0 5px;line-height:14px}
+.srs-cal-day.today{border:2px solid var(--warm2)}
+.srs-cal-day.picked{background:var(--warm2);color:#fff}
+.srs-cal-day.picked .n{background:#fff;color:var(--warm2)}
+.srs-cal-empty{aspect-ratio:1/1}
+.srs-result{font-size:12px;color:var(--ink);margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:20px}
+.srs-mod-btn{font-size:12px;padding:7px 12px;border-radius:16px;border:1px solid var(--warm3);background:linear-gradient(135deg,#fdf3d8,#f2e3b8);color:#5a4416;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.srs-mod-btn:hover{border-color:var(--warm2)}
+.srs-mod-btn.off{opacity:.45;border-style:dashed;cursor:default;pointer-events:none}
+
 </style>
 </head>
 <body>
@@ -141,6 +163,21 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
         <svg class="mini-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
         <div class="big-t">Por Clase</div>
       </a>
+    </div>
+
+    <!-- SRS 複習月曆（HOME） -->
+    <div class="srs-home" id="srsHome" style="display:none">
+      <h2>📅 Repaso por fecha</h2>
+      <div class="srs-sub">選日期 → 看當天要複習的卡 → 開始複習</div>
+      <div class="srs-cal-head">
+        <button class="srs-mini" onclick="homeCalPrev()">‹</button>
+        <div class="srs-cal-title" id="homeCalTitle"></div>
+        <button class="srs-mini" onclick="homeCalNext()">›</button>
+        <button class="srs-mini" onclick="homeCalToday()">Hoy</button>
+      </div>
+      <div class="srs-cal-week"><span>lun</span><span>mar</span><span>mié</span><span>jue</span><span>vie</span><span>sáb</span><span>dom</span></div>
+      <div class="srs-cal-body" id="homeCalBody"></div>
+      <div class="srs-result" id="homeCalResult"></div>
     </div>
 
     <!-- 字卡模組清單（Tarjetas 點入後） -->
@@ -255,6 +292,101 @@ $("pwSave").onclick = async () => {
   }
 };
 
+/* ===== HOME 複習月曆（SRS 聚合） ===== */
+let homeCal = { y: null, m: null, pick: null };
+let homeSrsCards = {};
+let homeSrsLoaded = false;
+
+async function loadHomeSrs(email){
+  homeSrsCards = {}; homeSrsLoaded = false;
+  try{
+    const snap = await getDoc(doc(db, "srs", email));
+    if(snap.exists() && snap.data().cards) homeSrsCards = snap.data().cards || {};
+  }catch(e){ console.warn("home srs load fail", e); }
+  homeSrsLoaded = true;
+  const now = new Date();
+  homeCal.y = now.getFullYear(); homeCal.m = now.getMonth();
+  homeRenderCal();
+}
+
+function homeCountOn(d){
+  let n = 0;
+  for(const k in homeSrsCards){ const c = homeSrsCards[k]; if(c && c.due === d) n++; }
+  return n;
+}
+
+function homeModOf(k){
+  if(k.indexOf('h_') === 0) return 'hanzi';
+  if(k.indexOf('c_') === 0) return 'clf';
+  return 'words';
+}
+
+function homeModName(mod){
+  return mod === 'hanzi' ? '漢字卡' : (mod === 'clf' ? '量詞卡' : '單詞卡');
+}
+
+function homeModCount(d, mod){
+  let n = 0;
+  for(const k in homeSrsCards){ const c = homeSrsCards[k]; if(c && c.due === d && homeModOf(k) === mod) n++; }
+  return n;
+}
+
+function homeFmtDate(d){
+  try{ return new Date(d * 86400000).toLocaleDateString('es-AR', { day:'numeric', month:'short', year:'numeric' }); }
+  catch(e){ return String(d); }
+}
+
+function homeRenderCal(){
+  const box = document.getElementById('homeCalBody');
+  if(!box) return;
+  const y = homeCal.y, m = homeCal.m;
+  document.getElementById('homeCalTitle').textContent = new Date(y, m, 1).toLocaleDateString('es-AR', { month:'long', year:'numeric' });
+  const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const now = new Date();
+  let html = '';
+  for(let i = 0; i < startDow; i++) html += '<div class="srs-cal-empty"></div>';
+  for(let d = 1; d <= daysInMonth; d++){
+    const dayNum = Math.floor(new Date(y, m, d).getTime() / 86400000);
+    const n = homeCountOn(dayNum);
+    let cls = 'srs-cal-day';
+    if(y === now.getFullYear() && m === now.getMonth() && d === now.getDate()) cls += ' today';
+    if(homeCal.pick === dayNum) cls += ' picked';
+    html += '<div class="' + cls + '" onclick="homePickDay(' + dayNum + ')"><span class="d">' + d + '</span>' + (n > 0 ? '<span class="n">' + n + '</span>' : '') + '</div>';
+  }
+  box.innerHTML = html;
+}
+
+function homeCalPrev(){ homeCal.m--; if(homeCal.m < 0){ homeCal.m = 11; homeCal.y--; } homeRenderCal(); }
+function homeCalNext(){ homeCal.m++; if(homeCal.m > 11){ homeCal.m = 0; homeCal.y++; } homeRenderCal(); }
+function homeCalToday(){
+  const now = new Date();
+  homeCal.y = now.getFullYear(); homeCal.m = now.getMonth();
+  homeCal.pick = Math.floor(now.getTime() / 86400000);
+  homeRenderCal(); homeShowPick(homeCal.pick);
+}
+function homePickDay(d){
+  homeCal.pick = d;
+  homeRenderCal(); homeShowPick(d);
+}
+
+function homeShowPick(d){
+  const res = document.getElementById('homeCalResult');
+  if(!res) return;
+  const total = homeCountOn(d);
+  if(total === 0){ res.innerHTML = homeFmtDate(d) + ' · sin tarjetas ese día'; return; }
+  const mods = ['words','hanzi','clf'];
+  let btns = '';
+  mods.forEach(mod => {
+    const n = homeModCount(d, mod);
+    if(n > 0) btns += '<a class="srs-mod-btn" href="original/' + (mod === 'words' ? 'words' : (mod === 'hanzi' ? 'hanzi' : 'clf')) + '.html?reviewday=' + d + '&v=' + VER + '">' + homeModName(mod) + ' · ' + n + '</a>';
+  });
+  res.innerHTML = '<b>' + homeFmtDate(d) + '</b> · ' + total + ' tarjetas: ' + btns;
+}
+
+window.homeCalPrev = homeCalPrev; window.homeCalNext = homeCalNext;
+window.homeCalToday = homeCalToday; window.homePickDay = homePickDay;
+
 let _authResolved = false;
 onAuthStateChanged(auth, async (user) => {
   if(!user){
@@ -303,6 +435,11 @@ onAuthStateChanged(auth, async (user) => {
     $("cardmods").insertAdjacentHTML("beforeend",
       `<div style="font-size:13px;color:var(--sub);padding:12px 0">目前尚未開放內容，請等候老師通知。<br>Todavía no hay contenido disponible.</div>`);
   }
+
+  /* HOME 月曆（讀當前登入者的 srs） */
+  const sh = document.getElementById("srsHome");
+  if(sh) sh.style.display = "block";
+  loadHomeSrs(user.email);
 
   window.showHomeModules = () => {
     $("cardmods").style.display = "none";

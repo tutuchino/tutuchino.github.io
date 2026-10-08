@@ -2943,6 +2943,16 @@ async function srsLoad(email){
   } catch(e){ console.warn("srs load fail", e); }
   SRS.loaded = true;
   srsUpdateReviewCount();
+  srsMaybeAutoReview();
+}
+
+function srsMaybeAutoReview(){
+  const rd = new URLSearchParams(location.search).get('reviewday');
+  if(!rd) return;
+  const day = parseInt(rd, 10);
+  if(!(day > 0)) return;
+  const cards = srsCardsDueOn(new Set([day]));
+  srsGoRepasar(cards, 'Repaso · ' + srsFmtDate(day));
 }
 
 let _toastTimer = null;
