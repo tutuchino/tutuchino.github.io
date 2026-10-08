@@ -359,6 +359,21 @@
   .review-hero .sub { font-size:12px; color:var(--mid); margin-top:4px; }
   .srs-toast { position:fixed; left:50%; bottom:96px; transform:translateX(-50%); background:var(--text); color:var(--front1); padding:10px 18px; border-radius:24px; font-size:13px; font-weight:600; box-shadow:0 6px 18px var(--shadow); opacity:0; transition:opacity .25s; z-index:99; pointer-events:none; white-space:nowrap; }
   .srs-toast.show { opacity:1; }
+  .srs-search { margin:0 0 14px; }
+  .srs-search-toggle { width:100%; padding:10px; border-radius:12px; border:1.5px solid var(--accent); background:var(--front1); color:var(--accent); font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .srs-search-panel { margin-top:8px; padding:12px; border-radius:14px; border:1px solid var(--line); background:var(--soft); }
+  .srs-search-row { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
+  .srs-search-row input[type=date] { flex:1; padding:7px 10px; border-radius:10px; border:1px solid var(--line); font-family:inherit; font-size:12px; background:var(--front1); color:var(--text); }
+  .srs-mini { padding:7px 12px; border-radius:10px; border:1px solid var(--accent); background:transparent; color:var(--accent); font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .srs-mini:hover { background:var(--accent); color:#fff; }
+  .srs-go { width:100%; margin-top:8px; background:var(--accent); color:#fff; }
+  .srs-date-result { font-size:12px; color:var(--mid); margin:4px 0 10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .srs-week-label { font-size:11px; font-weight:700; color:var(--mid); margin:6px 0 4px; letter-spacing:0.4px; }
+  .srs-week-list { display:flex; flex-direction:column; gap:6px; }
+  .srs-week-day { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text); cursor:pointer; }
+  .srs-week-day input { accent-color:var(--accent); }
+  .srs-week-day b { color:var(--accent); }
+
   .back-meta { margin-top:14px; font-size:11px; color:var(--mid); min-height:14px; }
 
   .filter-row {
@@ -1969,6 +1984,19 @@
       <div class="big">Hoy toca repasar</div>
       <div class="sub"><span id="reviewCount">0</span> tarjetas pendientes</div>
     </div>
+    <div class="srs-search" id="srsSearchBlock" style="display:none;">
+      <button class="srs-search-toggle" onclick="srsSearchToggle()">Buscar repaso por fecha</button>
+      <div class="srs-search-panel" id="srsSearchPanel" style="display:none;">
+        <div class="srs-search-row">
+          <input type="date" id="srsDatePick">
+          <button class="srs-mini" onclick="srsLookupDate()">Ver</button>
+        </div>
+        <div class="srs-date-result" id="srsDateResult"></div>
+        <div class="srs-week-label">Próxima semana (marca los días)</div>
+        <div class="srs-week-list" id="srsWeekList"></div>
+        <button class="srs-mini srs-go" onclick="srsRepasarSelected()">Repasar días seleccionados</button>
+      </div>
+    </div>
     <div class="cat-list" id="catList"></div>
   </div>
 
@@ -3005,6 +3033,89 @@ function srsCommitAndAdvance(card, key, item, days){
   }, 1300);
 }
 
+function srsSearchToggle(){
+  const p = document.getElementById('srsSearchPanel');
+  if(!p) return;
+  const show = p.style.display !== 'block';
+  p.style.display = show ? 'block' : 'none';
+  if(show) srsBuildWeek();
+}
+
+function srsDayFromStr(str){
+  const parts = str.split('-').map(Number);
+  return Math.floor(new Date(parts[0], parts[1]-1, parts[2]).getTime() / 86400000);
+}
+
+function srsCountOn(d){
+  let n = 0;
+  (window.CATEGORIES||[]).forEach(cat => (cat.subs||[]).forEach(sub => (sub.cards||[]).forEach(card => {
+    const c = SRS.cards[cardKey(card)];
+    if(c && c.due === d) n++;
+  })));
+  return n;
+}
+
+function srsCardsDueOn(daysSet){
+  const out = [];
+  (window.CATEGORIES||[]).forEach(cat => (cat.subs||[]).forEach(sub => (sub.cards||[]).forEach(card => {
+    const c = SRS.cards[cardKey(card)];
+    if(c && daysSet.has(c.due)) out.push(card);
+  })));
+  return out;
+}
+
+function srsFmtWeekday(d){
+  try { return new Date(d * 86400000).toLocaleDateString('es-AR', { weekday:'short', day:'numeric', month:'short' }); }
+  catch(e){ return String(d); }
+}
+
+function srsBuildWeek(){
+  const box = document.getElementById('srsWeekList');
+  if(!box) return;
+  const today = todayDays();
+  let html = '';
+  for(let i = 1; i <= 7; i++){
+    const d = today + i;
+    const n = srsCountOn(d);
+    html += '<label class="srs-week-day"><input type="checkbox" data-day="' + d + '"> ' + srsFmtWeekday(d) + ' · <b>' + n + '</b> tarjetas</label>';
+  }
+  box.innerHTML = html;
+}
+
+function srsLookupDate(){
+  const inp = document.getElementById('srsDatePick');
+  const res = document.getElementById('srsDateResult');
+  if(!inp || !inp.value){ srsToast('Elige una fecha primero.'); return; }
+  const d = srsDayFromStr(inp.value);
+  const n = srsCountOn(d);
+  res.innerHTML = srsFmtDate(d) + ' · <b>' + n + '</b> tarjetas <button class="srs-mini" onclick="srsRepasarDate(' + d + ')">Repasar</button>';
+}
+
+function srsGoRepasar(cards, title){
+  if(cards.length === 0){ srsToast('No hay tarjetas para esa fecha.'); return; }
+  SRS.reviewMode = true;
+  window.state.reviewQueue = cards;
+  window.state.cardIndex = 0;
+  document.getElementById('homeView').classList.remove('open');
+  document.getElementById('subView').classList.remove('open');
+  document.getElementById('cardView').classList.add('open');
+  document.getElementById('cardTitle').textContent = title + ' (' + cards.length + ')';
+  window.renderCard();
+}
+
+function srsRepasarDate(d){
+  srsGoRepasar(srsCardsDueOn(new Set([d])), srsFmtDate(d));
+}
+
+function srsRepasarSelected(){
+  const checks = document.querySelectorAll('#srsWeekList input:checked');
+  const days = new Set();
+  checks.forEach(c => days.add(parseInt(c.dataset.day, 10)));
+  if(days.size === 0){ srsToast('Selecciona al menos un día.'); return; }
+  const cards = srsCardsDueOn(days);
+  srsGoRepasar(cards, 'Repaso por fecha');
+}
+
 function srsUpdateReviewCount(){
   const hero = document.getElementById('reviewHero');
   if(!hero) return;
@@ -3062,6 +3173,8 @@ function enterReviewMode(){
 /* 學生端啟用 SRS：在 onAuthStateChanged 學生分支呼叫 */
 window.enableSRS = function(email){
   document.getElementById('srsRow').style.display = 'block';
+  const sb = document.getElementById('srsSearchBlock'); if(sb) sb.style.display = 'block';
+  srsBuildWeek();
   const lr = document.getElementById('learnedRow'); if(lr) lr.style.display = 'none';
   srsLoad(email);
 };
@@ -3073,6 +3186,10 @@ window.srsCustom = srsCustom;
 window.enterReviewMode = enterReviewMode;
 window.srsFmtDate = srsFmtDate;
 window.srsToast = srsToast;
+window.srsSearchToggle = srsSearchToggle;
+window.srsLookupDate = srsLookupDate;
+window.srsRepasarDate = srsRepasarDate;
+window.srsRepasarSelected = srsRepasarSelected;
 </script>
 </body></body>
 </html>
