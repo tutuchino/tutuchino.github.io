@@ -373,6 +373,19 @@
   .srs-week-day { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text); cursor:pointer; }
   .srs-week-day input { accent-color:var(--accent); }
   .srs-week-day b { color:var(--accent); }
+  .srs-cal-head { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+  .srs-cal-title { flex:1; text-align:center; font-size:13px; font-weight:800; color:var(--text); }
+  .srs-cal-week { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:4px; }
+  .srs-cal-week span { text-align:center; font-size:10px; color:var(--mid); font-weight:700; }
+  .srs-cal-body { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .srs-cal-day { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; aspect-ratio:1/1; border-radius:10px; background:var(--front1); border:1px solid var(--line); cursor:pointer; font-size:12px; color:var(--text); transition:transform .12s, box-shadow .12s; }
+  .srs-cal-day:hover { transform:scale(1.06); box-shadow:0 3px 8px var(--shadow); }
+  .srs-cal-day .n { font-size:10px; font-weight:800; color:#fff; background:var(--accent); border-radius:9px; padding:0 5px; line-height:14px; }
+  .srs-cal-day.today { border:2px solid var(--accent); }
+  .srs-cal-day.picked { background:var(--accent); color:#fff; }
+  .srs-cal-day.picked .n { background:#fff; color:var(--accent); }
+  .srs-cal-empty { aspect-ratio:1/1; }
+
 
   .back-meta { margin-top:14px; font-size:11px; color:var(--mid); min-height:14px; }
 
@@ -1987,14 +2000,17 @@
     <div class="srs-search" id="srsSearchBlock" style="display:none;">
       <button class="srs-search-toggle" onclick="srsSearchToggle()">Buscar repaso por fecha</button>
       <div class="srs-search-panel" id="srsSearchPanel" style="display:none;">
-        <div class="srs-search-row">
-          <input type="date" id="srsDatePick">
-          <button class="srs-mini" onclick="srsLookupDate()">Ver</button>
+        <div class="srs-cal-head">
+          <button class="srs-mini" onclick="srsPrevMonth()">‹</button>
+          <div class="srs-cal-title" id="srsCalTitle"></div>
+          <button class="srs-mini" onclick="srsNextMonth()">›</button>
+          <button class="srs-mini srs-today" onclick="srsGoToday()">Hoy</button>
         </div>
+        <div class="srs-cal-week">
+          <span>lun</span><span>mar</span><span>mié</span><span>jue</span><span>vie</span><span>sáb</span><span>dom</span>
+        </div>
+        <div class="srs-cal-body" id="srsCalBody"></div>
         <div class="srs-date-result" id="srsDateResult"></div>
-        <div class="srs-week-label">Próxima semana (marca los días)</div>
-        <div class="srs-week-list" id="srsWeekList"></div>
-        <button class="srs-mini srs-go" onclick="srsRepasarSelected()">Repasar días seleccionados</button>
       </div>
     </div>
     <div class="cat-list" id="catList"></div>
@@ -3038,7 +3054,7 @@ function srsSearchToggle(){
   if(!p) return;
   const show = p.style.display !== 'block';
   p.style.display = show ? 'block' : 'none';
-  if(show) srsBuildWeek();
+  if(show) srsOpenCal();
 }
 
 function srsDayFromStr(str){
@@ -3082,13 +3098,65 @@ function srsBuildWeek(){
   box.innerHTML = html;
 }
 
-function srsLookupDate(){
-  const inp = document.getElementById('srsDatePick');
+let srsCal = { y: null, m: null };
+
+function srsOpenCal(){
+  const now = new Date();
+  srsCal.y = now.getFullYear(); srsCal.m = now.getMonth();
+  srsRenderCal();
+}
+
+function srsRenderCal(){
+  const box = document.getElementById('srsCalBody');
+  if(!box) return;
+  const y = srsCal.y, m = srsCal.m;
+  const t = document.getElementById('srsCalTitle');
+  if(t) t.textContent = new Date(y, m, 1).toLocaleDateString('es-AR', { month:'long', year:'numeric' });
+  const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const now = new Date();
+  let html = '';
+  for(let i = 0; i < startDow; i++) html += '<div class="srs-cal-empty"></div>';
+  for(let d = 1; d <= daysInMonth; d++){
+    const dayNum = Math.floor(new Date(y, m, d).getTime() / 86400000);
+    const n = srsCountOn(dayNum);
+    let cls = 'srs-cal-day';
+    if(y === now.getFullYear() && m === now.getMonth() && d === now.getDate()) cls += ' today';
+    if(srsCal.pick === dayNum) cls += ' picked';
+    html += '<div class="' + cls + '" onclick="srsPickDay(' + dayNum + ')"><span class="d">' + d + '</span>' + (n > 0 ? '<span class="n">' + n + '</span>' : '') + '</div>';
+  }
+  box.innerHTML = html;
+}
+
+function srsPrevMonth(){
+  srsCal.m--; if(srsCal.m < 0){ srsCal.m = 11; srsCal.y--; }
+  srsRenderCal();
+}
+function srsNextMonth(){
+  srsCal.m++; if(srsCal.m > 11){ srsCal.m = 0; srsCal.y++; }
+  srsRenderCal();
+}
+function srsGoToday(){
+  const now = new Date();
+  srsCal.y = now.getFullYear(); srsCal.m = now.getMonth();
+  srsCal.pick = Math.floor(now.getTime() / 86400000);
+  srsRenderCal();
+  const n = srsCountOn(srsCal.pick);
+  srsShowPick(srsCal.pick, n);
+}
+
+function srsPickDay(d){
+  srsCal.pick = d;
+  srsRenderCal();
+  srsShowPick(d, srsCountOn(d));
+}
+
+function srsShowPick(d, n){
   const res = document.getElementById('srsDateResult');
-  if(!inp || !inp.value){ srsToast('Elige una fecha primero.'); return; }
-  const d = srsDayFromStr(inp.value);
-  const n = srsCountOn(d);
-  res.innerHTML = srsFmtDate(d) + ' · <b>' + n + '</b> tarjetas <button class="srs-mini" onclick="srsRepasarDate(' + d + ')">Repasar</button>';
+  if(!res) return;
+  res.innerHTML = n > 0
+    ? srsFmtDate(d) + ' · <b>' + n + '</b> tarjetas <button class="srs-mini" onclick="srsRepasarDate(' + d + ')">Repasar</button>'
+    : srsFmtDate(d) + ' · sin tarjetas ese día';
 }
 
 function srsGoRepasar(cards, title){
@@ -3174,7 +3242,6 @@ function enterReviewMode(){
 window.enableSRS = function(email){
   document.getElementById('srsRow').style.display = 'block';
   const sb = document.getElementById('srsSearchBlock'); if(sb) sb.style.display = 'block';
-  srsBuildWeek();
   const lr = document.getElementById('learnedRow'); if(lr) lr.style.display = 'none';
   srsLoad(email);
 };
@@ -3187,9 +3254,11 @@ window.enterReviewMode = enterReviewMode;
 window.srsFmtDate = srsFmtDate;
 window.srsToast = srsToast;
 window.srsSearchToggle = srsSearchToggle;
-window.srsLookupDate = srsLookupDate;
+window.srsPrevMonth = srsPrevMonth;
+window.srsNextMonth = srsNextMonth;
+window.srsGoToday = srsGoToday;
+window.srsPickDay = srsPickDay;
 window.srsRepasarDate = srsRepasarDate;
-window.srsRepasarSelected = srsRepasarSelected;
 </script>
 </body></body>
 </html>
