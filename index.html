@@ -186,6 +186,7 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
       <a href="original/hanzi.html"><span class="c-ico">字</span><span><span class="c-t">漢字閃卡</span><br><span class="c-e">Hanzi · 4,475 字</span></span></a>
       <a href="original/words.html"><span class="c-ico">詞</span><span><span class="c-t">單詞閃卡</span><br><span class="c-e">Palabras · 11,781 詞</span></span></a>
       <a href="original/clf.html"><span class="c-ico">量</span><span><span class="c-t">量詞閃卡</span><br><span class="c-e">Clasificadores · 258 個</span></span></a>
+      <a href="original/extra.html"><span class="c-ico">專</span><span><span class="c-t">進階詞彙</span><br><span class="c-e">Vocabulario avanzado · 16 módulos</span></span></a>
       <div class="back-row"><a href="#top" onclick="showHomeModules();return false;">← 回首頁入口</a></div>
     </div>
 
@@ -318,11 +319,15 @@ function homeCountOn(d){
 function homeModOf(k){
   if(k.indexOf('h_') === 0) return 'hanzi';
   if(k.indexOf('c_') === 0) return 'clf';
+  if(k.indexOf('e_') === 0) return 'extra';
   return 'words';
 }
 
 function homeModName(mod){
-  return mod === 'hanzi' ? '漢字卡' : (mod === 'clf' ? '量詞卡' : '單詞卡');
+  if(mod === 'hanzi') return '漢字卡';
+  if(mod === 'clf') return '量詞卡';
+  if(mod === 'extra') return '進階詞';
+  return '單詞卡';
 }
 
 function homeModCount(d, mod){
@@ -375,11 +380,12 @@ function homeShowPick(d){
   if(!res) return;
   const total = homeCountOn(d);
   if(total === 0){ res.innerHTML = homeFmtDate(d) + ' · sin tarjetas ese día'; return; }
-  const mods = ['words','hanzi','clf'];
+  const mods = ['words','hanzi','clf','extra'];
   let btns = '';
+  const modFile = { words:'words', hanzi:'hanzi', clf:'clf', extra:'extra' };
   mods.forEach(mod => {
     const n = homeModCount(d, mod);
-    if(n > 0) btns += '<a class="srs-mod-btn" href="original/' + (mod === 'words' ? 'words' : (mod === 'hanzi' ? 'hanzi' : 'clf')) + '.html?reviewday=' + d + '&v=' + VER + '">' + homeModName(mod) + ' · ' + n + '</a>';
+    if(n > 0) btns += '<a class="srs-mod-btn" href="original/' + modFile[mod] + '.html?reviewday=' + d + '&v=' + VER + '">' + homeModName(mod) + ' · ' + n + '</a>';
   });
   res.innerHTML = '<b>' + homeFmtDate(d) + '</b> · ' + total + ' tarjetas: ' + btns;
 }
@@ -568,6 +574,7 @@ async function showStudent(email){
       if(base.indexOf("hanzi.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
       else if(base.indexOf("words.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
       else if(base.indexOf("clf.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
+      else if(base.indexOf("extra.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
     });
     return false;
   };
