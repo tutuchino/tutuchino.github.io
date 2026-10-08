@@ -2228,7 +2228,7 @@ function renderCard() {
     } else if(item && item.due){
       lr.textContent = 'Próxima repetición: ' + window.srsFmtDate(item.due);
     } else {
-      lr.textContent = '';
+      lr.textContent = 'Nueva · se programa al repasar';
     }
   }
   document.getElementById('cardBox').classList.remove('flipped');
@@ -3006,12 +3006,26 @@ function srsUpdateReviewCount(){
   if(!hero) return;
   const today = todayDays();
   let n = 0;
+  let nextDue = Infinity, nextN = 0;
   for(const k in SRS.cards){
     const c = SRS.cards[k];
     if(c.due <= today) n++;
+    else if(c.due < nextDue){ nextDue = c.due; nextN = 1; }
+    else if(c.due === nextDue){ nextN++; }
   }
-  document.getElementById('reviewCount').textContent = n;
-  hero.style.display = n > 0 ? 'block' : 'none';
+  const big = hero.querySelector('.big');
+  const sub = hero.querySelector('.sub');
+  if(n > 0){
+    big.textContent = 'Hoy toca repasar';
+    sub.innerHTML = '<span id="reviewCount">' + n + '</span> tarjetas pendientes';
+  } else if(nextDue !== Infinity){
+    big.textContent = 'Próxima repetición';
+    sub.innerHTML = srsFmtDate(nextDue) + ' · <span id="reviewCount">' + nextN + '</span> tarjetas';
+  } else {
+    big.textContent = 'Repaso';
+    sub.innerHTML = 'Aprende tarjetas para programar tu repaso';
+  }
+  hero.style.display = 'block';
 }
 
 function enterReviewMode(){
@@ -3030,7 +3044,7 @@ function enterReviewMode(){
     });
   });
   due.sort((a,b) => a.due - b.due);
-  if(due.length === 0){ alert('No tienes tarjetas pendientes hoy.'); return; }
+  if(due.length === 0){ alert('No hay tarjetas pendientes hoy. Vuelve en la fecha de repaso.'); return; }
   SRS.reviewMode = true;
   window.state.reviewQueue = due.map(d => d.card);
   window.state.cardIndex = 0;
