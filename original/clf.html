@@ -51,7 +51,8 @@
   .mark-row { display:flex; gap:10px; margin-bottom:14px; }
   .mark-row button { flex:1; background:var(--btn-bg); border:1.5px solid var(--line); border-radius:14px; padding:12px 0; font-size:14px; font-weight:700; color:var(--text); cursor:pointer; font-family:"Times New Roman", Times, serif; }
   .mark-row button.on { background:var(--ok-bg); border-color:var(--ok); color:var(--ok); }
-  .nav-row {
+  .nav-row { display:flex; gap:10px; }
+
 
   /* ===== SRS（間隔複習） ===== */
   .srs-row { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; justify-content:center; }
@@ -67,7 +68,7 @@
   .srs-toast { position:fixed; left:50%; bottom:96px; transform:translateX(-50%); background:#3a2e1a; color:#fff8e7; padding:10px 18px; border-radius:24px; font-size:13px; font-weight:600; box-shadow:0 6px 18px rgba(0,0,0,.18); opacity:0; transition:opacity .25s; z-index:99; pointer-events:none; white-space:nowrap; }
   .srs-toast.show { opacity:1; }
   .back-meta { margin-top:10px; font-size:12px; color:var(--mid); font-weight:700; min-height:16px; }
- display:flex; gap:10px; }
+ 
   .nav-row button { flex:1; background:var(--accent); color:#fff; border:none; border-radius:14px; padding:12px 0; font-size:15px; font-weight:700; cursor:pointer; }
   .empty-note { font-size:13px; color:var(--mid); padding:10px 0; }
   .total-panel { position:fixed; inset:0; background:var(--bg); z-index:50; padding:16px; max-width:520px; margin:0 auto; display:none; overflow-y:auto; }
