@@ -1963,7 +1963,7 @@
 </div>
 
     <div class="review-hero" id="reviewHero" onclick="enterReviewMode()" style="display:none;">
-      <div class="big">Hoy toca repasar · 今日複習</div>
+      <div class="big">Hoy toca repasar</div>
       <div class="sub"><span id="reviewCount">0</span> tarjetas pendientes</div>
     </div>
     <div class="cat-list" id="catList"></div>
@@ -2014,17 +2014,17 @@
     </div>
     <div id="srsRow" style="display:none;">
       <div class="srs-row">
-        <button class="srs-btn again" onclick="srsRate('again')">Olvidado<br><small>1天</small></button>
-        <button class="srs-btn hard"  onclick="srsRate('hard')">Difícil<br><small>~2天</small></button>
-        <button class="srs-btn good"  onclick="srsRate('good')">Bien<br><small>依進度</small></button>
+        <button class="srs-btn again" onclick="srsRate('again')">Olvidado<br><small>1 día</small></button>
+        <button class="srs-btn hard"  onclick="srsRate('hard')">Difícil<br><small>2 días</small></button>
+        <button class="srs-btn good"  onclick="srsRate('good')">Bien<br><small>Según plan</small></button>
         <button class="srs-btn easy"  onclick="srsRate('easy')">Fácil<br><small>+30%</small></button>
       </div>
       <div class="srs-custom">
-        <button onclick="srsCustom(1)">明天</button>
-        <button onclick="srsCustom(3)">3天後</button>
-        <button onclick="srsCustom(7)">1週後</button>
-        <button onclick="srsCustom(30)">1月後</button>
-        <button onclick="srsCustom(60)">2月後</button>
+        <button onclick="srsCustom(1)">Mañana</button>
+        <button onclick="srsCustom(3)">3 días</button>
+        <button onclick="srsCustom(7)">1 semana</button>
+        <button onclick="srsCustom(30)">1 mes</button>
+        <button onclick="srsCustom(60)">2 meses</button>
       </div>
     </div>
     <div class="ctrl-row">
@@ -2987,7 +2987,7 @@ function enterReviewMode(){
   document.getElementById('homeView').classList.remove('open');
   document.getElementById('subView').classList.remove('open');
   document.getElementById('cardView').classList.add('open');
-  document.getElementById('cardTitle').textContent = 'Repaso diario · 今日複習 (' + due.length + ')';
+  document.getElementById('cardTitle').textContent = 'Repaso diario (' + due.length + ')';
   renderCard();
 }
 
