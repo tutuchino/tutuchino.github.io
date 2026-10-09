@@ -2029,6 +2029,10 @@
       <button class="top-btn" id="backToListBtn">← Volver</button>
       <div class="sub-title" id="cardTitle" style="font-size:15px"></div>
     </div>
+    <div style="margin:8px 0 2px;">
+      <input class="search-input" id="wSearch" placeholder="🔍 Buscar: chino / pinyin / español" style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--accent);background:var(--front1);color:var(--text);font-family:inherit;font-size:13px;outline:none;box-sizing:border-box;">
+      <div id="wSearchStatus" style="font-size:11px;color:var(--sub);min-height:15px;margin-top:4px;"></div>
+    </div>
     <div class="mode-row">
       <button id="modeZhBtn" class="active">Chino → Español</button>
       <button id="modeEsBtn">Español → Chino</button>
@@ -2204,6 +2208,40 @@ function renderSubs(cat) {
   });
 }
 
+function normPy(x){
+  return (x||'').toLowerCase()
+    .replace(/[\u0101\u00e1\u01ce\u00e0]/g,'a').replace(/[\u0113\u00e9\u011b\u00e8]/g,'e')
+    .replace(/[\u012b\u00ed\u01d0\u00ec]/g,'i').replace(/[\u014d\u00f3\u01d2\u00f2]/g,'o')
+    .replace(/[\u016b\u00fa\u01d4\u00f9]/g,'u').replace(/[\u01d6\u01d8\u01da\u01dc]/g,'\u00fc').replace(/\u00fc/g,'v')
+    .replace(/[^a-zv]/g,'');
+}
+function searchAllCards(q){
+  const isPy = /[a-z]/i.test(q);
+  const nq = normPy(q);
+  const hits = [];
+  CATEGORIES.forEach(cat => cat.subs.forEach(sub => sub.cards.forEach((c) => {
+    const zhOk = c.zh && c.zh.includes(q);
+    const pyOk = c.py && (c.py.toLowerCase().includes(q) || (isPy && normPy(c.py).includes(nq)));
+    const esOk = c.es && c.es.toLowerCase().includes(q);
+    if (zhOk || pyOk || esOk) hits.push({c, sub});
+  })));
+  return hits;
+}
+document.getElementById('wSearch').oninput = (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  const status = document.getElementById('wSearchStatus');
+  if (!q) { status.textContent = ''; return; }
+  const hits = searchAllCards(q);
+  if (!hits.length) { status.textContent = '沒有找到：「' + q + '」 · No se encontró'; return; }
+  const first = hits[0];
+  state.currentSub = first.sub;
+  state.cardIndex = 0;
+  state.reviewQueue = hits.map(h => h.c);
+  document.getElementById('cardTitle').textContent = first.sub.name;
+  renderCard();
+  showView('card');
+  status.textContent = '✓ 找到 ' + hits.length + ' 個：『' + first.c.zh + '』 ' + first.c.py + '（' + first.c.es + '）';
+};
 function openSub(sub) {
   state.currentSub = sub;
   state.cardIndex = 0;
