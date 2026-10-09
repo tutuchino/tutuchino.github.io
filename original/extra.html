@@ -262,12 +262,24 @@ function renderCard(){
   document.getElementById('flipInner').classList.remove('flipped');
   state.lastIdx=currentIdx; saveState();
 }
+function normPy(x){
+  return (x||'').toLowerCase()
+    .replace(/[\u0101\u00e1\u01ce\u00e0]/g,'a').replace(/[\u0113\u00e9\u011b\u00e8]/g,'e')
+    .replace(/[\u012b\u00ed\u01d0\u00ec]/g,'i').replace(/[\u014d\u00f3\u01d2\u00f2]/g,'o')
+    .replace(/[\u016b\u00fa\u01d4\u00f9]/g,'u').replace(/[\u01d6\u01d8\u01da\u01dc]/g,'\u00fc').replace(/\u00fc/g,'v')
+    .replace(/[^a-zv]/g,'');
+}
+
 function applyFilter(){
   const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const isPy=/[a-z]/i.test(q);
+  const nq=normPy(q);
   filteredList=cardList.filter(c=>{
     if(showOnlyUnlearned && state.marks[c.id]==='learned') return false;
     if(!q) return true;
-    return (c.word&&c.word.toLowerCase().includes(q))||(c.pinyin&&c.pinyin.toLowerCase().includes(q))||(c.es&&c.es.toLowerCase().includes(q));
+    return (c.word&&c.word.toLowerCase().includes(q))||
+      (c.pinyin&&(c.pinyin.toLowerCase().includes(q)||(isPy&&normPy(c.pinyin).includes(nq))))||
+      (c.es&&c.es.toLowerCase().includes(q));
   });
   currentIdx=0; renderCard();
 }

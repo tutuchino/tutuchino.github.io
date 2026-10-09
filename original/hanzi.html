@@ -1085,6 +1085,14 @@ function resetStroke() { if (writer) { writer.hideCharacter(); writer.animateCha
 const PAGE_SIZE = 100;
 let currentPage = 1;
 
+function normPy(x){
+  return (x||'').toLowerCase()
+    .replace(/[\u0101\u00e1\u01ce\u00e0]/g,'a').replace(/[\u0113\u00e9\u011b\u00e8]/g,'e')
+    .replace(/[\u012b\u00ed\u01d0\u00ec]/g,'i').replace(/[\u014d\u00f3\u01d2\u00f2]/g,'o')
+    .replace(/[\u016b\u00fa\u01d4\u00f9]/g,'u').replace(/[\u01d6\u01d8\u01da\u01dc]/g,'\u00fc').replace(/\u00fc/g,'v')
+    .replace(/[^a-zv]/g,'');
+}
+
 function renderTotalList() {
   const box = document.getElementById("totalList");
   box.innerHTML = "";
@@ -1098,9 +1106,11 @@ function renderTotalList() {
   }).filter(it => hskFilter === "all" || String(it.hsk) === hskFilter);
   if (charSearch) {
     const q = charSearch.toLowerCase();
+    const isPy = /[a-z]/i.test(charSearch);
+    const nq = normPy(q);
     list = list.filter(it =>
       (it.char && it.char.includes(charSearch)) ||
-      (it.pinyin && it.pinyin.toLowerCase().includes(q)) ||
+      (it.pinyin && (it.pinyin.toLowerCase().includes(q) || (isPy && normPy(it.pinyin).includes(nq)))) ||
       (it.es && it.es.toLowerCase().includes(q)) ||
       (it.id && it.id.includes(charSearch))
     );
@@ -1329,10 +1339,13 @@ document.getElementById("searchInput").oninput = (e) => {
   }
   const status = document.getElementById("searchStatus");
   if (!kw) { status.textContent = ""; return; }
-  // 搜索：汉字、拼音、西语
+  // 搜索：汉字、拼音（含聲調歸一化）、西语
+  const isPy = /[a-z]/i.test(kw);
+  const nq = normPy(kw);
   const hit = charList.findIndex(it =>
     it.char.includes(kw) ||
     it.pinyin.toLowerCase().includes(kw) ||
+    (isPy && normPy(it.pinyin).includes(nq)) ||
     it.es.toLowerCase().includes(kw)
   );
   if (hit >= 0) {

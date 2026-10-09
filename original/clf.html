@@ -587,7 +587,9 @@ function renderTotalList() {
   box.innerHTML = "";
   let list = clfList.filter(it => currentFilter === "all" || ("lv" + it.level) === currentFilter);
   const q = document.getElementById("searchInput").value.trim().toLowerCase();
-  if (q) list = list.filter(it => it.c.includes(q) || it.py.includes(q) || it.use.toLowerCase().includes(q));
+  const isPy = /[a-z]/i.test(q);
+  const nq = normPy(q);
+  if (q) list = list.filter(it => it.c.includes(q) || it.py.includes(q) || (isPy && normPy(it.py).includes(nq)) || it.use.toLowerCase().includes(q));
   if (hideLearned) list = list.filter(it => !store.learned.includes(it.id));
   if (list.length === 0) { box.innerHTML = '<div class="empty-note">此筛选下没有量词。</div>'; return; }
   list.forEach(it => {
@@ -673,6 +675,14 @@ document.getElementById("openListBtn").onclick = () => {
   renderTotalList();
 };
 document.getElementById("closeListBtn").onclick = closeList;
+function normPy(x){
+  return (x||'').toLowerCase()
+    .replace(/[\u0101\u00e1\u01ce\u00e0]/g,'a').replace(/[\u0113\u00e9\u011b\u00e8]/g,'e')
+    .replace(/[\u012b\u00ed\u01d0\u00ec]/g,'i').replace(/[\u014d\u00f3\u01d2\u00f2]/g,'o')
+    .replace(/[\u016b\u00fa\u01d4\u00f9]/g,'u').replace(/[\u01d6\u01d8\u01da\u01dc]/g,'\u00fc').replace(/\u00fc/g,'v')
+    .replace(/[^a-zv]/g,'');
+}
+
 document.getElementById("searchInput").oninput = renderTotalList;
 document.querySelectorAll("#filterRow button").forEach(btn => {
   btn.onclick = () => {
@@ -932,7 +942,9 @@ function renderTotalList() {
   box.innerHTML = "";
   let list = clfList.filter(it => currentFilter === "all" || ("lv" + it.level) === currentFilter);
   const q = document.getElementById("searchInput").value.trim().toLowerCase();
-  if (q) list = list.filter(it => it.c.includes(q) || it.py.includes(q) || it.use.toLowerCase().includes(q));
+  const isPy = /[a-z]/i.test(q);
+  const nq = normPy(q);
+  if (q) list = list.filter(it => it.c.includes(q) || it.py.includes(q) || (isPy && normPy(it.py).includes(nq)) || it.use.toLowerCase().includes(q));
   if (hideLearned) list = list.filter(it => !store.learned.includes(it.id));
   if (list.length === 0) { box.innerHTML = '<div class="empty-note">此筛选下没有量词。</div>'; return; }
   list.forEach(it => {
@@ -1339,7 +1351,9 @@ function renderTotalList() {
   box.innerHTML = "";
   let list = clfList.filter(it => currentFilter === "all" || ("lv" + it.level) === currentFilter);
   const q = document.getElementById("searchInput").value.trim().toLowerCase();
-  if (q) list = list.filter(it => it.c.includes(q) || it.py.includes(q) || it.use.toLowerCase().includes(q));
+  const isPy = /[a-z]/i.test(q);
+  const nq = normPy(q);
+  if (q) list = list.filter(it => it.c.includes(q) || it.py.includes(q) || (isPy && normPy(it.py).includes(nq)) || it.use.toLowerCase().includes(q));
   if (hideLearned) list = list.filter(it => !store.learned.includes(it.id));
   if (list.length === 0) { box.innerHTML = '<div class="empty-note">此筛选下没有量词。</div>'; return; }
   list.forEach(it => {
