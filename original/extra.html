@@ -116,10 +116,12 @@
 </div>
 
 <div class="teacher-panel" id="teacherPanel" style="display:none;">
-  <h3>🎓 發放模組給學生</h3>
-  <input class="t-inp" id="studentNameInput" placeholder="學生 email 前綴（如 facundo.garcia）">
-  <div class="t-mod-grid" id="tModGrid"></div>
-  <button class="t-save-btn" id="saveGrantBtn">✓ 儲存雲端</button>
+  <h3>🎓 發放模組</h3>
+  <div class="t-stat" id="tpModName">—</div>
+  <label style="display:block;padding:11px;border:1.5px solid var(--line);border-radius:12px;margin:8px 0;font-size:13px;cursor:pointer;">
+    <input type="checkbox" id="tpOpenMod" style="width:17px;height:17px;accent-color:var(--accent);vertical-align:middle;margin-right:6px;"> 開放此模組給 <b id="tpStudentName">學生</b>
+  </label>
+  <button class="t-save-btn" id="saveModBtn">✓ 儲存雲端</button>
   <div class="t-stat" id="exportStat"></div>
 </div>
 
@@ -219,6 +221,7 @@ function fillModSelect(allowedMods){
 }
 function setMod(modId){
   currentMod = modId;
+  window.currentMod = modId;
   cardList = ALL_CARDS.filter(c=>c.mod===modId);
   filteredList=[...cardList];
   currentIdx=0;
@@ -299,6 +302,8 @@ if(localStorage.getItem('extra_dark')==='true') document.body.classList.add('dar
 document.addEventListener('contextmenu', e=>e.preventDefault());
 window.state=state; window.renderCard=renderCard;
 window.setMod=setMod; window.fillModSelect=fillModSelect; window.applyFilter=applyFilter;
+const _uMod = new URLSearchParams(location.search).get('mod');
+if(_uMod) window.setMod(_uMod);
 </script>
 
 <script type="module">
@@ -465,45 +470,48 @@ window.srsRate=srsRate; window.srsCustom=srsCustom;
 window.srsPrevMonth=srsPrevMonth; window.srsNextMonth=srsNextMonth;
 window.srsGoToday=srsGoToday; window.srsPickDay=srsPickDay; window.srsRepasarDate=srsRepasarDate;
 
-window.renderTeacherGrid=function(checkedMods){
-  const grid=document.getElementById('tModGrid');
-  grid.innerHTML='';
-  MODS.forEach(m=>{
-    const lab=document.createElement('label');
-    lab.innerHTML='<input type="checkbox" value="'+m.id+'" '+((checkedMods&&checkedMods.includes(m.id))?'checked':'')+'> '+m.es+' ('+m.n+')';
-    grid.appendChild(lab);
-  });
-};
+let tpEmail = null, tpMods = [];
+function tpRefresh(){
+  const m = window.currentMod;
+  const mi = MODS.find(x=>x.id===m);
+  document.getElementById('tpModName').textContent = '模組：' + (mi ? mi.es : m);
+  document.getElementById('tpOpenMod').checked = tpMods.includes(m);
+}
+window.tpRefresh = tpRefresh;
 window.applyExtraGrant=function(allowedMods){
   window.fillModSelect(allowedMods);
+  const uMod = new URLSearchParams(location.search).get('mod');
   if(allowedMods && allowedMods.length){
-    setMod(allowedMods[0]);
+    if(uMod && allowedMods.includes(uMod)) window.setMod(uMod);
+    else window.setMod(allowedMods[0]);
   } else {
     document.getElementById('cardBox').innerHTML='<div class="empty-note-big">Este modulo aun no esta disponible para tu cuenta.</div>';
   }
+};
+window.applyExtraTeacher=function(allowedMods){
+  window.fillModSelect(MODS);
+  const uMod = new URLSearchParams(location.search).get('mod');
+  window.setMod(uMod && MODS.some(x=>x.id===uMod) ? uMod : MODS[0].id);
+  if(allowedMods) tpRefresh();
 };
 
 onAuthStateChanged(auth, async (user)=>{
   if(!user) return;
   const isTeacher = user.email==='blissfulmeow@chino-basico-por-tema.firebaseapp.com';
   if(isTeacher){
-    document.getElementById('teacherPanel').style.display='block';
-    window.fillModSelect(MODS);
-    window.renderTeacherGrid([]);
-    window.setMod(MODS[0].id);
     const sp=new URLSearchParams(location.search).get('student');
+    document.getElementById('teacherPanel').style.display = sp ? 'block' : 'none';
+    let granted = null;
     if(sp){
-      const inp=document.getElementById('studentNameInput');
-      inp.value=sp;
-      const email=sp.trim().toLowerCase().replace(/[^a-z0-9]+/g,'.')+'@chino-basico-por-tema.firebaseapp.com';
+      tpEmail = sp.trim().toLowerCase().replace(/[^a-z0-9]+/g,'.')+'@chino-basico-por-tema.firebaseapp.com';
+      document.getElementById('tpStudentName').textContent = sp;
       try{
-        const snap=await getDoc(doc(db,"grants",email));
-        const g=snap.exists()?(snap.data().extra||null):null;
-        const mods=(g&&g.mods)?g.mods:[];
-        window.renderTeacherGrid(mods);
-        document.getElementById('exportStat').textContent='已載入 '+mods.length+' 個模組給 '+sp;
-      }catch(e){ console.warn('load grant fail',e); }
+        const snap=await getDoc(doc(db,"grants",tpEmail));
+        tpMods = (snap.exists() && snap.data().extra && snap.data().extra.mods) || [];
+      }catch(e){ tpMods = []; }
+      granted = tpMods;
     }
+    window.applyExtraTeacher(granted);
     return;
   }
   try{
@@ -519,29 +527,36 @@ onAuthStateChanged(auth, async (user)=>{
   srsLoad(user.email);
 });
 
-document.getElementById('saveGrantBtn').addEventListener('click', async ()=>{
+document.getElementById('saveModBtn').addEventListener('click', async ()=>{
   const stat=document.getElementById('exportStat');
   try{
     if(!auth.currentUser || auth.currentUser.email!=='blissfulmeow@chino-basico-por-tema.firebaseapp.com'){
       stat.textContent='請先以老師帳號登入'; return;
     }
-    const name=document.getElementById('studentNameInput').value.trim();
-    if(!name){ stat.textContent='Escribe el nombre del estudiante.'; return; }
-    const mods=[];
-    document.querySelectorAll('#tModGrid input:checked').forEach(cb=>mods.push(cb.value));
-    if(mods.length===0){ stat.textContent='Selecciona al menos un modulo.'; return; }
-    const email=name.trim().toLowerCase().replace(/[^a-z0-9]+/g,'.')+'@chino-basico-por-tema.firebaseapp.com';
-    await setDoc(doc(db,"grants",email), { extra:{mods:mods, updatedAt:new Date()} }, { merge:true });
-    alert('✓ 已儲存雲端 · '+mods.length+' 個模組開放給 '+name);
-    stat.textContent='✓ Guardado: '+mods.length+' modulos → '+email;
+    if(!tpEmail){ stat.textContent='缺少學生參數'; return; }
+    const m = window.currentMod;
+    const on = document.getElementById('tpOpenMod').checked;
+    if(on && !tpMods.includes(m)) tpMods.push(m);
+    if(!on) tpMods = tpMods.filter(x=>x!==m);
+    await setDoc(doc(db,"grants",tpEmail), { extra:{mods:tpMods, updatedAt:new Date()} }, { merge:true });
+    stat.textContent='✓ Guardado: '+tpMods.length+' modulos → '+tpEmail;
   }catch(e){ stat.textContent='Error: '+(e.message||e); }
 });
+/* 模組切換時同步老師開關 */
+(function(){
+  const sel = document.getElementById('modSelect');
+  const orig = sel.onchange;
+  sel.onchange = (e)=>{ if(orig) orig(e); window.tpRefresh && window.tpRefresh(); };
+})();
 
 /* 暴露給非 module script 用 */
 window.ALL_CARDS = ALL_CARDS;
 window.MODS = MODS;
 refreshVisible();
-window.setMod(MODS[0].id);
+{
+  const uMod = new URLSearchParams(location.search).get('mod');
+  window.setMod(uMod && MODS.some(x=>x.id===uMod) ? uMod : MODS[0].id);
+}
 </script>
 </body>
 </html>

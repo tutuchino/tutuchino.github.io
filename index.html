@@ -89,11 +89,16 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
 /* 字卡模組清單（老師管理閃卡內容） */
 .cardmods{display:none;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:var(--shadow);text-align:left}
 .cardmods h2{font-size:15px;color:var(--warm2);font-weight:700;margin-bottom:12px}
-.cardmods a{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;text-decoration:none;border:1.5px solid var(--line);margin-bottom:8px;color:var(--ink)}
+.cardmods .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.cardmods a{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border-radius:14px;text-decoration:none;border:1.5px solid var(--line);color:var(--ink);position:relative}
 .cardmods a:hover{border-color:var(--warm2)}
-.cardmods .c-ico{font-size:24px;font-weight:900;color:var(--warm2)}
-.cardmods .c-t{font-size:14px;font-weight:600}
-.cardmods .c-e{font-size:11px;color:var(--sub)}
+.cardmods .c-ico{font-size:22px;font-weight:900;color:var(--warm2);line-height:1}
+.cardmods .c-t{font-size:13.5px;font-weight:700;line-height:1.3}
+.cardmods .c-e{font-size:10.5px;color:var(--sub)}
+.cardmods .g-chk{position:absolute;top:8px;right:8px;width:17px;height:17px;accent-color:var(--warm2);cursor:pointer}
+.cardmods .extra-save{margin-top:2px;margin-bottom:10px}
+.cardmods .extra-save button{width:100%;padding:11px;background:var(--warm2);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer}
+.cardmods .extra-save .msg{font-size:12px;color:var(--sub);margin-top:6px}
 .cardmods .back-row{margin-top:6px}
 .cardmods .back-row a{display:inline-block;border:none;background:none;color:var(--sub);font-size:12px;padding:4px 0}
 .loading{color:var(--sub);font-size:14px;padding:20px 0}
@@ -180,14 +185,18 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
       <div class="srs-result" id="homeCalResult"></div>
     </div>
 
-    <!-- 字卡模組清單（Tarjetas 點入後） -->
+        <!-- 字卡模組清單（Tarjetas 點入後）：三卡 + 16 模組，兩列排 -->
     <div class="cardmods" id="cardmods">
-      <h2>📚 Tarjetas · 字卡模組</h2>
-      <a href="original/hanzi.html"><span class="c-ico">字</span><span><span class="c-t">漢字閃卡</span><br><span class="c-e">Hanzi · 4,475 字</span></span></a>
-      <a href="original/words.html"><span class="c-ico">詞</span><span><span class="c-t">單詞閃卡</span><br><span class="c-e">Palabras · 11,781 詞</span></span></a>
-      <a href="original/clf.html"><span class="c-ico">量</span><span><span class="c-t">量詞閃卡</span><br><span class="c-e">Clasificadores · 258 個</span></span></a>
-      <a href="original/extra.html"><span class="c-ico">專</span><span><span class="c-t">進階詞彙</span><br><span class="c-e">Vocabulario avanzado · 16 módulos</span></span></a>
-      <div class="back-row"><a href="#top" onclick="showHomeModules();return false;">← 回首頁入口</a></div>
+      <h2>📚 Tarjetas · 19 個模組</h2>
+      <div class="grid" id="cardGrid">
+        <a href="original/hanzi.html"><span class="c-ico">字</span><span class="c-t">漢字閃卡</span><span class="c-e">Hanzi · 4,475 字</span></a>
+        <a href="original/words.html"><span class="c-ico">詞</span><span class="c-t">單詞閃卡</span><span class="c-e">Palabras · 11,781 詞</span></a>
+        <a href="original/clf.html"><span class="c-ico">量</span><span class="c-t">量詞閃卡</span><span class="c-e">Clasificadores · 258 個</span></a>
+      </div>
+      <div class="extra-save" id="extraSaveRow" style="display:none">
+        <button id="saveExtraBtn">✓ 儲存開放模組到雲端</button>
+        <div class="msg" id="extraSaveMsg"></div>
+      </div>
     </div>
 
     <!-- 老師管理面板 -->
@@ -253,6 +262,60 @@ const db = getFirestore(fb);
 let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
 const VER = "20261001m"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
+/* 16 個進階模組（與 extra.html 的 MODS 同序同 id） */
+const EXTRA_MODS = [
+  {id:"liyu", es:"Argot", n:200, ico:"💬"},
+  {id:"pianpang", es:"Radicales", n:50, ico:"偏"},
+  {id:"dongci", es:"Verbos", n:600, ico:"🏃"},
+  {id:"tongyifanyi", es:"Sinónimos y antónimos", n:100, ico:"⇄"},
+  {id:"shangye", es:"Negocios", n:100, ico:"💼"},
+  {id:"duoyinzi", es:"Polifonía", n:50, ico:"多"},
+  {id:"xingrongci", es:"Adjetivos", n:300, ico:"🎨"},
+  {id:"xingjin", es:"Caracteres similares", n:50, ico:"👀"},
+  {id:"yingshi", es:"Cine y TV", n:100, ico:"🎬"},
+  {id:"chengyu", es:"Modismos", n:300, ico:"📜"},
+  {id:"xinwen", es:"Noticias", n:100, ico:"📰"},
+  {id:"yihunci", es:"Palabras confusas", n:50, ico:"🔀"},
+  {id:"falv", es:"Legal", n:80, ico:"⚖"},
+  {id:"dapei", es:"Colocaciones", n:100, ico:"🔗"},
+  {id:"yuqi", es:"Partículas", n:30, ico:"❗"},
+  {id:"yufa", es:"Gramática", n:100, ico:"📐"},
+];
+window.renderExtraCards = (allowedMods, isTeacher) => {
+  const grid = $("cardGrid");
+  grid.querySelectorAll("a[data-mod]").forEach(a=>a.remove());
+  const list = allowedMods === null ? EXTRA_MODS : EXTRA_MODS.filter(m=>allowedMods.includes(m.id));
+  list.forEach(m=>{
+    const a = document.createElement("a");
+    a.href = "original/extra.html?mod=" + m.id;
+    a.setAttribute("data-mod", m.id);
+    a.innerHTML = '<span class="c-ico">'+m.ico+'</span><span class="c-t">'+m.es+'</span><span class="c-e">'+m.n+' 卡</span>';
+    if(isTeacher){
+      const cb = document.createElement("input");
+      cb.type = "checkbox"; cb.className = "g-chk"; cb.dataset.mod = m.id;
+      cb.checked = (allowedMods || []).includes(m.id);
+      a.appendChild(cb);
+    }
+    grid.appendChild(a);
+  });
+  const row = $("extraSaveRow");
+  if(row) row.style.display = isTeacher ? "block" : "none";
+};
+window.saveExtraGrant = async () => {
+  const msg = $("extraSaveMsg"); if(!msg) return;
+  if(!selEmail){ msg.textContent = "請先選擇學生 · Elegí un alumno primero"; return; }
+  const checked = [...document.querySelectorAll("#cardGrid .g-chk:checked")].map(c=>c.dataset.mod);
+  try{
+    await setDoc(doc(db,"grants",selEmail), { extra:{ mods: checked, updatedAt: new Date() } }, { merge:true });
+    msg.innerHTML = "✓ 已儲存雲端：" + checked.length + " 個模組開放給 " + fmtName(selEmail) +
+      (checked.length ? "（" + checked.map(id=>EXTRA_MODS.find(m=>m.id===id)?.es||id).join(" · ") + "）" : "");
+    msg.style.color = "var(--good,#2e7d32)";
+  }catch(e){
+    msg.textContent = "儲存失敗：" + (e.message||e);
+    msg.style.color = "#c0392b";
+  }
+};
+$("saveExtraBtn").onclick = saveExtraGrant;
 window.zoom = d => {
   zlvl = Math.max(1, Math.min(5, zlvl + d));
   document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};
@@ -437,6 +500,12 @@ onAuthStateChanged(auth, async (user) => {
   /* 只留閃卡入口，直接顯示字卡模組 */
   $("duo").style.display = "none";
   $("cardmods").style.display = showTarjetas ? "block" : "none";
+  if(isTeacher){
+    window.renderExtraCards(null, true);
+  } else {
+    const extraMods = (grant && grant.extra && grant.extra.mods) || [];
+    window.renderExtraCards(extraMods, false);
+  }
   if(!showTarjetas){
     $("cardmods").insertAdjacentHTML("beforeend",
       `<div style="font-size:13px;color:var(--sub);padding:12px 0">目前尚未開放內容，請等候老師通知。<br>Todavía no hay contenido disponible.</div>`);
@@ -559,10 +628,14 @@ async function showStudent(email){
     if(gz > 0) part.push("漢字卡 " + gz + " 組");
     if(gw > 0) part.push("單詞卡 " + gw + " 組");
     if(gc > 0) part.push("量詞卡 " + gc + " 組");
+    const exm = (g.extra && g.extra.mods) || [];
+    if(exm.length > 0) part.push("進階模組 " + exm.length + " 個");
     sumEl.innerHTML = part.length
       ? '<span style="color:#2e7d32;">已開放：' + part.join(" · ") + '</span>'
       : '<span style="color:#c0392b;">尚未開放任何閃卡內容（三卡均 0 組）</span>';
   }
+  /* 16 個進階模組的勾選狀態（老師視圖） */
+  window.renderExtraCards((g.extra && g.extra.mods) || [], true);
   $("goTarjetas").href = "#tarjetas";
   $("goTarjetas").onclick = () => {
     $("cardmods").style.display = "block";
@@ -570,11 +643,12 @@ async function showStudent(email){
     const _s = encodeURIComponent(email.split("@")[0]);
     $("cardmods").querySelectorAll("a").forEach(a=>{
       if(a.classList.contains("back-row")) return;
-      const base = a.getAttribute("href").split("?")[0];
-      if(base.indexOf("hanzi.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
-      else if(base.indexOf("words.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
-      else if(base.indexOf("clf.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
-      else if(base.indexOf("extra.html")>=0) a.href = base + "?v="+VER+"&student="+_s;
+      const href = a.getAttribute("href");
+      const [path, q] = href.split("?");
+      const params = new URLSearchParams(q||"");
+      params.set("v", VER);
+      params.set("student", _s);
+      a.href = path + "?" + params.toString();
     });
     return false;
   };
