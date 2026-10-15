@@ -280,7 +280,7 @@ const EXTRA_MODS = [
 window.renderExtraCards = (allowedMods, isTeacher) => {
   const grid = $("cardGrid");
   grid.querySelectorAll("a[data-mod]").forEach(a=>a.remove());
-  const list = allowedMods === null ? EXTRA_MODS : EXTRA_MODS.filter(m=>allowedMods.includes(m.id));
+  const list = isTeacher ? EXTRA_MODS : EXTRA_MODS.filter(m=>allowedMods.includes(m.id));
   list.forEach(m=>{
     const a = document.createElement("a");
     a.href = "original/extra.html?mod=" + m.id;
