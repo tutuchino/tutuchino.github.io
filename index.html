@@ -1,675 +1,739 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Chino Básico por Tema</title>
-<link rel="icon" href="/favicon.ico"><link rel="icon" type="image/png" href="/favicon.png">
-<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<title>TUTU · Chino Básico por Tema</title>
+<link rel="icon" type="image/png" href="https://aka.doubaocdn.com/s/PVHDdf9smT">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap">
 <style>
 :root{
-  --paper:#f2ead8; --card:#fdf8ec; --ink:#3a3428; --sub:#7d7560;
-  --line:#e0d5bb; --gold:#c9a86a;
-  --warm1:#EFC25D; --warm2:#D9A033; --warm3:#C9A97D; --warm4:#E6D8AB;
-  --orange1:#FFB366; --orange2:#FF8C2E; --orange3:#E66A14; --orange4:#FFF4E0;
-  --shadow:0 4px 20px rgba(60,45,20,.10);
+  --paper:#EEE7DC; --card:#DFC7AB; --ink:#83572F; --sub:#AE855C;
+  --line:#CDA479; --gold:#D4AF37; --warm:#B8860B; --warm-dark:#8B6508;
+  --teal:#5BA3B8; --rose:#d4726a; --accent:#B8860B; --shadow:0 4px 24px rgba(131,87,47,.12);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--paper);color:var(--ink);font-family:"Noto Sans SC",sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;transition:background .3s}
-html.night{--paper:#26221c;--card:#322c24;--ink:#ece3cf;--sub:#a89e88;--line:#4a4238;--shadow:0 4px 20px rgba(0,0,0,.3)}
-.wrap{width:100%;max-width:460px;text-align:center}
-.tools{display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px}
-.tools button{background:var(--card);border:1px solid var(--line);color:var(--sub);border-radius:20px;width:38px;height:38px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:"Times New Roman",serif}
-.tools button:hover{color:var(--warm2)}
-.logo-wrap{display:flex;flex-direction:column;align-items:center;margin:14px 0 22px}
-.logo{width:96px;height:96px;border-radius:50%;background:var(--card);border:3px solid var(--gold);box-shadow:0 6px 24px rgba(201,168,106,.3);overflow:hidden;display:flex;align-items:center;justify-content:center}
-.logo img{width:100%;height:100%;object-fit:cover}
-.logo-name{font-family:"Times New Roman",serif;font-size:14px;font-weight:700;letter-spacing:6px;color:var(--warm2);margin-top:12px}
-h1{font-family:"Times New Roman","Noto Serif SC",serif;font-size:34px;font-weight:900;margin:6px 0 4px;letter-spacing:10px;color:var(--warm2)}
-.small-title{font-family:"Noto Serif SC",serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--sub);margin-bottom:6px}
-.sub{color:var(--sub);font-size:13px;margin-bottom:8px}
-.who{font-size:15px;color:var(--sub);margin-top:32px;margin-bottom:34px}
-.who strong{color:var(--warm2);font-family:"Noto Serif SC",serif;font-size:17px}
-.form{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);text-align:left}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:13px;color:var(--sub);margin-bottom:5px}
-.field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:16px;background:transparent;color:var(--ink)}
-.btn{width:100%;background:linear-gradient(135deg,var(--warm2),#b8821e);color:#fff;border:none;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;font-family:"Times New Roman",serif;letter-spacing:1px;box-shadow:0 4px 12px rgba(217,160,51,.35)}
-.btn:hover{transform:translateY(-1px)}
-.err{color:#c0392b;font-size:13px;margin-top:8px;min-height:18px}
-.home{display:none}
-.bigmod{display:block;text-decoration:none;border-radius:20px;padding:24px 20px;margin-bottom:16px;box-shadow:var(--shadow);transition:transform .18s;position:relative;overflow:hidden}
-.bigmod:hover{transform:translateY(-3px)}
-.bigmod .badge{position:absolute;top:14px;right:16px;font-size:11px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.55)}
-.mod-tarjetas{background:linear-gradient(135deg,#fdf3d8,var(--warm4));color:#5a4416;border:1.5px solid var(--warm3)}
-.mod-tarjetas .badge{background:rgba(217,160,51,.2);color:#8a6a1a}
-.mod-tarjetas .big-ico{font-family:"Noto Serif SC",serif;font-size:40px;font-weight:900;line-height:1}
-.mod-tarjetas .big-t{font-family:"Times New Roman","Noto Serif SC",serif;font-size:22px;font-weight:700;margin-top:8px}
-.mod-tarjetas .big-e{font-size:13px;opacity:.75;margin-top:4px}
-.mod-notas{background:linear-gradient(135deg,var(--orange4),#ffe3c2);color:#8a3c0a;border:1.5px solid var(--orange1)}
-.mod-notas .badge{background:rgba(255,140,46,.18);color:var(--orange3)}
-.mod-notas .big-ico{font-size:38px;line-height:1}
-.mod-notas .big-t{font-family:"Times New Roman","Noto Serif SC",serif;font-size:22px;font-weight:700;margin-top:8px}
-.mod-notas .big-e{font-size:13px;opacity:.8;margin-top:4px}
-.teacher-row{margin-top:18px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-.teacher-row a, .teacher-row button{background:none;border:1px solid var(--line);color:var(--sub);border-radius:20px;padding:8px 18px;font-size:13px;cursor:pointer;text-decoration:none}
-.teacher-row a:hover,.teacher-row button:hover{color:var(--warm2);border-color:var(--warm2)}
-.logout-row{margin-top:14px;display:flex;justify-content:center}
-.logout-row button{background:none;border:1px solid var(--line);color:var(--sub);border-radius:20px;padding:7px 18px;font-size:13px;cursor:pointer;font-family:inherit}
-.logout-row button:hover{color:var(--warm2);border-color:var(--warm2)}
-footer{margin-top:18px;font-size:12px;color:var(--sub)}
-/* 雙入口並排 */
-.duo{display:grid;grid-template-columns:1fr;gap:14px;margin:4px 0 26px;max-width:340px;margin-left:auto;margin-right:auto}
-.duo .bigmod{padding:14px 10px;margin-bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:96px}
-.duo .big-t{font-size:15px;letter-spacing:1px}
-.duo .mini-ico{width:26px;height:26px;opacity:.9}
-@media(max-width:380px){.duo{grid-template-columns:1fr}.duo .bigmod{min-height:auto;padding:14px 12px}}
-/* 與下方內容的距離 */
-#cardmods{margin-top:6px}
-/* 老師管理面板 */
-.tpanel{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:var(--shadow);text-align:left}
-.tpanel h2{font-size:15px;color:var(--warm2);font-weight:700;margin-bottom:4px;letter-spacing:.5px}
-.tpanel .tp-sub{font-size:12px;color:var(--sub);margin-bottom:12px}
-.tpanel select{width:100%;padding:10px 12px;font-size:15px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font-family:inherit;margin-bottom:12px}
-.tpanel .tp-add{display:flex;gap:8px;margin-bottom:12px}
-.tpanel .tp-add input{flex:1;padding:10px 12px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font-family:inherit}
-.tpanel .tp-add button{padding:10px 14px;font-size:14px;border:none;border-radius:10px;background:var(--warm2);color:#fff;cursor:pointer;white-space:nowrap}
-.tp-student{display:none;border-top:1.5px dashed var(--line);padding-top:12px}
-.tp-name{font-family:"Times New Roman",serif;font-size:20px;font-weight:700;color:var(--warm2);margin-bottom:2px}
-.tp-stats{font-size:12px;color:var(--sub);margin-bottom:12px}
-.tp-switch{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.tp-switch label{display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;border:1.5px solid var(--line);border-radius:20px;padding:7px 14px;background:transparent}
-.tp-switch input{width:17px;height:17px;accent-color:var(--warm2)}
-.tp-actions{display:flex;gap:8px;flex-wrap:wrap}
-.tp-actions a{font-size:13px;padding:9px 14px;border-radius:20px;text-decoration:none;font-weight:600}
-.tp-go-tar{background:linear-gradient(135deg,#fdf3d8,#f2e3b8);color:#5a4416;border:1px solid var(--warm3)}
-.tp-go-notas{background:linear-gradient(135deg,var(--orange4),#ffe3c2);color:#8a3c0a;border:1px solid var(--orange1)}
-.tp-save{font-size:12px;color:var(--good,#2e7d32);margin-top:8px;min-height:16px}
-.tp-empty{font-size:12px;color:var(--sub);padding:8px 0}
-/* 字卡模組清單（老師管理閃卡內容） */
-.cardmods{display:none;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:var(--shadow);text-align:left}
-.cardmods h2{font-size:15px;color:var(--warm2);font-weight:700;margin-bottom:12px}
-.cardmods .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.cardmods a{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border-radius:14px;text-decoration:none;border:1.5px solid var(--line);color:var(--ink);position:relative}
-.cardmods a:hover{border-color:var(--warm2)}
-.cardmods .c-ico{font-size:22px;font-weight:900;color:var(--warm2);line-height:1}
-.cardmods .c-t{font-size:13.5px;font-weight:700;line-height:1.3}
-.cardmods .c-e{font-size:10.5px;color:var(--sub)}
-.cardmods .g-chk{position:absolute;top:8px;right:8px;width:17px;height:17px;accent-color:var(--warm2);cursor:pointer}
-.cardmods .extra-save{margin-top:2px;margin-bottom:10px}
-.cardmods .extra-save button{width:100%;padding:11px;background:var(--warm2);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer}
-.cardmods .extra-save .msg{font-size:12px;color:var(--sub);margin-top:6px}
-.cardmods .back-row{margin-top:6px}
-.cardmods .back-row a{display:inline-block;border:none;background:none;color:var(--sub);font-size:12px;padding:4px 0}
-.loading{color:var(--sub);font-size:14px;padding:20px 0}
-.srs-home{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:var(--shadow);text-align:left}
-.srs-home h2{font-size:15px;color:var(--warm2);font-weight:700;margin-bottom:2px}
-.srs-home .srs-sub{font-size:11px;color:var(--sub);margin-bottom:10px}
-.srs-cal-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.srs-cal-title{flex:1;text-align:center;font-size:13px;font-weight:800;color:var(--ink)}
-.srs-mini{padding:6px 11px;border-radius:10px;border:1px solid var(--warm3);background:transparent;color:var(--warm2);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
-.srs-mini:hover{background:var(--warm2);color:#fff}
-.srs-cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
-.srs-cal-week span{text-align:center;font-size:10px;color:var(--sub);font-weight:700}
-.srs-cal-body{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.srs-cal-day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;aspect-ratio:1/1;border-radius:10px;background:var(--paper);border:1px solid var(--line);cursor:pointer;font-size:12px;color:var(--ink);transition:transform .12s, box-shadow .12s}
-.srs-cal-day:hover{transform:scale(1.06);box-shadow:var(--shadow)}
-.srs-cal-day .n{font-size:10px;font-weight:800;color:#fff;background:var(--warm2);border-radius:9px;padding:0 5px;line-height:14px}
-.srs-cal-day.today{border:2px solid var(--warm2)}
-.srs-cal-day.picked{background:var(--warm2);color:#fff}
-.srs-cal-day.picked .n{background:#fff;color:var(--warm2)}
-.srs-cal-empty{aspect-ratio:1/1}
-.srs-result{font-size:12px;color:var(--ink);margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:20px}
-.srs-mod-btn{font-size:12px;padding:7px 12px;border-radius:16px;border:1px solid var(--warm3);background:linear-gradient(135deg,#fdf3d8,#f2e3b8);color:#5a4416;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
-.srs-mod-btn:hover{border-color:var(--warm2)}
-.srs-mod-btn.off{opacity:.45;border-style:dashed;cursor:default;pointer-events:none}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:"Noto Sans SC",sans-serif;line-height:1.7;overflow-x:hidden;background-image:radial-gradient(circle at 20% 20%, rgba(184,134,11,.05) 0%, transparent 50%),radial-gradient(circle at 80% 80%, rgba(91,163,184,.05) 0%, transparent 50%)}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
 
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+section{padding:80px 0}
+
+/* ===== 首页区 ===== */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;width:100%}
+.hero-left{padding:40px 0}
+.hero-logo{width:200px;height:auto;margin-bottom:28px}
+.hero h1{font-family:"Playfair Display","Noto Serif SC",serif;font-size:clamp(40px,5.5vw,64px);font-weight:900;line-height:1.1;margin-bottom:24px;color:var(--warm)}
+.hero p.lead{font-size:16px;color:var(--sub);max-width:480px;margin-bottom:36px;line-height:1.8}
+.btn-contacto{display:inline-block;background:var(--ink);color:var(--paper);padding:16px 48px;border-radius:6px;font-size:16px;font-weight:800;letter-spacing:1px;transition:all .25s;cursor:pointer;border:none;font-family:inherit}
+.btn-contacto:hover{background:var(--warm);color:#fff;transform:translateY(-2px);box-shadow:0 4px 16px rgba(184,134,11,.3)}
+.hero-right{position:relative;height:100%;min-height:520px}
+.hero-img{position:absolute;inset:0;background:#fff;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.hero-img::after{content:none}
+.hero-img-caption{position:absolute;bottom:20px;left:20px;background:rgba(253,248,236,.9);padding:8px 16px;border-radius:4px;font-size:12px;color:var(--sub)}
+
+/* ===== Sobre mí ===== */
+.about{background:var(--card)}
+.section-label{font-family:"Noto Sans SC","Inter",sans-serif;font-size:16px;font-weight:900;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:16px;display:inline-block;border-bottom:2px solid var(--teal);padding-bottom:4px}
+.section-title{font-family:"Playfair Display","Noto Serif SC",serif;font-size:clamp(28px,3.5vw,44px);font-weight:900;line-height:1.2;margin-bottom:48px;position:relative;display:inline-block}
+.section-title::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-16px;width:80px;height:2px;background:var(--warm)}
+.about-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.about-card{background:var(--paper);border-radius:8px;padding:36px 28px;border:1px solid var(--gold);transition:transform .2s ease, box-shadow .2s ease}
+.about-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.about-card h3{font-family:"Playfair Display","Noto Serif SC",serif;font-size:20px;font-weight:700;margin-bottom:14px;color:var(--ink)}
+.about-card p{font-size:16px;color:var(--sub);line-height:1.8}
+
+/* ===== 教学方式 ===== */
+.method{padding:80px 0}
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.method-img{border-radius:8px;overflow:hidden;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center}
+.method-img img{width:100%;height:100%;object-fit:cover;display:block}
+.method-list{display:flex;flex-direction:column;gap:28px}
+.method-item{display:flex;gap:20px;align-items:flex-start}
+.method-num{font-family:"Playfair Display",serif;font-size:32px;font-weight:900;color:var(--warm);min-width:40px;line-height:1}
+.method-item h4{font-family:"Playfair Display","Noto Serif SC",serif;font-size:18px;font-weight:700;margin-bottom:6px}
+.method-item p{font-size:16px;color:var(--sub);line-height:1.7}
+
+/* ===== 课程内容网格 ===== */
+.content{background:var(--card)}
+.content-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.content-card{background:var(--paper);border:1px solid var(--gold);border-radius:8px;overflow:hidden;transition:transform .25s,box-shadow .25s;cursor:pointer}
+.content-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.content-thumb{aspect-ratio:4/3;background:var(--paper);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.content-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.content-thumb .emoji{font-size:48px;opacity:.4}
+.content-body{padding:20px 20px 24px}
+.content-body h3{font-family:"Playfair Display","Noto Serif SC",serif;font-size:16px;font-weight:700;margin-bottom:6px}
+.content-body p{font-size:15px;color:var(--sub);line-height:1.6}
+.content-card .cta{display:inline-block;margin-top:12px;font-size:16px;color:var(--warm);font-weight:800;letter-spacing:.5px}
+
+/* 「家」字动画特殊卡片 */
+.content-card.hanzi-card{background:var(--ink);color:var(--paper)}
+.hanzi-stage{aspect-ratio:4/3;background:var(--ink);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hanzi-svg{width:70%;height:auto}
+.hanzi-label{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:11px;color:rgba(242,234,216,.5);letter-spacing:1px}
+
+/* ===== 学生进度 ===== */
+.progress{padding:80px 0}
+.progress-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.progress-ill{aspect-ratio:1/1;background:linear-gradient(135deg,#e8dcc0,#d4c4a0);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.progress-ill::after{content:none}
+.progress-text h3{font-family:"Playfair Display","Noto Serif SC",serif;font-size:clamp(24px,3vw,36px);font-weight:900;line-height:1.25;margin-bottom:20px}
+.progress-text p{font-size:17px;color:var(--sub);line-height:1.8;margin-bottom:24px}
+.audio-player{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px 20px;display:flex;align-items:center;gap:14px}
+.audio-play{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--paper);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.audio-bar{flex:1;height:4px;background:var(--line);border-radius:2px;position:relative}
+.audio-bar::after{content:"";position:absolute;left:0;top:0;bottom:0;width:0;background:var(--warm);border-radius:2px}
+.audio-time{font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums}
+
+/* ===== 怎么上课 ===== */
+.how{background:var(--card)}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.how-item{text-align:center;padding:32px 20px}
+.how-icon{width:64px;height:64px;margin:0 auto 16px;background:var(--paper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px}
+.how-item h4{font-family:"Playfair Display","Noto Serif SC",serif;font-size:17px;font-weight:700;margin-bottom:8px}
+.how-item p{font-size:16px;color:var(--sub);line-height:1.7}
+
+/* ===== Contacto ===== */
+.contact{padding:100px 0;text-align:center;background:var(--paper)}
+.contact h2{font-family:"Playfair Display","Noto Serif SC",serif;font-size:clamp(32px,4.5vw,56px);font-weight:900;line-height:1.2;margin-bottom:28px;color:var(--warm)}
+.contact p{max-width:640px;margin:0 auto 16px;font-size:17px;color:var(--sub);line-height:1.8}
+.contact p strong{color:var(--ink)}
+.btn-whatsapp{display:inline-flex;align-items:center;gap:10px;background:#128C7E;color:#fff;padding:16px 44px;border-radius:50px;font-size:16px;font-weight:700;margin-top:28px;transition:all .25s;cursor:pointer;border:none;font-family:inherit}
+.btn-whatsapp:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(18,140,126,.3)}
+
+/* ===== Footer ===== */
+footer{background:var(--ink);color:rgba(242,234,216,.6);padding:28px 0;text-align:center;font-size:12px}
+footer a{color:rgba(242,234,216,.5);font-size:11px}
+
+/* ===== 模态框 ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(58,52,40,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:12px;max-width:640px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative}
+.modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:var(--paper);border:1px solid var(--line);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:10}
+.modal-hero{aspect-ratio:16/9;background:linear-gradient(135deg,#e8dcc0,#d4c4a0);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.modal-hero img{width:100%;height:100%;object-fit:cover}
+.modal-hero .emoji{font-size:64px;opacity:.4}
+.modal-body{padding:28px 32px 36px}
+.modal-body h3{font-family:"Playfair Display","Noto Serif SC",serif;font-size:24px;font-weight:900;margin-bottom:12px;color:var(--ink)}
+.modal-body p{font-size:17px;color:var(--sub);line-height:1.8;margin-bottom:12px}
+.modal-body .detail{background:var(--paper);border-radius:8px;padding:16px 20px;margin-top:16px;font-size:16px;line-height:1.8}
+.modal-body audio{width:100%;margin-top:16px}
+
+/* ===== 响应式 ===== */
+@media(max-width:900px){
+  .hero-grid,.method-grid,.progress-grid{grid-template-columns:1fr;gap:40px}
+  .hero-right{min-height:560px}
+  .about-grid,.content-grid,.how-grid{grid-template-columns:1fr 1fr}
+  .method-img{aspect-ratio:4/3}
+}
+@media(max-width:600px){
+  section{padding:56px 0}
+  .about-grid,.content-grid,.how-grid{grid-template-columns:1fr}
+  .hero{min-height:auto;padding:60px 0}
+  .modal-body{padding:20px}
+}
 </style>
 </head>
 <body>
-<script>try{if(localStorage.getItem('tt-theme')==='dark')document.documentElement.classList.add('night');var z=localStorage.getItem('tt-zoom');if(z)document.documentElement.style.zoom=z;}catch(e){}</script>
-<div class="wrap">
-  <div class="tools">
-    <button onclick="zoom(-1)" title="縮小">A−</button>
-    <button onclick="zoom(1)" title="放大">A+</button>
-    <button onclick="toggleNight()" title="暗色模式">◐</button>
-  </div>
 
-  <div id="view-login" style="display:none">
-    <div class="logo-wrap">
-      <div class="logo"><img src="logo.png" alt="TUTU"></div>
-    </div>
-    <h1>T U T U</h1>
-    <div class="small-title">Chino Básico por Tema</div>
-    <div class="sub">基礎中文 · 按主題學習</div>
-    <div class="form">
-      <div class="field"><label>名字 · Nombre</label><input id="f-user" placeholder="nombre.apellido" autocomplete="username"></div>
-      <div class="field"><label>密碼 · Contraseña</label><input id="f-pass" type="password" autocomplete="current-password"></div>
-      <button class="btn" id="btn-login">進入學習 · Iniciar</button>
-      <div class="err" id="login-err"></div>
-    </div>
-  </div>
-
-  <div id="view-home" class="home">
-    <div class="logo-wrap">
-      <div class="logo"><img src="logo.png" alt="TUTU"></div>
-    </div>
-    <h1>T U T U</h1>
-    <div class="small-title">Chino Básico por Tema</div>
-    <div class="who" id="who"></div>
-
-    <!-- 雙入口：Tarjetas | Por Clase -->
-    <div class="duo" id="duo">
-      <a class="bigmod mod-tarjetas" id="entryTarjetas" style="display:none" href="#tarjetas">
-        <svg class="mini-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 5V3h8v2"/><path d="M8 10h8M8 14h5"/></svg>
-        <div class="big-t">Tarjetas</div>
-      </a>
-      <a class="bigmod mod-notas" id="entryNotas" style="display:none" href="original/notas.html">
-        <svg class="mini-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        <div class="big-t">Por Clase</div>
-      </a>
-    </div>
-
-    <!-- SRS 複習月曆（HOME） -->
-    <div class="srs-home" id="srsHome" style="display:none">
-      <h2>📅 Repaso por fecha</h2>
-      <div class="srs-sub">選日期 → 看當天要複習的卡 → 開始複習</div>
-      <div class="srs-cal-head">
-        <button class="srs-mini" onclick="homeCalPrev()">‹</button>
-        <div class="srs-cal-title" id="homeCalTitle"></div>
-        <button class="srs-mini" onclick="homeCalNext()">›</button>
-        <button class="srs-mini" onclick="homeCalToday()">Hoy</button>
+<!-- ============ 首页区 ============ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <img src="https://aka.doubaocdn.com/s/4SeJChKE0E" alt="TUTU" class="hero-logo">
+        <h1>Chino Básico por Tema</h1>
+        <p class="lead">¡Bienvenido a mi plataforma de aprendizaje de chino en línea! Como hablante nativa de mandarín, me especializo en enseñar este idioma a estudiantes internacionales. Vendrás conmigo en un viaje de inmersión cultural y lingüística, donde te ayudaré a desarrollar tus habilidades de conversación en chino.</p>
+        <a href="#contacto" class="btn-contacto">Contacto</a>
       </div>
-      <div class="srs-cal-week"><span>lun</span><span>mar</span><span>mié</span><span>jue</span><span>vie</span><span>sáb</span><span>dom</span></div>
-      <div class="srs-cal-body" id="homeCalBody"></div>
-      <div class="srs-result" id="homeCalResult"></div>
-    </div>
-
-        <!-- 字卡模組清單（Tarjetas 點入後）：三卡 + 16 模組，兩列排 -->
-    <div class="cardmods" id="cardmods">
-      <h2>📚 Tarjetas · 19 個模組</h2>
-      <div class="grid" id="cardGrid">
-        <a href="original/hanzi.html"><span class="c-ico">字</span><span class="c-t">漢字閃卡</span><span class="c-e">Hanzi · 4,475 字</span></a>
-        <a href="original/words.html"><span class="c-ico">詞</span><span class="c-t">單詞閃卡</span><span class="c-e">Palabras · 11,781 詞</span></a>
-        <a href="original/clf.html"><span class="c-ico">量</span><span class="c-t">量詞閃卡</span><span class="c-e">Clasificadores · 258 個</span></a>
-      </div>
-      <div class="extra-save" id="extraSaveRow" style="display:none">
-        <button id="saveExtraBtn">✓ 儲存開放模組到雲端</button>
-        <div class="msg" id="extraSaveMsg"></div>
-      </div>
-    </div>
-
-    <!-- 老師管理面板 -->
-    <div class="tpanel" id="tpanel" style="display:none">
-      <h2>🎓 管理學生 · Gestionar alumnos</h2>
-      <div class="tp-sub">選擇學生 → 看開放狀態 → 新增或取消</div>
-      <select id="studentSelect"><option value="">— 選擇學生 —</option></select>
-      <div class="tp-add">
-        <input id="tpNewName" placeholder="學生 email（如 facundo.garcia）" onkeydown="if(event.key==='Enter')addStudent()">
-        <button onclick="addStudent()">＋ 新增</button>
-      </div>
-      <div class="tp-empty" id="tpEmpty"></div>
-      <div class="tp-student" id="tpStudent">
-        <div class="tp-name" id="tpName"></div>
-        <div class="tp-stats" id="tpStats"></div>
-        <div class="tp-stats" id="tpGrantSum" style="margin-top:2px;"></div>
-        <div class="tp-switch">
-          <label><input type="checkbox" id="swTarjetas"> 📚 閃卡入口</label>
+      <div class="hero-right">
+        <div class="hero-img" style="padding:0">
+          <img id="heroImg1" src="https://aka.doubaocdn.com/s/fURPAVkgig" alt="Notas de clase - vocabulario" style="width:100%;height:100%;object-fit:contain;position:absolute;inset:0;background:var(--paper)">
+          <img id="heroImg2" src="https://aka.doubaocdn.com/s/g5t9iU22ge" alt="Notas de clase - gramática" style="width:100%;height:100%;object-fit:contain;position:absolute;inset:0;display:none;background:var(--paper)">
+          <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10">
+            <button onclick="showHeroImg(1)" id="heroBtn1" style="padding:6px 14px;border:none;border-radius:20px;background:var(--ink);color:var(--paper);font-size:12px;cursor:pointer;font-family:inherit">Vocabulario</button>
+            <button onclick="showHeroImg(2)" id="heroBtn2" style="padding:6px 14px;border:none;border-radius:20px;background:rgba(242,234,216,.9);color:var(--ink);font-size:12px;cursor:pointer;font-family:inherit">Gramática</button>
+          </div>
         </div>
-        <div class="tp-actions">
-          <a class="tp-go-tar" id="goTarjetas" href="#">✎ 管理閃卡內容</a>
-          
-        </div>
-        <div class="tp-save" id="tpSave">✓ 開關勾選後自動儲存</div>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="logout-row">
-  <button id="btn-logout">登出 · Salir</button>
-  <button id="btn-changepw" style="margin-left:8px;">修改密碼 · Cambiar contraseña</button>
-</div>
-<div id="pwModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
-  <div style="background:var(--card);border-radius:14px;padding:24px;width:90%;max-width:340px;border:1px solid var(--line);">
-    <h3 style="margin:0 0 14px;font-size:16px;color:var(--ink);">修改密碼</h3>
-    <input id="pwOld" type="password" placeholder="舊密碼" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);box-sizing:border-box;">
-    <input id="pwNew1" type="password" placeholder="新密碼（至少6碼）" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);box-sizing:border-box;">
-    <input id="pwNew2" type="password" placeholder="再輸入新密碼" style="width:100%;padding:10px;margin-bottom:12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);box-sizing:border-box;">
-    <div id="pwMsg" style="font-size:12px;color:#c0392b;margin-bottom:10px;"></div>
-    <button id="pwSave" style="width:100%;padding:11px;border:none;border-radius:10px;background:var(--gold);color:#fff;font-weight:700;cursor:pointer;">確認修改</button>
-    <button id="pwCancel" style="width:100%;padding:9px;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);cursor:pointer;">取消</button>
+<!-- ============ Sobre mí ============ -->
+<section class="about">
+  <div class="container">
+    <div class="section-label">Sobre mí</div>
+    <h2 class="section-title">Soy una hablante nativa de chino</h2>
+    <div class="about-grid">
+      <div class="about-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <h3 style="margin:0">Hablante nativa de chino</h3>
+        </div>
+        <p>Nací y crecí en Taiwán, por lo que el idioma mandarín es mi lengua materna. Tengo un dominio profundo y natural de la gramática, el vocabulario y las sutilezas del idioma. He trabajado como profesora y traductora.</p>
+      </div>
+      <div class="about-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+          <h3 style="margin:0">Experiencia Docente</h3>
+        </div>
+        <p>He estado enseñando chino a estudiantes internacionales durante varios años. Entiendo las dificultades que enfrentan los estudiantes y puedo guiarlos de manera efectiva. Entreno principalmente en el habla del idioma.</p>
+      </div>
+      <div class="about-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          <h3 style="margin:0">Dedicación al Aprendizaje</h3>
+        </div>
+        <p>Continúo perfeccionando mis habilidades como profesora y mantengo un profundo interés en la enseñanza y el aprendizaje del idioma chino. Diseño todos los materiales y el sistema de enseñanza.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 教学方式 ============ -->
+<section class="method">
+  <div class="container">
+    <div class="method-grid">
+      <div class="method-img">
+        <img src="https://aka.doubaocdn.com/s/Y70VZCxTVA" alt="Terrazas verdes">
+      </div>
+      <div>
+        <div class="section-label">Metodología</div>
+        <h2 class="section-title">Aprendé chino de conversación por temas</h2>
+        <div class="method-list">
+          <div class="method-item">
+            <div class="method-num">1</div>
+            <div>
+              <h4>Vocabulario Esencial</h4>
+              <p>Aprendé las palabras y frases más útiles para conversaciones cotidianas en chino, como saludos, presentaciones y expresiones básicas.</p>
+            </div>
+          </div>
+          <div class="method-item">
+            <div class="method-num">2</div>
+            <div>
+              <h4>Diálogos Prácticos</h4>
+              <p>Practicá diálogos realistas sobre temas comunes como pedir direcciones, ir de compras o comer en un restaurante.</p>
+            </div>
+          </div>
+          <div class="method-item">
+            <div class="method-num">3</div>
+            <div>
+              <h4>Pronunciación y Entonación</h4>
+              <p>Mejorá tu pronunciación y dominio de la entonación, elementos clave para comunicarte con fluidez en chino.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 课程内容 ============ -->
+<section class="content">
+  <div class="container">
+    <div class="section-label">Contenidos del curso</div>
+    <h2 class="section-title">Todo lo que incluye cada clase</h2>
+    <div class="content-grid">
+
+      <!-- 闪卡词汇 -->
+      <div class="content-card" onclick="openModal('flashcards')">
+        <div class="content-thumb" style="padding:0">
+          <img src="https://aka.doubaocdn.com/s/fouOCVCMsa" style="width:100%;height:100%;object-fit:cover;display:block">
+        </div>
+        <div class="content-body">
+          <h3>Tarjetas de vocabulario</h3>
+          <p>Sistema de repetición espaciada: las tarjetas regresan en el momento justo para que no olvides lo aprendido.</p>
+          <span class="cta">Ver ejemplo →</span>
+        </div>
+      </div>
+
+      <!-- 汉字演变「家」动画 -->
+      <div class="content-card hanzi-card" onclick="openModal('hanzi')">
+        <div class="hanzi-stage">
+          <svg class="hanzi-svg" viewBox="0 0 200 200" id="hanziSvg">
+            <g class="frame" data-frame="0">
+              <path d="M40,70 L100,40 L160,70" fill="none" stroke="#f2ead8" stroke-width="3" stroke-linecap="round"/>
+              <path d="M50,70 L50,130 M150,70 L150,130" stroke="#f2ead8" stroke-width="3" stroke-linecap="round"/>
+              <ellipse cx="100" cy="130" rx="28" ry="18" fill="none" stroke="#f2ead8" stroke-width="3"/>
+              <circle cx="88" cy="125" r="3" fill="#f2ead8"/>
+              <circle cx="112" cy="125" r="3" fill="#f2ead8"/>
+            </g>
+            <g class="frame" data-frame="1" style="display:none">
+              <path d="M35,65 L100,35 L165,65" fill="none" stroke="#f2ead8" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M45,65 L45,135 M155,65 L155,135" stroke="#f2ead8" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M70,110 Q100,95 130,110 Q135,130 100,135 Q65,130 70,110 Z" fill="none" stroke="#f2ead8" stroke-width="3"/>
+              <path d="M85,105 L85,125 M115,105 L115,125" stroke="#f2ead8" stroke-width="2.5"/>
+            </g>
+            <g class="frame" data-frame="2" style="display:none">
+              <path d="M40,60 Q100,30 160,60" fill="none" stroke="#f2ead8" stroke-width="3" stroke-linecap="round"/>
+              <path d="M50,60 L50,140 M150,60 L150,140" stroke="#f2ead8" stroke-width="3" stroke-linecap="round"/>
+              <path d="M75,100 Q100,85 125,100 Q130,125 100,130 Q70,125 75,100 Z" fill="none" stroke="#f2ead8" stroke-width="2.5"/>
+            </g>
+            <g class="frame" data-frame="3" style="display:none">
+              <text x="100" y="135" text-anchor="middle" font-family="serif" font-size="80" fill="#f2ead8">家</text>
+            </g>
+            <g class="frame" data-frame="4" style="display:none">
+              <text x="100" y="140" text-anchor="middle" font-family="serif" font-size="90" font-weight="bold" fill="#f2ead8">家</text>
+            </g>
+          </svg>
+          <div class="hanzi-label" id="hanziLabel">JIA · Evolución del carácter</div>
+        </div>
+        <div class="content-body" style="background:var(--ink);color:var(--paper)">
+          <h3>Evolución de los caracteres</h3>
+          <p style="color:rgba(242,234,216,.7)">Desde los huesos oraculares hasta hoy: así se escribió 「家」 (casa) hace más de tres mil años.</p>
+          <span class="cta" style="color:var(--warm)">Ver explicación →</span>
+        </div>
+      </div>
+
+      <!-- 语法卡片 -->
+      <div class="content-card" onclick="openModal('grammar')">
+        <div class="content-thumb" style="padding:0">
+          <img src="https://aka.doubaocdn.com/s/NRStYYO3Sq" style="width:100%;height:100%;object-fit:cover;display:block" alt="Gramática paso a paso">
+        </div>
+        <div class="content-body">
+          <h3>Gramática paso a paso</h3>
+          <p>Explicación clara de las estructuras chinas, con ejemplos reales y audio para practicar la entonación.</p>
+          <span class="cta">Ver ejemplo →</span>
+        </div>
+      </div>
+
+      <!-- 成语与俚语 -->
+      <div class="content-card" onclick="openModal('idioms')">
+        <div class="content-thumb" style="padding:0;align-items:stretch">
+          <img src="https://aka.doubaocdn.com/s/Al242eLjm7" alt="Jerga en chino" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div class="content-body">
+          <h3>Modismos y dichos chinos</h3>
+          <p>成语 (chéngyǔ) y expresiones cotidianas que te harán sonar más natural y entender la cultura.</p>
+          <span class="cta">Ver ejemplo →</span>
+        </div>
+      </div>
+
+      <!-- 文化与历史 -->
+      <div class="content-card" onclick="openModal('history')">
+        <div class="content-thumb" style="padding:0;align-items:stretch">
+          <img src="https://aka.doubaocdn.com/s/u1g3EOWKrR" alt="Línea de tiempo de China" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div class="content-body">
+          <h3>Cultura e historia</h3>
+          <p>Línea de tiempo interactiva de China: dinastías, personajes, inventos y curiosidades, desde hace 4000 años hasta hoy.</p>
+          <span class="cta">Ver línea de tiempo →</span>
+        </div>
+      </div>
+
+      <!-- 有声书 -->
+      <div class="content-card" onclick="openModal('audiobook')">
+        <div class="content-thumb" style="padding:0">
+          <img src="https://aka.doubaocdn.com/s/mUaiSJv3IW" style="width:100%;height:100%;object-fit:cover;display:block" alt="Libros narrados">
+        </div>
+        <div class="content-body">
+          <h3>Libros narrados</h3>
+          <p>Lecturas en chino con audio, para practicar la comprensión auditiva a tu propio ritmo.</p>
+          <span class="cta">Ver ejemplo →</span>
+        </div>
+      </div>
+
+      <!-- 播客 -->
+      <div class="content-card" onclick="openModal('podcast')">
+        <div class="content-thumb" style="padding:0">
+          <img src="https://aka.doubaocdn.com/s/zfUFIRvVp4" style="width:100%;height:100%;object-fit:cover;display:block" alt="Podcast">
+        </div>
+        <div class="content-body">
+          <h3>Podcast</h3>
+          <p>Episodios cortos de 3–5 minutos para escuchar mientras hacés otras actividades.</p>
+          <span class="cta">Escuchar episodio →</span>
+        </div>
+      </div>
+
+      <!-- 口语练习 -->
+      <div class="content-card" onclick="openModal('oral')">
+        <div class="content-thumb" style="padding:0;align-items:stretch">
+          <img src="https://aka.doubaocdn.com/s/XOYut8lHtK" alt="Grabaciones de clase" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div class="content-body">
+          <h3>Práctica oral</h3>
+          <p>Grabaciones de los diálogos de clase para que los puedas escuchar y repasar cuando quieras.</p>
+          <span class="cta">Ver ejemplo →</span>
+        </div>
+      </div>
+
+      <!-- Flipbook -->
+      <div class="content-card" onclick="openModal('flipbook')">
+        <div class="content-thumb" style="padding:0">
+          <img src="https://aka.doubaocdn.com/s/45xINzfu86" style="width:100%;height:100%;object-fit:cover;display:block" alt="Flipbooks">
+        </div>
+        <div class="content-body">
+          <h3>Flipbooks</h3>
+          <p>Materiales visuales que simulan un libro físico, para repasar vocabulario de forma dinámica.</p>
+          <span class="cta">Ver ejemplo →</span>
+        </div>
+      </div>
+
+      <!-- Temas Culturales -->
+      <div class="content-card" onclick="openModal('culture')">
+        <div class="content-thumb" style="padding:0;align-items:stretch">
+          <img src="https://aka.doubaocdn.com/s/Y8mMUghrMG" alt="Cultura china" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div class="content-body">
+          <h3>Temas culturales</h3>
+          <p>Comida, festividades y tradiciones: cada tema cultural conecta con el vocabulario que ves en clase.</p>
+          <span class="cta">Ver ejemplo →</span>
+        </div>
+      </div>
+
+      <!-- 上课笔记 -->
+      <div class="content-card" onclick="openModal('notes')">
+        <div class="content-thumb" style="padding:0;align-items:stretch">
+          <img src="https://aka.doubaocdn.com/s/Q6qO4gPdxD" alt="Notas de clase" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div class="content-body">
+          <h3>Notas detalladas de clase</h3>
+          <p>Apuntes completos por cada lección: vocabulario, gramática y cultura en contexto.</p>
+          <span class="cta">Ver ejemplo →</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 学生进度 ============ -->
+<section class="progress">
+  <div class="container">
+    <div class="progress-grid">
+      <div class="progress-ill" style="padding:0;align-items:stretch">
+        <img src="https://aka.doubaocdn.com/s/sjr5GF0jeo" alt="Progreso real" style="width:100%;height:100%;object-fit:cover">
+      </div>
+      <div class="progress-text">
+        <div class="section-label">Progreso real</div>
+        <h3>Una estudiante argentina aprendiendo chino desde cero</h3>
+        <p>Estos audios son grabaciones de una chica argentina que está aprendiendo chino desde el nivel más básico. Acá podés escuchar su progreso y práctica durante las lecciones, demostrando cómo va desarrollando sus habilidades lingüísticas en clase.</p>
+        <div style="margin-top:16px">
+          <iframe src="https://tuttu.io/embed/ln7UzJaQ" style="width:100%;height:120px;border:none;border-radius:8px" allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div style="margin-top:12px">
+          <iframe src="https://tuttu.io/embed/gEfAqWDT" style="width:100%;height:120px;border:none;border-radius:8px" allow="autoplay; encrypted-media"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 怎么上课 ============ -->
+<section class="how">
+  <div class="container">
+    <div class="section-label" style="text-align:center">¿Cómo se cursa?</div>
+    <h2 class="section-title" style="text-align:center">Clases online, a tu medida</h2>
+    <div class="how-grid">
+      <div class="how-item">
+        <div class="how-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <h4>Google Meet / Teams</h4>
+        <p>Clases por videollamada, desde donde estés. No necesitás instalar nada especial.</p>
+      </div>
+      <div class="how-item">
+        <div class="how-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <h4>Duración flexible</h4>
+        <p>La clase termina cuando el tema queda cerrado, no por un reloj. Profundizamos lo que haga falta.</p>
+      </div>
+      <div class="how-item">
+        <div class="how-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </div>
+        <h4>Materiales incluidos</h4>
+        <p>Todas las tarjetas, notas, audios y ejercicios que ves arriba están incluidos en el curso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Contacto ============ -->
+<section class="contact" id="contacto">
+  <div class="container">
+    <h2>Contáctame para más información</h2>
+    <p>En TUTU, me apasiona ayudarte a alcanzar la <strong>fluidez en chino hablado</strong>, enfocándome en técnicas prácticas y personalizadas que te permitirán comunicarte con confianza en cualquier situación. Como tu profesora dedicada, me comprometo a ofrecerte clases interactivas y un enfoque individualizado que transformará tu aprendizaje del chino.</p>
+    <p>¿Tenés preguntas o te interesa aprender más sobre mi programa de enseñanza de chino? No dudes en comunicarte conmigo. Estoy aquí para ayudarte a alcanzar tus objetivos de aprendizaje del idioma.</p>
+    <a class="btn-whatsapp" href="https://wa.me/5491123177126" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
+      WhatsApp
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© TUTU · Chino Básico por Tema</p>
+  </div>
+</footer>
+
+<!-- ============ 模态框 ============ -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalBg(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-hero" id="modalHero">
+      <span class="emoji" id="modalEmoji">📦</span>
+      <img id="modalImg" style="display:none;width:100%;height:100%;object-fit:cover" alt="">
+    </div>
+    <div class="modal-body">
+      <h3 id="modalTitle"></h3>
+      <p id="modalDesc"></p>
+      <div class="detail" id="modalDetail"></div>
+      <div id="modalExtra"></div>
+    </div>
   </div>
 </div>
-    <footer>Chino Básico por Tema · 基礎中文 — 按主題學習</footer>
-  </div>
-</div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const fb = initializeApp({
-  apiKey: "AIzaSyC_C9Mj_xAXyVTcd34v1VfnffvgJMDMLm8",
-  authDomain: "chino-basico-por-tema.firebaseapp.com",
-  projectId: "chino-basico-por-tema",
-  storageBucket: "chino-basico-por-tema.firebasestorage.app",
-  messagingSenderId: "25772645467",
-  appId: "1:25772645467:web:325ba09f8ec4d6b229737e"
-});
-const auth = getAuth(fb);
-const db = getFirestore(fb);
-
-let zlvl = 3;
-const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
-const VER = "20261001m"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
-/* 16 個進階模組（與 extra.html 的 MODS 同序同 id） */
-const EXTRA_MODS = [
-  {id:"liyu", es:"Jerga", n:200, ico:"俚"},
-  {id:"pianpang", es:"Radicales", n:50, ico:"偏"},
-  {id:"dongci", es:"Verbos", n:600, ico:"動"},
-  {id:"tongyifanyi", es:"Sinónimos y antónimos", n:100, ico:"同"},
-  {id:"shangye", es:"Términos Comerciales", n:100, ico:"商"},
-  {id:"duoyinzi", es:"Caracteres polifónicos", n:50, ico:"音"},
-  {id:"xingrongci", es:"Adjetivos", n:300, ico:"形"},
-  {id:"xingjin", es:"Caracteres similares", n:50, ico:"近"},
-  {id:"yingshi", es:"Cine y TV", n:100, ico:"影"},
-  {id:"chengyu", es:"Modismos", n:300, ico:"成"},
-  {id:"xinwen", es:"Noticias", n:100, ico:"聞"},
-  {id:"yihunci", es:"Palabras confusas", n:50, ico:"混"},
-  {id:"falv", es:"Términos Legales", n:80, ico:"法"},
-  {id:"dapei", es:"Colocaciones", n:100, ico:"配"},
-  {id:"yuqi", es:"Partículas modales", n:30, ico:"氣"},
-  {id:"yufa", es:"Gramática", n:100, ico:"語"},
-];
-window.renderExtraCards = (allowedMods, isTeacher) => {
-  const grid = $("cardGrid");
-  grid.querySelectorAll("a[data-mod]").forEach(a=>a.remove());
-  const list = allowedMods === null ? EXTRA_MODS : EXTRA_MODS.filter(m=>allowedMods.includes(m.id));
-  list.forEach(m=>{
-    const a = document.createElement("a");
-    a.href = "original/extra.html?mod=" + m.id;
-    a.setAttribute("data-mod", m.id);
-    a.innerHTML = '<span class="c-ico">'+m.ico+'</span><span class="c-t">'+m.es+'</span><span class="c-e">'+m.n+' 卡</span>';
-    if(isTeacher){
-      const cb = document.createElement("input");
-      cb.type = "checkbox"; cb.className = "g-chk"; cb.dataset.mod = m.id;
-      cb.checked = (allowedMods || []).includes(m.id);
-      a.appendChild(cb);
-    }
-    grid.appendChild(a);
-  });
-  const row = $("extraSaveRow");
-  if(row) row.style.display = isTeacher ? "block" : "none";
-};
-window.saveExtraGrant = async () => {
-  const msg = $("extraSaveMsg"); if(!msg) return;
-  if(!selEmail){ msg.textContent = "請先選擇學生 · Elegí un alumno primero"; return; }
-  const checked = [...document.querySelectorAll("#cardGrid .g-chk:checked")].map(c=>c.dataset.mod);
-  try{
-    await setDoc(doc(db,"grants",selEmail), { extra:{ mods: checked, updatedAt: new Date() } }, { merge:true });
-    msg.innerHTML = "✓ 已儲存雲端：" + checked.length + " 個模組開放給 " + fmtName(selEmail) +
-      (checked.length ? "（" + checked.map(id=>EXTRA_MODS.find(m=>m.id===id)?.es||id).join(" · ") + "）" : "");
-    msg.style.color = "var(--good,#2e7d32)";
-  }catch(e){
-    msg.textContent = "儲存失敗：" + (e.message||e);
-    msg.style.color = "#c0392b";
-  }
-};
-$("saveExtraBtn").onclick = saveExtraGrant;
-window.zoom = d => {
-  zlvl = Math.max(1, Math.min(5, zlvl + d));
-  document.documentElement.style.zoom = ZOOMS[zlvl-1]; try{localStorage.setItem("tt-zoom", ZOOMS[zlvl-1]);}catch(e){};
-};
-window.toggleNight = () => { document.documentElement.classList.toggle("night"); try{localStorage.setItem("tt-theme", document.documentElement.classList.contains("night")?"dark":"light");}catch(e){} };
-
-function $(id){ return document.getElementById(id); }
-function usernameToEmail(u){ return u.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com"; }
-
-$("btn-login").onclick = async () => {
-  $("login-err").textContent="";
-  const u=$("f-user").value, p=$("f-pass").value;
-  if(!u||!p){ $("login-err").textContent="請輸入名字和密碼"; return; }
-  if(u.trim().toLowerCase() === "blissfulmeow" && p === "tutu1987"){
-    try{ await signInWithEmailAndPassword(auth, "blissfulmeow@chino-basico-por-tema.firebaseapp.com", p); }
-    catch(e){ $("login-err").textContent="老師登入失敗：" + (e.message||e); }
-    return;
-  }
-  try{ await signInWithEmailAndPassword(auth, usernameToEmail(u), p); }
-  catch(e){ $("login-err").textContent="登入失敗：名字或密碼錯誤"; }
-};
-
-$("btn-changepw").onclick = () => { $("pwModal").style.display = "flex"; };
-$("pwCancel").onclick = () => { $("pwModal").style.display = "none"; $("pwMsg").textContent=""; };
-$("pwSave").onclick = async () => {
-  const oldP = $("pwOld").value, n1 = $("pwNew1").value, n2 = $("pwNew2").value;
-  if(!oldP || !n1){ $("pwMsg").textContent = "請填寫完整"; return; }
-  if(n1.length < 6){ $("pwMsg").textContent = "新密碼至少6碼"; return; }
-  if(n1 !== n2){ $("pwMsg").textContent = "兩次新密碼不一致"; return; }
-  try {
-    const u = auth.currentUser;
-    const cred = await signInWithEmailAndPassword(auth, u.email, oldP);
-    await updatePassword(cred.user, n1);
-    $("pwMsg").textContent = "✓ 密碼已更新";
-    setTimeout(()=>{ $("pwModal").style.display="none"; $("pwOld").value=""; $("pwNew1").value=""; $("pwNew2").value=""; }, 1500);
-  } catch(e) {
-    $("pwMsg").textContent = "錯誤：" + (e.code === "auth/wrong-password" ? "舊密碼不正確" : (e.message||e));
+<script>
+// ===== 模态框内容数据 =====
+var modalData = {
+  flashcards: {
+    emoji: "🃏",
+    title: "Tarjetas de vocabulario con repetición espaciada",
+    desc: "Cada palabra que aprendes entra en un sistema de repetición espaciada (SRS). Si te costó una palabra, vuelve a aparecer al día siguiente; si te resultó fácil, vuelve más tarde. Así no olvidas lo aprendido y aprovechás mejor el tiempo de estudio.",
+    detail: "Cada tarjeta incluye:<br>🔹 Palabra en chino<br>🔹 Pinyin con la pronunciación<br>🔹 Significado en español<br>🔹 Audio nativo<br><br>El sistema SRS decide automáticamente cuándo tenés que repasar cada palabra, para que no desperdicies tiempo repasando lo que ya sabés."
+  },
+  hanzi: {
+    emoji: "🏠",
+    title: "Evolución del carácter 「家」 (casa)",
+    desc: "「家」 se escribió de muy distintas formas a lo largo de 3000 años. En la escritura oracular, hace más de tres mil años, era una casa (el techo 宀) con un adentro (el cerdo 豕): en la antigüedad, tener un cerdo en casa significaba tener un hogar estable y con comida.",
+    detail: "Así evolucionó:<br>1. Época oracular (≈1200 a.C.) — techo + cerdo<br>2. Bronce (≈1000 a.C.) — forma más curva<br>3. Escritura pequeña sellada (≈200 a.C.) — estilo formal<br>4. Escritura clerical (≈100 d.C.) — se parece al de hoy<br>5. Escritura estándar (hoy) — 家<br><br>En el curso aprendemos la historia de cada carácter para que lo recuerdes con más facilidad."
+  },
+  grammar: {
+    emoji: "📐",
+    title: "Gramática explicada paso a paso",
+    desc: "Cada estructura gramatical se explica con ejemplos reales que usarías en la vida diaria. Nada de reglas abstractas: aprendés cómo se arma una oración en chino, con audio para practicar la entonación.",
+    detail: "Cada punto de gramática viene con:<br>🔹 Explicación clara en español<br>🔹 Ejemplos de la vida cotidiana<br>🔹 Pinyin para practicar la pronunciación<br>🔹 Traducción al español<br><br>Los ejemplos salen de los diálogos que trabajamos en clase, así los ves en contexto real."
+  },
+  idioms: {
+    emoji: "🎭",
+    title: "Modismos y dichos chinos (成语)",
+    desc: "Los chinos tienen expresiones de solo cuatro caracteres que resumen historias enteras. Aprender 成语 te permite sonar más natural y entender la cultura detrás del idioma.",
+    detail: "Ejemplo: 「对牛弹琴」 (duì niú tán qín)<br>Literal: «tocar el arpa ante una vaca»<br>Significado: explicarle algo a alguien que no lo entiende o no le interesa.<br><br>Equivalente en español: «dar perlas a los cerdos» o «hablar en chino a un sordo»."
+  },
+  history: {
+    emoji: "🏛️",
+    title: "¿Por qué los chinos llaman a su país 中国?",
+    desc: "Una línea de tiempo interactiva que recorre 4000 años de historia china. No es una lista de reyes y batallas: es la historia de cómo se inventó la comida, la porcelana, la pólvora, y por qué hoy los chinos piensan y hablan como lo hacen.",
+    detail: "En esta línea de tiempo vas a encontrar:<br><br>🔹 <strong>Qin Shi Huang</strong> — el primer emperador que unificó China y construyó la Gran Muralla<br>🔹 <strong>La Ruta de la Seda</strong> — cómo la seda, el papel y la porcelana llegaron a Occidente<br>🔹 <strong>Li Bai y la poesía Tang</strong> — el poeta más famoso de China, cuyo poema todos los niños chinos memorizan<br>🔹 <strong>Marco Polo en China</strong> — el viajero veneciano que describió Kublai Khan al mundo<br>🔹 <strong>El Festival del Bote del Dragón</strong> — por qué se comen zongzi cada año<br><br>Cada dinastía está conectada con las palabras que aprendés en clase. Por ejemplo, cuando estudias 「茶」 (té), también aprendés la historia de cómo el té se convirtió en la bebida nacional de China."
+  },
+  audiobook: {
+    emoji: "📖",
+    title: "Libros narrados en chino",
+    desc: "Textos adaptados a tu nivel, narrados en chino estándar. Los podés escuchar mientras cocinás, mientras viajás o antes de dormir. Así entrenás la comprensión auditiva sin esfuerzo.",
+    detail: "Los textos incluyen:<br>🔹 Vocabulario adaptado a tu nivel<br>🔹 Audio con pronunciación clara y pausada<br>🔹 Traducción al español al final<br>🔹 Preguntas de comprensión para verificar que entendiste"
+  },
+  podcast: {
+    emoji: "🎙️",
+    title: "Podcast de chino para estudiantes",
+    desc: "Episodios cortos de 3 a 5 minutos sobre temas variados: cultura, consejos de estudio, anécdotas de clase. Ideal para escuchar mientras hacés otras actividades.",
+    detail: "Escuchá un fragmento del episodio más abajo. El episodio completo trata sobre cómo dejar de postergar y crear hábitos de estudio.",
+    audio: "https://aka.doubaocdn.com/s/2kF16NeNua"
+  },
+  oral: {
+    emoji: "🗣️",
+    title: "Práctica oral con grabaciones de clase",
+    desc: "Grabamos los diálogos de cada clase para que los puedas escuchar y repasar cuando quieras. Así practicás la pronunciación y la entonación en tu tiempo libre.",
+    detail: "Cada clase incluye:<br>🔹 Grabación completa del diálogo trabajado<br>🔹 Transcripción con pinyin y traducción<br>🔹 Ejercicios de repaso para practicar"
+  },
+  flipbook: {
+    emoji: "📒",
+    title: "Flipbooks",
+    desc: "Materiales visuales que simulan un libro físico: pasás las páginas con el mouse o el dedo, y cada página tiene una palabra nueva, una imagen y un audio. Es una forma más dinámica de repasar que solo ver una lista de palabras.",
+    detail: "Ejemplo de flipbook con audio:<br><br><a href='https://audiomack.com/blissfulmeow/song/2-2' target='_blank' style='color:var(--accent);font-weight:600'>▶ Escuchar flipbook «El limón no es rojo»</a><br><br>Los flipbooks incluyen:<br>🔹 Imágenes ilustrativas por página<br>🔹 Audio con la pronunciación de cada palabra<br>🔹 Pinyin y traducción al español<br>🔹 Navegación simple: pasá la página con un clic"
+  },
+  culture: {
+    emoji: "🏮",
+    title: "Temas culturales: comida, festividades y tradiciones",
+    desc: "No solo aprendés el idioma: también aprendés la cultura que hay detrás. Cada tema cultural se conecta con el vocabulario que estás viendo en clase.",
+    detail: "Algunos de los temas que vemos:<br><br>🔹 <strong>Comida china</strong> — el pan al vapor (馒头), el dim sum, el té y la historia de cada plato<br>🔹 <strong>Festividades</strong> — Festival de Primavera, Festival del Bote del Dragón, Festival de Qingming<br>🔹 <strong>Vida cotidiana</strong> — cómo se saludan los chinos, cómo se pide comida en un restaurante, la propina en China<br>🔹 <strong>Tradiciones</strong> — el zodiaco chino, el nombre chino, el kung fu y la medicina tradicional china<br><br>Por ejemplo, cuando aprendés la palabra 「茶」 (té), también vemos un flipbook sobre la ceremonia del té y la historia del té en China."
+  },
+  notes: {
+    emoji: "📝",
+    title: "Notas detalladas de cada clase",
+    desc: "Después de cada clase, te envío apuntes completos con el vocabulario nuevo, la gramática explicada y los temas culturales que vimos. Los podés revisar cuando quieras, sin tener que tomar apuntes durante la clase.",
+    detail: "Cada apunte incluye:<br>🔹 Vocabulario por tema, con pinyin y traducción<br>🔹 Gramática explicada en español con ejemplos<br>🔹 Temas culturales e históricos conectados a la lección<br>🔹 Ejercicios de repaso para practicar"
   }
 };
 
-/* ===== HOME 複習月曆（SRS 聚合） ===== */
-let homeCal = { y: null, m: null, pick: null };
-let homeSrsCards = {};
-let homeSrsLoaded = false;
-
-async function loadHomeSrs(email){
-  homeSrsCards = {}; homeSrsLoaded = false;
-  try{
-    const snap = await getDoc(doc(db, "srs", email));
-    if(snap.exists() && snap.data().cards) homeSrsCards = snap.data().cards || {};
-  }catch(e){ console.warn("home srs load fail", e); }
-  homeSrsLoaded = true;
-  const now = new Date();
-  homeCal.y = now.getFullYear(); homeCal.m = now.getMonth();
-  homeRenderCal();
+function showHeroImg(n){
+  document.getElementById('heroImg1').style.display = n===1 ? 'block' : 'none';
+  document.getElementById('heroImg2').style.display = n===2 ? 'block' : 'none';
+  document.getElementById('heroBtn1').style.background = n===1 ? 'var(--ink)' : 'rgba(255,255,255,.8)';
+  document.getElementById('heroBtn1').style.color = n===1 ? 'var(--paper)' : 'var(--ink)';
+  document.getElementById('heroBtn2').style.background = n===2 ? 'var(--ink)' : 'rgba(255,255,255,.8)';
+  document.getElementById('heroBtn2').style.color = n===2 ? 'var(--paper)' : 'var(--ink)';
 }
+function openModal(key){
+  var d = modalData[key];
+  if(!d) return;
+  document.getElementById('modalTitle').textContent = d.title;
+  document.getElementById('modalDesc').textContent = d.desc;
+  document.getElementById('modalDetail').innerHTML = d.detail;
+  document.getElementById('modalExtra').innerHTML = d.audio ? '<audio controls preload="none" style="width:100%"><source src="'+d.audio+'" type="audio/mpeg"></audio>' : '';
 
-function homeCountOn(d){
-  let n = 0;
-  for(const k in homeSrsCards){ const c = homeSrsCards[k]; if(c && c.due === d) n++; }
-  return n;
-}
-
-function homeModOf(k){
-  if(k.indexOf('h_') === 0) return 'hanzi';
-  if(k.indexOf('c_') === 0) return 'clf';
-  if(k.indexOf('e_') === 0) return 'extra';
-  return 'words';
-}
-
-function homeModName(mod){
-  if(mod === 'hanzi') return '漢字卡';
-  if(mod === 'clf') return '量詞卡';
-  if(mod === 'extra') return '進階詞';
-  return '單詞卡';
-}
-
-function homeModCount(d, mod){
-  let n = 0;
-  for(const k in homeSrsCards){ const c = homeSrsCards[k]; if(c && c.due === d && homeModOf(k) === mod) n++; }
-  return n;
-}
-
-function homeFmtDate(d){
-  try{ return new Date(d * 86400000).toLocaleDateString('es-AR', { day:'numeric', month:'short', year:'numeric' }); }
-  catch(e){ return String(d); }
-}
-
-function homeRenderCal(){
-  const box = document.getElementById('homeCalBody');
-  if(!box) return;
-  const y = homeCal.y, m = homeCal.m;
-  document.getElementById('homeCalTitle').textContent = new Date(y, m, 1).toLocaleDateString('es-AR', { month:'long', year:'numeric' });
-  const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
-  const daysInMonth = new Date(y, m+1, 0).getDate();
-  const now = new Date();
-  let html = '';
-  for(let i = 0; i < startDow; i++) html += '<div class="srs-cal-empty"></div>';
-  for(let d = 1; d <= daysInMonth; d++){
-    const dayNum = Math.floor(new Date(y, m, d).getTime() / 86400000);
-    const n = homeCountOn(dayNum);
-    let cls = 'srs-cal-day';
-    if(y === now.getFullYear() && m === now.getMonth() && d === now.getDate()) cls += ' today';
-    if(homeCal.pick === dayNum) cls += ' picked';
-    html += '<div class="' + cls + '" onclick="homePickDay(' + dayNum + ')"><span class="d">' + d + '</span>' + (n > 0 ? '<span class="n">' + n + '</span>' : '') + '</div>';
-  }
-  box.innerHTML = html;
-}
-
-function homeCalPrev(){ homeCal.m--; if(homeCal.m < 0){ homeCal.m = 11; homeCal.y--; } homeRenderCal(); }
-function homeCalNext(){ homeCal.m++; if(homeCal.m > 11){ homeCal.m = 0; homeCal.y++; } homeRenderCal(); }
-function homeCalToday(){
-  const now = new Date();
-  homeCal.y = now.getFullYear(); homeCal.m = now.getMonth();
-  homeCal.pick = Math.floor(now.getTime() / 86400000);
-  homeRenderCal(); homeShowPick(homeCal.pick);
-}
-function homePickDay(d){
-  homeCal.pick = d;
-  homeRenderCal(); homeShowPick(d);
-}
-
-function homeShowPick(d){
-  const res = document.getElementById('homeCalResult');
-  if(!res) return;
-  const total = homeCountOn(d);
-  if(total === 0){ res.innerHTML = homeFmtDate(d) + ' · sin tarjetas ese día'; return; }
-  const mods = ['words','hanzi','clf','extra'];
-  let btns = '';
-  const modFile = { words:'words', hanzi:'hanzi', clf:'clf', extra:'extra' };
-  mods.forEach(mod => {
-    const n = homeModCount(d, mod);
-    if(n > 0) btns += '<a class="srs-mod-btn" href="original/' + modFile[mod] + '.html?reviewday=' + d + '&v=' + VER + '">' + homeModName(mod) + ' · ' + n + '</a>';
-  });
-  res.innerHTML = '<b>' + homeFmtDate(d) + '</b> · ' + total + ' tarjetas: ' + btns;
-}
-
-window.homeCalPrev = homeCalPrev; window.homeCalNext = homeCalNext;
-window.homeCalToday = homeCalToday; window.homePickDay = homePickDay;
-
-let _authResolved = false;
-onAuthStateChanged(auth, async (user) => {
-  if(!user){
-    // session 恢復期間不立即顯示登入頁，避免閃爍
-    if(_authResolved) return;
-    setTimeout(()=>{
-      if(!auth.currentUser){
-        $("view-login").style.display="block";
-        $("view-home").style.display="none";
-      }
-    }, 1200);
-    return;
-  }
-  _authResolved = true;
-  $("view-login").style.display="none";
-  $("view-home").style.display="block";
-  /* 身份切換時重置視圖，避免學生看到殘留的老師面板 */
-  $("tpanel").style.display = "none";
-  $("cardmods").style.display = "none";
-  $("duo").style.display = "grid";
-  $("tpStudent").style.display = "none";
-
-  const isTeacher = user.email === "blissfulmeow@chino-basico-por-tema.firebaseapp.com";
-  if(isTeacher){
-    $("who").innerHTML = "你好，<strong>Prof. Blissfulmeow</strong>！";
-  } else {
-    const raw = user.email.split("@")[0];
-    const first = raw.split(".")[0];
-    $("who").innerHTML = "你好，<strong>" + first.charAt(0).toUpperCase()+first.slice(1) + "</strong>！";
-  }
-
-  let grant = null;
-  try{
-    const snap = await getDoc(doc(db, "grants", user.email));
-    if(snap.exists()) grant = snap.data();
-  }catch(e){ console.warn("grants load fail", e); }
-
-  const mods = (grant && grant.modules) || {};
-  const showTarjetas = isTeacher || mods.tarjetas === true;
-  const showNotas    = isTeacher || mods.notas === true;
-
-  /* 只留閃卡入口，直接顯示字卡模組 */
-  $("duo").style.display = "none";
-  $("cardmods").style.display = showTarjetas ? "block" : "none";
-  if(isTeacher){
-    window.renderExtraCards(null, true);
-  } else {
-    const extraMods = (grant && grant.extra && grant.extra.mods) || [];
-    window.renderExtraCards(extraMods, false);
-  }
-  if(!showTarjetas){
-    $("cardmods").insertAdjacentHTML("beforeend",
-      `<div style="font-size:13px;color:var(--sub);padding:12px 0">目前尚未開放內容，請等候老師通知。<br>Todavía no hay contenido disponible.</div>`);
-  }
-
-  /* HOME 月曆（讀當前登入者的 srs） */
-  const sh = document.getElementById("srsHome");
-  if(sh) sh.style.display = "block";
-  loadHomeSrs(user.email);
-
-  window.showHomeModules = () => {
-    $("cardmods").style.display = "none";
-    $("duo").style.display = "grid";
+  var hero = document.getElementById('modalHero');
+  var imgUrls = {
+    oral: 'https://aka.doubaocdn.com/s/XOYut8lHtK',
+    history: 'https://aka.doubaocdn.com/s/u1g3EOWKrR',
+    notes: 'https://aka.doubaocdn.com/s/BIHoweGPkB',
+    culture: 'https://aka.doubaocdn.com/s/jwmlFY2iei',
+    grammar: 'https://aka.doubaocdn.com/s/JISn4UEXUV'
   };
-
-  try{
-    await setDoc(doc(db, "stats", user.email), {
-      lastSeen: new Date(), lastModule: "inicio"
-    }, { merge: true });
-  }catch(e){}
-
-  /* ===== 老師：選擇學生 + 開關 ===== */
-  if(isTeacher){
-    $("tpanel").style.display = "block";
-    await loadStudentList();
+  if(key === 'culture'){
+    hero.style.aspectRatio = 'auto';
+    hero.style.height = 'auto';
+    hero.style.display = 'block';
+    hero.style.alignItems = 'unset';
+    hero.style.justifyContent = 'unset';
+    hero.style.overflow = 'visible';
+    hero.innerHTML = '<img src="https://aka.doubaocdn.com/s/Q5dneXYV8W" style="width:100%;height:auto;object-fit:contain;display:block" alt="Cultura china">';
+  } else if(key === 'history'){
+    hero.style.aspectRatio = 'auto';
+    hero.style.height = 'auto';
+    hero.style.display = 'block';
+    hero.style.alignItems = 'unset';
+    hero.style.justifyContent = 'unset';
+    hero.style.overflow = 'visible';
+    hero.innerHTML = '<img src="https://aka.doubaocdn.com/s/ZqDzolbvLC" style="width:100%;height:auto;object-fit:contain;display:block" alt="Línea de tiempo de historia de China">';
+  } else if(key === 'idioms'){
+    hero.style.aspectRatio = 'auto';
+    hero.style.height = 'auto';
+    hero.style.display = 'block';
+    hero.style.alignItems = 'unset';
+    hero.style.justifyContent = 'unset';
+    hero.style.overflow = 'visible';
+    hero.innerHTML = '<img src="https://aka.doubaocdn.com/s/rUwEdRdL3t" style="width:100%;height:auto;object-fit:contain;display:block" alt="Modismo ejemplo">';
+  } else if(key === 'flashcards'){
+    hero.innerHTML = '<img src="https://aka.doubaocdn.com/s/BJJ4r6Uok8" style="width:100%;height:100%;object-fit:cover" alt="Tarjetas de vocabulario">';
+  } else if(key === 'hanzi'){
+    hero.innerHTML = '<img src="https://aka.doubaocdn.com/s/39fOYO8cWH" style="width:100%;height:100%;object-fit:contain;background:var(--paper)" alt="Evolución del carácter 家">';
+  } else if(key === 'grammar'){
+    hero.innerHTML = '<img src="https://aka.doubaocdn.com/s/NRStYYO3Sq" style="width:100%;height:100%;object-fit:cover" alt="Gramática paso a paso">';
+  } else if(key === 'flipbook'){
+    hero.style.aspectRatio = 'auto';
+    hero.style.height = 'auto';
+    hero.innerHTML = '<div style="width:100%;background:#3a3a3a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;color:#fff;text-align:center">' +
+      '<img src="https://aka.doubaocdn.com/s/4Idl2r3ABB" style="width:60%;max-width:280px;margin-bottom:14px;border-radius:8px" alt="Limones">' +
+      '<div style="font-size:16px;font-weight:600;margin-bottom:4px">El limón no es rojo</div>' +
+      '<div style="font-size:12px;opacity:.7;margin-bottom:14px">níngméng búshì hóngsè de</div>' +
+      '<audio controls style="width:90%;max-width:320px">' +
+        '<source src="https://aka.doubaocdn.com/s/O4VbHt6rls" type="audio/mpeg">' +
+      '</audio>' +
+    '</div>';
+  } else if(key === 'podcast'){
+    hero.innerHTML = '<img src="https://aka.doubaocdn.com/s/BW86rKPJ8V" style="width:100%;height:100%;object-fit:cover" alt="Podcast">';
+  } else if(key === 'notes'){
+    var notePages = [
+      'https://aka.doubaocdn.com/s/pIO9wTeEim',
+      'https://aka.doubaocdn.com/s/cimNFeITSZ',
+      'https://aka.doubaocdn.com/s/J0lPCf7QK0',
+      'https://aka.doubaocdn.com/s/RKPlVnWjQS',
+      'https://aka.doubaocdn.com/s/1IXmUh3BLE'
+    ];
+    window._notePage = 0;
+    hero.style.aspectRatio = 'auto';
+    hero.style.height = 'auto';
+    hero.innerHTML = '<div style="width:100%;position:relative;background:#f5efe0">' +
+      '<img id="noteImg" src="'+notePages[0]+'" style="width:100%;display:block">' +
+      '<button onclick="noteNav(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer">‹</button>' +
+      '<button onclick="noteNav(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer">›</button>' +
+      '<div id="notePageNum" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#fff;padding:4px 12px;border-radius:12px;font-size:12px">1 / 5</div>' +
+    '</div>';
+    window._notePages = notePages;
+  } else if(key === 'culture'){
+    hero.style.aspectRatio = 'auto';
+    hero.style.height = 'auto';
+    hero.innerHTML = '<img src="https://aka.doubaocdn.com/s/ZqDzolbvLC" style="width:100%;display:block" alt="Línea de tiempo de historia de China">';
+  } else if(key === 'oral'){
+    hero.innerHTML = '<img src="https://aka.doubaocdn.com/s/lc5ANaoKrE" style="width:100%;height:100%;object-fit:cover" alt="Práctica oral">';
+  } else if(key === 'audiobook'){
+    var bookPages = [
+      'https://aka.doubaocdn.com/s/mUaiSJv3IW',
+      'https://aka.doubaocdn.com/s/FrGMPTlqvV',
+      'https://aka.doubaocdn.com/s/cyufT2QNpU',
+      'https://aka.doubaocdn.com/s/V6lbkjptjc'
+    ];
+    window._bookPage = 0;
+    hero.style.aspectRatio = '3/4';
+    hero.innerHTML = '<div style="width:100%;height:100%;position:relative;background:#f5efe0">' +
+      '<img id="bookImg" src="'+bookPages[0]+'" style="width:100%;height:100%;object-fit:contain;display:block">' +
+      '<button onclick="bookNav(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer">‹</button>' +
+      '<button onclick="bookNav(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer">›</button>' +
+      '<div id="bookPageNum" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#fff;padding:4px 12px;border-radius:12px;font-size:12px">1 / 4</div>' +
+    '</div>';
+    window._bookPages = bookPages;
+  } else if(imgUrls[key]){
+    hero.innerHTML = '<img src="'+imgUrls[key]+'" style="width:100%;height:100%;object-fit:cover" alt="">';
+  } else {
+    hero.innerHTML = '<span class="emoji">'+d.emoji+'</span>';
   }
-});
 
-/* ---------- 老師管理學生 ---------- */
-let grantCache = {};
-let statsCache = {};
-let selEmail = null;
-
-function fmtName(email){
-  const raw = email.split("@")[0];
-  return raw.split(".").map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(" ");
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-function shortBatch(b){ return b.replace(/^L/,"N").replace(/-b/, " · "); }
-
-async function addStudent(){
-  const name = document.getElementById("tpNewName").value.trim();
-  if(!name){ alert("請輸入學生名字 · Escribí el nombre del alumno"); return; }
-  const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
-  try{
-    await setDoc(doc(db, "grants", email), { modules:{}, createdAt: new Date() }, { merge: true });
-    document.getElementById("tpNewName").value = "";
-    await loadStudentList();
-    const sel = document.getElementById("studentSelect");
-    [...sel.options].forEach(o=>{ if(o.value===email){ sel.value = email; } });
-    showStudent(email);
-    document.getElementById("tpEmpty").textContent = "✓ 已新增 " + name.split(" ").map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(" ") + "（" + email + "）";
-  }catch(e){
-    document.getElementById("tpEmpty").textContent = "新增失敗：" + e.message;
-  }
+function bookNav(dir){
+  var pages = window._bookPages;
+  if(!pages) return;
+  window._bookPage = (window._bookPage + dir + pages.length) % pages.length;
+  document.getElementById('bookImg').src = pages[window._bookPage];
+  document.getElementById('bookPageNum').textContent = (window._bookPage+1) + ' / ' + pages.length;
 }
-window.addStudent = addStudent;
-
-async function loadStudentList(){
-  const sel = $("studentSelect");
-  try{
-    const snap = await getDocs(collection(db, "grants"));
-    if(snap.empty){
-      $("tpEmpty").textContent = "尚無學生紀錄。請先在任一字卡頁輸入學生名並儲存一次。";
-      return;
-    }
-    $("tpEmpty").textContent = "";
-    snap.forEach(d=>{ grantCache[d.id] = d.data(); });
-    try{
-      const st = await getDocs(collection(db, "stats"));
-      st.forEach(d=>{ statsCache[d.id] = d.data(); });
-    }catch(e){}
-    const seen = new Set();
-    const opts = [];
-    snap.docs.forEach(d=>{
-      const nm = fmtName(d.id);
-      if(seen.has(nm)) return;
-      seen.add(nm);
-      opts.push(`<option value="${d.id}">${nm}</option>`);
-    });
-    sel.innerHTML = '<option value="">— 選擇學生 —</option>' + opts.join("");
-    sel.onchange = () => { if(sel.value) showStudent(sel.value); };
-    // 自動恢復上次選的學生（除非登出）
-    try{
-      const last = localStorage.getItem("tt-student");
-      if(last && [...sel.options].some(o=>o.value===last)){
-        sel.value = last;
-        showStudent(last);
-      }
-    }catch(e){}
-  }catch(e){
-    $("tpEmpty").textContent = "載入學生失敗：" + e.message;
-  }
+function noteNav(dir){
+  var pages = window._notePages;
+  if(!pages) return;
+  window._notePage = (window._notePage + dir + pages.length) % pages.length;
+  document.getElementById('noteImg').src = pages[window._notePage];
+  document.getElementById('notePageNum').textContent = (window._notePage+1) + ' / ' + pages.length;
 }
-
-async function showStudent(email){
-  selEmail = email;
-  try{ localStorage.setItem("tt-student", email); }catch(e){}
-  $("tpStudent").style.display = "block";
-  $("tpName").textContent = fmtName(email);
-  let g = grantCache[email] || {};
-  try{
-    const s = await getDoc(doc(db, "grants", email));
-    if(s.exists()){ g = s.data(); grantCache[email] = g; }
-  }catch(e){}
-  const mods = g.modules || {};
-  $("swTarjetas").checked = !!mods.tarjetas;
-  const swN = $("swNotas"); if(swN) swN.checked = !!mods.notas;
-  const st = statsCache[email] || {};
-  const rawLast = st.lastSeen;
-  const last = rawLast ? (rawLast.toDate ? rawLast.toDate() : new Date(rawLast)).toLocaleString("zh-TW") : "—";
-  const notasOpen = st.notasOpen ? (st.notasOpen.count||1) : 0;
-  $("tpStats").textContent = "最後活動：" + last + " · 看筆記次數：" + notasOpen;
-  // 開放摘要：三張卡各自已開放幾組
-  const gz = (g.hanzi && g.hanzi.batches) ? g.hanzi.batches.length : 0;
-  const gw = (g.words && g.words.cats) ? g.words.cats.length : 0;
-  const gc = (g.clf && g.clf.batches) ? g.clf.batches.length : 0;
-  const sumEl = document.getElementById("tpGrantSum");
-  if(sumEl){
-    const part = [];
-    if(gz > 0) part.push("漢字卡 " + gz + " 組");
-    if(gw > 0) part.push("單詞卡 " + gw + " 組");
-    if(gc > 0) part.push("量詞卡 " + gc + " 組");
-    const exm = (g.extra && g.extra.mods) || [];
-    if(exm.length > 0) part.push("進階模組 " + exm.length + " 個");
-    sumEl.innerHTML = part.length
-      ? '<span style="color:#2e7d32;">已開放：' + part.join(" · ") + '</span>'
-      : '<span style="color:#c0392b;">尚未開放任何閃卡內容（三卡均 0 組）</span>';
-  }
-  /* 16 個進階模組的勾選狀態（老師視圖） */
-  window.renderExtraCards((g.extra && g.extra.mods) || [], true);
-  $("goTarjetas").href = "#tarjetas";
-  $("goTarjetas").onclick = () => {
-    $("cardmods").style.display = "block";
-    $("duo").style.display = "none";
-    const _s = encodeURIComponent(email.split("@")[0]);
-    $("cardmods").querySelectorAll("a").forEach(a=>{
-      if(a.classList.contains("back-row")) return;
-      const href = a.getAttribute("href");
-      const [path, q] = href.split("?");
-      const params = new URLSearchParams(q||"");
-      params.set("v", VER);
-      params.set("student", _s);
-      a.href = path + "?" + params.toString();
-    });
-    return false;
-  };
-  const gN = $("goNotas"); if(gN) gN.href = "original/notas.html?v=" + VER + "&student=" + encodeURIComponent(email.split("@")[0]);
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeModalBg(e){
+  if(e.target === document.getElementById('modalOverlay')) closeModal();
 }
 
-$("swTarjetas").onchange = async e => {
-  if(!selEmail) return;
-  try{
-    await setDoc(doc(db,"grants",selEmail),{modules:{tarjetas:e.target.checked}},{merge:true});
-    $("tpSave").textContent = "✓ 已儲存：閃卡入口 " + (e.target.checked?"開放":"關閉");
-    setTimeout(()=>$("tpSave").textContent = "✓ 開關勾選後自動儲存", 2500);
-  }catch(err){ $("tpSave").textContent = "儲存失敗：" + err.message; }
-};
-$("btn-logout").onclick = () => {
-  _authResolved = false;
-  try{ localStorage.removeItem("tt-student"); }catch(e){}
-  try{ localStorage.clear(); }catch(e){}
-  try{ signOut(auth); }catch(e){}
-  location.href = "index.html";
-};
+// ===== 「家」字演变动画 =====
+(function(){
+  var frames = document.querySelectorAll('#hanziSvg .frame');
+  var labels = ['JIA · Época oracular (≈1200 a.C.)','JIA · Bronce (≈1000 a.C.)','JIA · Escritura pequeña sellada (≈200 a.C.)','JIA · Escritura clerical (≈100 d.C.)','JIA · Escritura estándar (hoy)'];
+  var idx = 0;
+  var labelEl = document.getElementById('hanziLabel');
+  function show(i){
+    frames.forEach(function(f,k){ f.style.display = k===i ? 'block' : 'none'; });
+    labelEl.textContent = labels[i];
+  }
+  setInterval(function(){ idx = (idx+1)%frames.length; show(idx); }, 2200);
+  show(0);
+})();
 </script>
+
 </body>
 </html>
