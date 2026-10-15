@@ -185,9 +185,9 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
     <div class="cardmods" id="cardmods">
       <h2>📚 Tarjetas · 19 個模組</h2>
       <div class="grid" id="cardGrid">
-        <a href="original/hanzi.html"><span class="c-ico">字</span><span class="c-t">漢字閃卡</span><span class="c-e">Hanzi · 4,475 字</span></a>
-        <a href="original/words.html"><span class="c-ico">詞</span><span class="c-t">單詞閃卡</span><span class="c-e">Palabras · 11,781 詞</span></a>
-        <a href="original/clf.html"><span class="c-ico">量</span><span class="c-t">量詞閃卡</span><span class="c-e">Clasificadores · 258 個</span></a>
+        <a href="original/hanzi.html"><span class="c-ico">字</span><span class="c-t">漢字閃卡</span><span class="c-e" id="hanziCount">Hanzi · 4,475 字</span></a>
+        <a href="original/words.html"><span class="c-ico">詞</span><span class="c-t">單詞閃卡</span><span class="c-e" id="wordsCount">Palabras · 11,781 詞</span></a>
+        <a href="original/clf.html"><span class="c-ico">量</span><span class="c-t">量詞閃卡</span><span class="c-e" id="clfCount">Clasificadores · 258 個</span></a>
       </div>
       <div class="extra-save" id="extraSaveRow" style="display:none">
         <button id="saveExtraBtn">✓ 儲存開放模組到雲端</button>
@@ -499,11 +499,20 @@ onAuthStateChanged(auth, async (user) => {
   if(isTeacher){
     window.renderExtraCards(null, true);
     document.querySelector("#cardmods h2").textContent = "📚 Tarjetas · 19 個模組";
+    document.getElementById("hanziCount").textContent = "Hanzi · 4,475 字";
+    document.getElementById("wordsCount").textContent = "Palabras · 11,781 詞";
+    document.getElementById("clfCount").textContent = "Clasificadores · 258 個";
   } else {
     const extraMods = (grant && grant.extra && grant.extra.mods) || [];
     window.renderExtraCards(extraMods, false);
     const totalMods = 3 + extraMods.length;
     document.querySelector("#cardmods h2").textContent = "📚 Tarjetas · " + totalMods + " 個模組";
+    const hGroups = (grant && grant.hanzi && grant.hanzi.batches) ? grant.hanzi.batches.length : 0;
+    const wGroups = (grant && grant.words && grant.words.cats) ? grant.words.cats.length : 0;
+    const cGroups = (grant && grant.clf && grant.clf.batches) ? grant.clf.batches.length : 0;
+    document.getElementById("hanziCount").textContent = "Hanzi · " + hGroups + " 组";
+    document.getElementById("wordsCount").textContent = "Palabras · " + wGroups + " 组";
+    document.getElementById("clfCount").textContent = "Clasificadores · " + cGroups + " 组";
   }
   if(!showTarjetas){
     $("cardmods").insertAdjacentHTML("beforeend",
