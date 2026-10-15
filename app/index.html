@@ -498,9 +498,12 @@ onAuthStateChanged(auth, async (user) => {
   $("cardmods").style.display = showTarjetas ? "block" : "none";
   if(isTeacher){
     window.renderExtraCards(null, true);
+    document.querySelector("#cardmods h2").textContent = "📚 Tarjetas · 19 個模組";
   } else {
     const extraMods = (grant && grant.extra && grant.extra.mods) || [];
     window.renderExtraCards(extraMods, false);
+    const totalMods = 3 + extraMods.length;
+    document.querySelector("#cardmods h2").textContent = "📚 Tarjetas · " + totalMods + " 個模組";
   }
   if(!showTarjetas){
     $("cardmods").insertAdjacentHTML("beforeend",
