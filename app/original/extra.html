@@ -410,7 +410,7 @@ function srsCommit(card,key,item,days){
   srsFlush();
   srsToast('Volvera '+srsIntervalText(days)+' · '+srsFmtDate(item.due));
   document.getElementById('flipInner').classList.add('flipped');
-  document.getElementById('lastReviewed').textContent='Ultima vez: '+srsFmtDate(item.lastReviewed)+' · Proxima: '+srsFmtDate(item.due);
+  document.getElementById('lastReviewed').textContent='Última vez: '+srsFmtDate(item.lastReviewed)+' · Próxima: '+srsFmtDate(item.due);
   SRS.busy=true;
   setTimeout(()=>{
     SRS.busy=false;

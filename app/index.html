@@ -242,8 +242,8 @@ footer{margin-top:18px;font-size:12px;color:var(--sub)}
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateEmail, updatePassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const fb = initializeApp({
@@ -259,7 +259,7 @@ const db = getFirestore(fb);
 
 let zlvl = 3;
 const ZOOMS = [0.85, 0.92, 1.0, 1.1, 1.2];
-const VER = "20261001m"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
+const VER = "20261026a"; // 版本戳：三卡/筆記連結帶此值繞過 CDN 快取
 /* 16 個進階模組（與 extra.html 的 MODS 同序同 id） */
 const EXTRA_MODS = [
   {id:"liyu", es:"Jerga", n:200, ico:"俚"},
@@ -557,8 +557,28 @@ function shortBatch(b){ return b.replace(/^L/,"N").replace(/-b/, " · "); }
 
 async function addStudent(){
   const name = document.getElementById("tpNewName").value.trim();
+  const emptyEl = document.getElementById("tpEmpty");
   if(!name){ alert("請輸入學生名字 · Escribí el nombre del alumno"); return; }
   const email = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,".") + "@chino-basico-por-tema.firebaseapp.com";
+  /* 1) 先建立 Firebase Auth 登入帳號（用次級 App，避免把老師登出） */
+  let authCreated = false;
+  try{
+    const sec = initializeApp(fb.options, "creator-" + Date.now());
+    try{
+      const secAuth = getAuth(sec);
+      await createUserWithEmailAndPassword(secAuth, email, "123123");
+      authCreated = true;
+      await signOut(secAuth);
+    } finally {
+      try{ await deleteApp(sec); }catch(e){}
+    }
+  }catch(e){
+    if(e.code !== "auth/email-already-in-use"){
+      emptyEl.textContent = "建立登入帳號失敗：" + (e.message || e);
+      return;
+    }
+  }
+  /* 2) 建立 grants 紀錄 */
   try{
     await setDoc(doc(db, "grants", email), { modules:{}, createdAt: new Date() }, { merge: true });
     document.getElementById("tpNewName").value = "";
@@ -566,9 +586,10 @@ async function addStudent(){
     const sel = document.getElementById("studentSelect");
     [...sel.options].forEach(o=>{ if(o.value===email){ sel.value = email; } });
     showStudent(email);
-    document.getElementById("tpEmpty").textContent = "✓ 已新增 " + name.split(" ").map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(" ") + "（" + email + "）";
+    const nice = name.split(" ").map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(" ");
+    emptyEl.textContent = "✓ 已新增 " + nice + "（" + email + "）" + (authCreated ? " · 登入密碼 123123（可請學生自行修改）" : " · 此帳號原本已存在");
   }catch(e){
-    document.getElementById("tpEmpty").textContent = "新增失敗：" + e.message;
+    emptyEl.textContent = "新增失敗：" + (e.message || e);
   }
 }
 window.addStudent = addStudent;
@@ -673,12 +694,13 @@ $("swTarjetas").onchange = async e => {
     setTimeout(()=>$("tpSave").textContent = "✓ 開關勾選後自動儲存", 2500);
   }catch(err){ $("tpSave").textContent = "儲存失敗：" + err.message; }
 };
-$("btn-logout").onclick = () => {
+$("btn-logout").onclick = async () => {
   _authResolved = false;
   try{ localStorage.removeItem("tt-student"); }catch(e){}
   try{ localStorage.clear(); }catch(e){}
-  try{ signOut(auth); }catch(e){}
-  location.href = "index.html";
+  try{ sessionStorage.clear(); }catch(e){}
+  try{ await signOut(auth); }catch(e){}
+  location.replace("index.html");
 };
 </script>
 </body>

@@ -530,7 +530,8 @@ window.applyClfGrant = function(grant) {
     renderClf();
     return;
   }
-  const kept = clfList.filter(it => grant.batches.includes(batchKeyOf(it)) && (grant.levels.length === 0 || grant.levels.includes(it.level)));
+  const gLevels = grant.levels || [];
+  const kept = clfList.filter(it => grant.batches.includes(batchKeyOf(it)) && (gLevels.length === 0 || gLevels.includes(it.level)));
   clfList.splice(0, clfList.length, ...kept);
   document.querySelectorAll('div[style*="#fff8e7"]').forEach(p => { p.style.display = "none"; });
   currentIndex = 0;

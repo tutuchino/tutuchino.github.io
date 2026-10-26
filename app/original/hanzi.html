@@ -1936,15 +1936,18 @@ window.applyHanziGrant = function(grant){
     return;
   }
   const allowed = new Set(grant.batches);
+  // 先按 HSK 級別分組一次，算出每字的批次 key（避免 O(n²) 重複掃描）
+  const hskGroups = {};
+  charList.forEach(it => { if(it.hsk) (hskGroups[it.hsk] = hskGroups[it.hsk] || []).push(it); });
+  const hskKeyMap = new Map();
+  Object.keys(hskGroups).forEach(k => {
+    hskGroups[k].sort((a,b)=>parseInt(a.id,10)-parseInt(b.id,10));
+    hskGroups[k].forEach((it,i)=>{ hskKeyMap.set(it.id, 'HSK' + k + '-b' + (Math.floor(i/20)+1)); });
+  });
   // 同時檢查 L key 和 HSK key（不管當前模式）
   const kept = charList.filter(it => {
     const lKey = batchKeyOfL(it);
-    let hskKey = null;
-    if(it.hsk){
-      const arr = charList.filter(x => x.hsk === it.hsk).sort((a,b)=>parseInt(a.id,10)-parseInt(b.id,10));
-      const idx = arr.findIndex(x => x.id === it.id);
-      hskKey = 'HSK' + it.hsk + '-b' + (Math.floor(idx/20)+1);
-    }
+    const hskKey = hskKeyMap.get(it.id);
     return allowed.has(lKey) || (hskKey && allowed.has(hskKey));
   });
   charList.splice(0, charList.length, ...kept);
@@ -2174,9 +2177,6 @@ function restoreHanziGrant(g){
   });
   if(typeof updateExportStat === "function") updateExportStat();
   console.log("restoreHanziGrant: batches=" + batches.length + " restored=" + restored + " mode=" + currentGroupMode);
-  if(location.search.includes("student=") && batches.length > 0){
-    setTimeout(() => alert("除錯：恢復 " + batches.length + " 個批次，實際勾選 " + restored + " 個，模式 " + currentGroupMode), 500);
-  }
   if(typeof updateExportStat === "function") updateExportStat();
   // 雙保險：200ms 後再恢復一次（防止渲染時序問題）
   setTimeout(() => {
@@ -2226,7 +2226,6 @@ onAuthStateChanged(auth, async (user) => {
         const snap = await getDoc(doc(db, "grants", email));
         const g = snap.exists() ? (snap.data().hanzi || null) : {batches:[],levels:[]};
         window.__pendingHanziGrant = g;
-        setTimeout(() => alert("【除錯】\n網址 student=" + sp + "\nemail=" + email + "\ngrants存在=" + snap.exists() + "\nbatches數=" + ((g&&g.batches)||[]).length + "\n內容=" + JSON.stringify((g&&g.batches)||[])), 800);
         // 如果批次 checkbox 已渲染，立即恢復；否則等 Promise.all
         if(document.querySelectorAll("#batchCheckRow input[data-batch]").length > 0){
           restoreHanziGrant(g);
@@ -2308,7 +2307,7 @@ document.getElementById("saveHanziGrantBtn").addEventListener("click", async () 
     const verify = await getDoc(doc(db, "grants", email));
     const vData = verify.exists() ? (verify.data().hanzi || {}) : {};
     const vBatches = vData.batches || [];
-    alert("✓ 已儲存雲端\n寫入: " + mergedBatches.length + " 批次\n讀回: " + vBatches.length + " 批次\n給: " + email + (vBatches.length !== batches.length ? "\n⚠️ 讀回數量不符！" : ""));
+    alert("✓ 已儲存雲端 · Guardado\n" + vBatches.length + " 個批次（grupos）→ " + email + (vBatches.length !== batches.length ? "\n⚠️ 讀回數量與寫入不符，請再按一次儲存。" : ""));
     stat.textContent = "✓ Guardado (" + vBatches.length + "/" + batches.length + " lotes) → " + email;
   } catch(e) {
     stat.textContent = "Error: " + (e.message || e);
